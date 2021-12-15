@@ -130,7 +130,7 @@
           <div slot="content">
             <m-select-input
               v-model="maxRetryTimes"
-              :list="[0, 1, 2, 3, 4]"
+              :list="[0, 1, 2, 3, 4, 30,60,90,120,150,180,210,240,270,300,360,720]"
             ></m-select-input>
             <span>({{ $t("Times") }})</span>
             <span class="text-b">{{ $t("Failed retry interval") }}</span>
