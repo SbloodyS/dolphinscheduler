@@ -408,10 +408,10 @@ public abstract class AbstractCommandExecutor {
      * @return appid
      */
     private String findAppId(String line) {
-//        Matcher matcher = APPLICATION_REGEX.matcher(line);
-//        if (matcher.find()) {
-//            return matcher.group();
-//        }
+        Matcher matcher = APPLICATION_REGEX.matcher(line);
+        if (matcher.find()) {
+            return matcher.group();
+        }
         return null;
     }
 
