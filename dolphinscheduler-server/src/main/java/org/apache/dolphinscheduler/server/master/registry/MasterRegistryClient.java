@@ -415,7 +415,7 @@ public class MasterRegistryClient {
                 break;
             case SUSPENDED:
                 logger.warn("registry connection state is {}, ready to stop myself", state);
-                registryClient.getStoppable().stop("registry connection state is SUSPENDED, stop myself");
+//                registryClient.getStoppable().stop("registry connection state is SUSPENDED, stop myself");
                 break;
             case RECONNECTED:
                 logger.debug("registry connection state is {}, clean the node info", state);
