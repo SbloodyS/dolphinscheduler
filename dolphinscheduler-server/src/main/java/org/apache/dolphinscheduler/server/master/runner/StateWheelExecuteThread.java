@@ -122,10 +122,10 @@ public class StateWheelExecuteThread extends Thread {
                 addTaskStateChangeEvent(taskInstance);
                 taskInstanceRetryCheckList.remove(taskInstance.getId());
             }
-//            if (taskInstance.isSubProcess() || taskInstance.isDependTask()) {
-//                addTaskStateChangeEvent(taskInstance);
-//                taskInstanceRetryCheckList.remove(taskInstance.getId());
-//            }
+            if (taskInstance.taskCanRetry() && (taskInstance.isSubProcess() || taskInstance.isDependTask())) {
+                addTaskStateChangeEvent(taskInstance);
+                taskInstanceRetryCheckList.remove(taskInstance.getId());
+            }
         }
     }
 
