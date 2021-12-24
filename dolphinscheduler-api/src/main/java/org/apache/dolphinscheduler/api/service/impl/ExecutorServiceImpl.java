@@ -599,13 +599,13 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
 
                     for (int i = 1; i <= createCount; i++) {
                         int extra = (i <= remainingItems) ? 1:0;
-                        int bucketItems = (itemsPerBucket + extra);
+                        int singleBucketItems = (itemsPerBucket + extra);
 
                         if (i == 1) {
-                            endDateIndex += bucketItems - 1;
+                            endDateIndex += singleBucketItems - 1;
                         } else {
                             startDateIndex = endDateIndex + 1;
-                            endDateIndex += bucketItems;
+                            endDateIndex += singleBucketItems;
                         }
 
                         cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(startDateIndex)));
