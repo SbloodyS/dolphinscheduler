@@ -581,6 +581,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                 LinkedList<Date> listDate = new LinkedList<>();
                 List<Schedule> schedules = processService.queryReleaseSchedulerListByProcessDefinitionCode(command.getProcessDefinitionCode());
                 listDate.addAll(CronUtils.getSelfFireDateList(start, end, schedules));
+                int listDateSize = listDate.size();
                 createCount = listDate.size();
                 if (!CollectionUtils.isEmpty(listDate)) {
                     if (expectedParallelismNumber != null && expectedParallelismNumber != 0) {
@@ -589,15 +590,23 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                     logger.info("In parallel mode, current expectedParallelismNumber:{}", createCount);
 
                     listDate.addLast(end);
-                    int chunkSize = listDate.size() / createCount;
+//                    int chunkSize = listDate.size() / createCount;
 
-                    for (int i = 0; i < createCount; i++) {
-                        int rangeStart = i == 0 ? i : (i * chunkSize);
-                        int rangeEnd = i == createCount - 1 ? listDate.size() - 1
-                                : rangeStart + chunkSize;
+//                    for (int i = 0; i < createCount; i++) {
+//                        int rangeStart = i == 0 ? i : (i * chunkSize);
+//                        int rangeEnd = i == createCount - 1 ? listDate.size() - 1
+//                                : rangeStart + chunkSize;
+//
+//                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(rangeStart)));
+//                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(rangeEnd)));
+//                        command.setCommandParam(JSONUtils.toJsonString(cmdParam));
+//                        processService.createCommand(command);
+                    for (int i = 0; i < listDateSize; i += createCount) {
+                        int startDateIndex = Math.min(i, listDateSize - 1);
+                        int endDateIndex = Math.min(i + createCount - 1, listDateSize - 1);
 
-                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(rangeStart)));
-                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(rangeEnd)));
+                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(startDateIndex)));
+                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(endDateIndex)));
                         command.setCommandParam(JSONUtils.toJsonString(cmdParam));
                         processService.createCommand(command);
                     }
