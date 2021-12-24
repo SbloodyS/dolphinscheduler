@@ -607,8 +607,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                     int startDateIndex = 0;
                     int endDateIndex = 0;
 
-                    for (int i = 1; i <= createCount; i++)
-                    {
+                    for (int i = 1; i <= createCount; i++) {
                         int extra = (i <= remainingItems) ? 1:0;
                         int total_num = (itemsPerBucket + extra);
 
