@@ -590,18 +590,8 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                     }
                     logger.info("In parallel mode, current expectedParallelismNumber:{}", createCount);
 
-//                    listDate.addLast(end);
-//                    int chunkSize = listDate.size() / createCount;
-
-//                    for (int i = 0; i < createCount; i++) {
-//                        int rangeStart = i == 0 ? i : (i * chunkSize);
-//                        int rangeEnd = i == createCount - 1 ? listDate.size() - 1
-//                                : rangeStart + chunkSize;
-//
-//                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(rangeStart)));
-//                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(rangeEnd)));
-//                        command.setCommandParam(JSONUtils.toJsonString(cmdParam));
-//                        processService.createCommand(command);
+                    // Distribute the number of tasks equally to each bucket.
+                    // The last bucket with insufficient quantity will be assigned to the remaining tasks.
                     int itemsPerBucket = (listDateSize / createCount);
                     int remainingItems = (listDateSize % createCount);
                     int startDateIndex = 0;
@@ -609,13 +599,13 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
 
                     for (int i = 1; i <= createCount; i++) {
                         int extra = (i <= remainingItems) ? 1:0;
-                        int total_num = (itemsPerBucket + extra);
+                        int bucketItems = (itemsPerBucket + extra);
 
                         if (i == 1) {
-                            endDateIndex += total_num - 1;
+                            endDateIndex += bucketItems - 1;
                         } else {
                             startDateIndex = endDateIndex + 1;
-                            endDateIndex += total_num;
+                            endDateIndex += bucketItems;
                         }
 
                         cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(startDateIndex)));
