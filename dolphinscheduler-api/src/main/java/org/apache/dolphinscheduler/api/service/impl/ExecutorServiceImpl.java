@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.api.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.swagger.models.auth.In;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -601,14 +602,26 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
 //                        cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(rangeEnd)));
 //                        command.setCommandParam(JSONUtils.toJsonString(cmdParam));
 //                        processService.createCommand(command);
-                    for (int i = 0; i < listDateSize; i += createCount) {
-                        int startDateIndex = Math.min(i, listDateSize - 1);
-                        int endDateIndex = Math.min(i + createCount - 1, listDateSize - 1);
+                    int itemsPerBucket = (listDateSize / createCount);
+                    int remainingItems = (listDateSize % createCount);
+                    int startDateIndex = 0;
+                    int endDateIndex = 0;
+
+                    for (int i = 1; i <= createCount; i++)
+                    {
+                        int extra = (i <= remainingItems) ? 1:0;
+                        int total_num = (itemsPerBucket + extra);
+
+                        if (i == 1) {
+                            endDateIndex += total_num - 1;
+                        } else {
+                            startDateIndex = endDateIndex + 1;
+                            endDateIndex += total_num;
+                        }
 
                         cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(startDateIndex)));
                         cmdParam.put(CMDPARAM_COMPLEMENT_DATA_END_DATE, DateUtils.dateToString(listDate.get(endDateIndex)));
                         command.setCommandParam(JSONUtils.toJsonString(cmdParam));
-                        logger.info("startDateIndex: {} | endDateIndex: {}", startDateIndex, endDateIndex);
                         processService.createCommand(command);
                     }
                 }
@@ -620,4 +633,31 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         logger.info("create complement command count: {}", createCount);
         return createCount;
     }
+
+//    public static void main(String[] args) {
+//
+//        int numBuckets = 3;
+//        int numItems = 10;
+//
+//        int itemsPerBucket = (numItems / numBuckets);
+//        int remainingItems = (numItems % numBuckets);
+//        int startDateIndex = 0;
+//        int endDateIndex = 0;
+//
+//        for (int i = 1; i <= numBuckets; i++)
+//        {
+//            int extra = (i <= remainingItems) ? 1:0;
+//            int total_num = (itemsPerBucket + extra);
+//            System.out.println("bucket " + i + " contains " + total_num + " items.");
+//
+//            if (i == 1) {
+//                endDateIndex += total_num - 1;
+//            } else {
+//                startDateIndex = endDateIndex + 1;
+//                endDateIndex += total_num;
+//            }
+//
+//            System.out.printf("startDateIndex: %s | endDateIndex: %s\n", startDateIndex, endDateIndex);
+//        }
+//    }
 }

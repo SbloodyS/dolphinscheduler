@@ -1281,7 +1281,6 @@ public class WorkflowExecuteThread implements Runnable {
                                 activeTaskProcessorMaps.remove(originalId);
                             }
                         }
-                        logger.info("submitTaskExec: {}", taskInstance.getProcessInstanceId());
                     }
                 } else if (DependResult.FAILED == dependResult) {
                     // if the dependency fails, the current node is not submitted and the state changes to failure.
