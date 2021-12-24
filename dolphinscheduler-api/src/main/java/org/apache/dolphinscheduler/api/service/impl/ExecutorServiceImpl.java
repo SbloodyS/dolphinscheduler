@@ -590,22 +590,22 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                     }
                     logger.info("In parallel mode, current expectedParallelismNumber:{}", createCount);
 
-                    // Distribute the number of tasks equally to each bucket.
-                    // The last bucket with insufficient quantity will be assigned to the remaining tasks.
-                    int itemsPerBucket = (listDateSize / createCount);
+                    // Distribute the number of tasks equally to each command.
+                    // The last command with insufficient quantity will be assigned to the remaining tasks.
+                    int itemsPerCommand = (listDateSize / createCount);
                     int remainingItems = (listDateSize % createCount);
                     int startDateIndex = 0;
                     int endDateIndex = 0;
 
                     for (int i = 1; i <= createCount; i++) {
-                        int extra = (i <= remainingItems) ? 1:0;
-                        int singleBucketItems = (itemsPerBucket + extra);
+                        int extra = (i <= remainingItems) ? 1 : 0;
+                        int singleCommandItems = (itemsPerCommand + extra);
 
                         if (i == 1) {
-                            endDateIndex += singleBucketItems - 1;
+                            endDateIndex += singleCommandItems - 1;
                         } else {
                             startDateIndex = endDateIndex + 1;
-                            endDateIndex += singleBucketItems;
+                            endDateIndex += singleCommandItems;
                         }
 
                         cmdParam.put(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.dateToString(listDate.get(startDateIndex)));
