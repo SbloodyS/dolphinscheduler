@@ -157,7 +157,7 @@
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem('abc', definitionList)
+              sessionStorage.setItem('abc', JSON.stringify(definitionList))
               resolve(definitionList)
             })
           }
