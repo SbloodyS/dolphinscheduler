@@ -64,7 +64,7 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  // let definitionCacheList
+  let definitionCacheList
 
   export default {
     name: 'dep-list',
@@ -141,12 +141,12 @@ import disabledState from '@/module/mixin/disabledState'
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", this.definitionCacheList)
+        console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (this.definitionCacheList) {
+          if (definitionCacheList) {
             console.log("使用缓存")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(this.definitionCacheList)
+            resolve(definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               this.definitionCacheList = _.map(_.cloneDeep(res), v => {
@@ -155,7 +155,7 @@ import disabledState from '@/module/mixin/disabledState'
                   label: v.processDefinition.name
                 }
               })
-              resolve(this.definitionCacheList)
+              resolve(definitionCacheList)
             })
           }
         })
@@ -310,6 +310,7 @@ import disabledState from '@/module/mixin/disabledState'
     },
     beforeDestroy() {
       // sessionStorage.removeItem('definitionCacheList')
+      definitionCacheList = null
       console.log("移除缓存")
     },
     components: {}
