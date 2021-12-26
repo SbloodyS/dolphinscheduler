@@ -87,7 +87,7 @@
     },
     methods: {
       beforeDestroy() {
-        sessionStorage.removeItem("definitionList")
+        sessionStorage.removeItem('definitionList')
       },
 
       /**
@@ -154,7 +154,7 @@
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem('definitionList', definitionList)
+              // sessionStorage.setItem('definitionList', definitionList)
               resolve(definitionList)
             })
           })
