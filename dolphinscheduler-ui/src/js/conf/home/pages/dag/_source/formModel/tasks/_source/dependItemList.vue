@@ -86,6 +86,9 @@
       event: 'dependItemListEvent'
     },
     methods: {
+      beforeDestroy() {
+        sessionStorage.removeItem("definitionList")
+      },
 
       /**
        * add task
@@ -99,10 +102,8 @@
         this._getProcessByProjectCode(projectCode).then(definitionList => {
           if (!definitionList || definitionList.length === 0) {
             this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
-            console.log("definitionList1:", definitionList)
             return
           }
-          console.log("definitionList2:", definitionList)
           // dependItemList index
           let is = (value) => _.some(this.dependItemList, { definitionCode: value })
           let noArr = _.filter(definitionList, v => !is(v.value))
@@ -142,17 +143,22 @@
         })
       },
       _getProcessByProjectCode (code) {
-        return new Promise((resolve, reject) => {
-          this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-            let definitionList = _.map(_.cloneDeep(res), v => {
-              return {
-                value: v.processDefinition.code,
-                label: v.processDefinition.name
-              }
+        if (sessionStorage.getItem('definitionList') == null) {
+          return new Promise((resolve, reject) => {
+            this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
+              let definitionList = _.map(_.cloneDeep(res), v => {
+                return {
+                  value: v.processDefinition.code,
+                  label: v.processDefinition.name
+                }
+              })
+              sessionStorage.setItem('definitionList', definitionList)
+              resolve(definitionList)
             })
-            resolve(definitionList)
           })
-        })
+        } else {
+          return sessionStorage.getItem('definitionList')
+        }
       },
       /**
        * get dependItemList
