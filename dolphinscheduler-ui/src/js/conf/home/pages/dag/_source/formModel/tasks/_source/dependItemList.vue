@@ -52,17 +52,19 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import { cycleList, dateValueList } from './commcon'
-  import disabledState from '@/module/mixin/disabledState'
+import _ from 'lodash'
+import {cycleList, dateValueList} from './commcon'
+import disabledState from '@/module/mixin/disabledState'
 
-  // Depend on all tasks
+// Depend on all tasks
   const DEP_ALL_TASK = {
     code: 0,
     name: 'ALL'
   }
 
   const dependentList = []
+
+  let definitionCacheList
 
   export default {
     name: 'dep-list',
@@ -138,22 +140,21 @@
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", sessionStorage.getItem('definitionCacheList'))
+        console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (sessionStorage.getItem('definitionCacheList')) {
+          if (definitionCacheList) {
             console.log("使用缓存")
-            let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionList)
+            // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
+            resolve(definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-              let definitionList = _.map(_.cloneDeep(res), v => {
+              definitionCacheList = _.map(_.cloneDeep(res), v => {
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionList))
-              resolve(definitionList)
+              resolve(definitionCacheList)
             })
           }
         })
@@ -307,7 +308,7 @@
     mounted () {
     },
     beforeDestroy() {
-      sessionStorage.removeItem('definitionCacheList')
+      // sessionStorage.removeItem('definitionCacheList')
       console.log("移除缓存")
     },
     components: {}
