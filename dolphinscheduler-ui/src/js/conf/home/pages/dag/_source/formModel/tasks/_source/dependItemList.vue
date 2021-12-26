@@ -87,7 +87,7 @@
     },
     methods: {
       beforeDestroy() {
-        sessionStorage.removeItem('definitionList')
+        sessionStorage.removeItem('abc')
       },
 
       /**
@@ -143,11 +143,11 @@
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", sessionStorage.getItem('definitionList'))
+        console.log("definitionList:", sessionStorage.getItem('abc'))
         return new Promise((resolve, reject) => {
-          if (sessionStorage.getItem('definitionList')) {
+          if (sessionStorage.getItem('abc')) {
             console.log("使用缓存")
-            let definitionList = sessionStorage.getItem('definitionList')
+            let definitionList = sessionStorage.getItem('abc')
             resolve(definitionList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
@@ -157,7 +157,7 @@
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem('definitionList', definitionList)
+              sessionStorage.setItem('abc', definitionList)
               resolve(definitionList)
             })
           }
