@@ -147,7 +147,7 @@
         return new Promise((resolve, reject) => {
           if (sessionStorage.getItem('abc')) {
             console.log("使用缓存")
-            let definitionList = sessionStorage.getItem('abc')
+            let definitionList = JSON.parse(sessionStorage.getItem('abc'))
             resolve(definitionList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
