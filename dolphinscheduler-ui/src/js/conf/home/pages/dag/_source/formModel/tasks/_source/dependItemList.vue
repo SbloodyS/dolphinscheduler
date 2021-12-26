@@ -63,8 +63,6 @@
     name: 'ALL'
   }
 
-  Vue.prototype.eventBus= new Vue();
-
   const dependentList = []
 
   export default {
@@ -90,7 +88,7 @@
     methods: {
       beforeDestroy(){
         //组件销毁前移除监听
-        this.eventBus.$off('change');
+        sessionStorage.removeItem("dependItemList")
       },
 
       /**
@@ -103,8 +101,13 @@
         // add task list
         let projectCode = this.projectList[0].value
         this._getProcessByProjectCode(projectCode).then(definitionList => {
+          if (sessionStorage.getItem("dependItemList") != null) {
+            this.dependItemList = sessionStorage.getItem('dependItemList')
+          }
+
           if (!definitionList || definitionList.length === 0) {
-            this.eventBus.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
+            this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
+            sessionStorage.setItem('dependItemList', this.dependItemList)
             return
           }
           // dependItemList index
