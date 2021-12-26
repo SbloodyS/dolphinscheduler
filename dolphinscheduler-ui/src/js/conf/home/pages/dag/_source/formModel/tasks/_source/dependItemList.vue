@@ -143,9 +143,7 @@
         })
       },
       _getProcessByProjectCode (code) {
-        if (sessionStorage.getItem('definitionList')) {
-          return sessionStorage.getItem('definitionList')
-        } else {
+        if (sessionStorage.getItem('definitionList') === null) {
           return new Promise((resolve, reject) => {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionList = _.map(_.cloneDeep(res), v => {
@@ -154,10 +152,12 @@
                   label: v.processDefinition.name
                 }
               })
-              // sessionStorage.setItem('definitionList', definitionList)
+              sessionStorage.setItem('definitionList', definitionList)
               resolve(definitionList)
             })
           })
+        } else {
+          return sessionStorage.getItem('definitionList')
         }
       },
       /**
