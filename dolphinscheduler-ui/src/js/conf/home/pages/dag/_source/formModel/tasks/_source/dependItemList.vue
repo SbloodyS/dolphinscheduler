@@ -149,7 +149,7 @@ import disabledState from '@/module/mixin/disabledState'
             resolve(definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-              this.definitionCacheList = _.map(_.cloneDeep(res), v => {
+              definitionCacheList = _.map(_.cloneDeep(res), v => {
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name
