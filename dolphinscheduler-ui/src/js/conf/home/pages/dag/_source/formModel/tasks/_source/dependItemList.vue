@@ -141,10 +141,10 @@ import disabledState from '@/module/mixin/disabledState'
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", definitionCacheList)
+        // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
           if (definitionCacheList) {
-            console.log("使用缓存")
+            // console.log("使用缓存")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
             resolve(definitionCacheList)
           } else {
@@ -311,7 +311,7 @@ import disabledState from '@/module/mixin/disabledState'
     beforeDestroy() {
       // sessionStorage.removeItem('definitionCacheList')
       definitionCacheList = null
-      console.log("移除缓存")
+      // console.log("移除缓存")
     },
     components: {}
   }
