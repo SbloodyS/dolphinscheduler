@@ -145,33 +145,22 @@
       _getProcessByProjectCode (code) {
         console.log("definitionList:", sessionStorage.getItem('definitionList'))
         return new Promise((resolve, reject) => {
-          this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-            let definitionList = _.map(_.cloneDeep(res), v => {
-              return {
-                value: v.processDefinition.code,
-                label: v.processDefinition.name
-              }
+          if (sessionStorage.getItem('definitionList')) {
+            console.log("使用缓存")
+            let definitionList = sessionStorage.getItem('definitionList')
+          } else {
+            this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
+              let definitionList = _.map(_.cloneDeep(res), v => {
+                return {
+                  value: v.processDefinition.code,
+                  label: v.processDefinition.name
+                }
+              })
+              sessionStorage.setItem('definitionList', definitionList)
+              resolve(definitionList)
             })
-            sessionStorage.setItem('definitionList', definitionList)
-            resolve(definitionList)
-          })
+          }
         })
-        // if (sessionStorage.getItem('definitionList') === null) {
-        //   return new Promise((resolve, reject) => {
-        //     this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-        //       let definitionList = _.map(_.cloneDeep(res), v => {
-        //         return {
-        //           value: v.processDefinition.code,
-        //           label: v.processDefinition.name
-        //         }
-        //       })
-        //       sessionStorage.setItem('definitionList', definitionList)
-        //       resolve(definitionList)
-        //     })
-        //   })
-        // } else {
-        //   return sessionStorage.getItem('definitionList')
-        // }
       },
       /**
        * get dependItemList
