@@ -86,10 +86,6 @@
       event: 'dependItemListEvent'
     },
     methods: {
-      beforeDestroy(){
-        //组件销毁前移除监听
-        sessionStorage.removeItem("dependItemList")
-      },
 
       /**
        * add task
@@ -103,8 +99,10 @@
         this._getProcessByProjectCode(projectCode).then(definitionList => {
           if (!definitionList || definitionList.length === 0) {
             this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
+            console.log("definitionList1:", definitionList)
             return
           }
+          console.log("definitionList2:", definitionList)
           // dependItemList index
           let is = (value) => _.some(this.dependItemList, { definitionCode: value })
           let noArr = _.filter(definitionList, v => !is(v.value))
@@ -113,11 +111,8 @@
           this._getDependItemList(val).then(depTasksList => {
             this.$nextTick(() => {
               this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams(val, definitionList, depTasksList, projectCode)))
-              console.log("depTasksList:", depTasksList)
             })
           })
-          console.log("dependItemList:", this.dependItemList)
-
         })
         // remove tooltip
         this._removeTip()
