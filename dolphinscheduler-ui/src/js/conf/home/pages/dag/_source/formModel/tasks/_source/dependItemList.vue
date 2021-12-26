@@ -53,7 +53,6 @@
 
 <script>
   import _ from 'lodash'
-  import Vue from 'vue'
   import { cycleList, dateValueList } from './commcon'
   import disabledState from '@/module/mixin/disabledState'
 
@@ -87,7 +86,8 @@
     },
     methods: {
       beforeDestroy() {
-        sessionStorage.removeItem('abc')
+        sessionStorage.removeItem('definitionCacheList')
+        console.log("移除缓存")
       },
 
       /**
@@ -143,11 +143,11 @@
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", sessionStorage.getItem('abc'))
+        console.log("definitionList:", sessionStorage.getItem('definitionCacheList'))
         return new Promise((resolve, reject) => {
-          if (sessionStorage.getItem('abc')) {
+          if (sessionStorage.getItem('definitionCacheList')) {
             console.log("使用缓存")
-            let definitionList = JSON.parse(sessionStorage.getItem('abc'))
+            let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
             resolve(definitionList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
@@ -157,7 +157,7 @@
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem('abc', JSON.stringify(definitionList))
+              sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionList))
               resolve(definitionList)
             })
           }
