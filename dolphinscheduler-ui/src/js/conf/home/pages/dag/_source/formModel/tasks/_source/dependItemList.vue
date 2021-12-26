@@ -148,6 +148,7 @@
           if (sessionStorage.getItem('definitionList')) {
             console.log("使用缓存")
             let definitionList = sessionStorage.getItem('definitionList')
+            resolve(definitionList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionList = _.map(_.cloneDeep(res), v => {
