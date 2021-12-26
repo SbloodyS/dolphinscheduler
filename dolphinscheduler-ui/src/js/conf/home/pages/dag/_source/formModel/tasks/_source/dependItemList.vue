@@ -53,6 +53,7 @@
 
 <script>
   import _ from 'lodash'
+  import Vue from 'vue'
   import { cycleList, dateValueList } from './commcon'
   import disabledState from '@/module/mixin/disabledState'
 
@@ -61,6 +62,8 @@
     code: 0,
     name: 'ALL'
   }
+
+  Vue.prototype.eventBus= new Vue();
 
   const dependentList = []
 
@@ -85,6 +88,11 @@
       event: 'dependItemListEvent'
     },
     methods: {
+      beforeDestroy(){
+        //组件销毁前移除监听
+        this.eventBus.$off('change');
+      },
+
       /**
        * add task
        */
@@ -96,7 +104,7 @@
         let projectCode = this.projectList[0].value
         this._getProcessByProjectCode(projectCode).then(definitionList => {
           if (!definitionList || definitionList.length === 0) {
-            this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
+            this.eventBus.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
             return
           }
           // dependItemList index
@@ -157,12 +165,6 @@
         return new Promise((resolve, reject) => {
           if (is) {
             this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
-              console.log("yes:",[{ ...DEP_ALL_TASK }].concat(_.map(res, v => {
-                return {
-                  code: v.code,
-                  name: v.name
-                }
-              })))
               resolve([{ ...DEP_ALL_TASK }].concat(_.map(res, v => {
                 return {
                   code: v.code,
@@ -172,7 +174,6 @@
             })
           } else {
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
-              console.log("no:", res)
               resolve(res)
             })
           }
