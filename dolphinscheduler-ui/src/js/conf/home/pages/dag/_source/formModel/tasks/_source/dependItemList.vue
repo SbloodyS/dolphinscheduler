@@ -143,7 +143,7 @@
         })
       },
       _getProcessByProjectCode (code) {
-        if (sessionStorage.getItem('definitionList') == null) {
+        if (sessionStorage.getItem('definitionList')) {
           return new Promise((resolve, reject) => {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionList = _.map(_.cloneDeep(res), v => {
