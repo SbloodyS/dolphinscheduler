@@ -62,6 +62,8 @@
     name: 'ALL'
   }
 
+  const dependentList = []
+
   export default {
     name: 'dep-list',
     data () {
@@ -155,6 +157,12 @@
         return new Promise((resolve, reject) => {
           if (is) {
             this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
+              console.log("yes:",[{ ...DEP_ALL_TASK }].concat(_.map(res, v => {
+                return {
+                  code: v.code,
+                  name: v.name
+                }
+              })))
               resolve([{ ...DEP_ALL_TASK }].concat(_.map(res, v => {
                 return {
                   code: v.code,
@@ -164,6 +172,7 @@
             })
           } else {
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
+              console.log("no:", res)
               resolve(res)
             })
           }
@@ -185,7 +194,7 @@
           }
           /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
           let definitionCode = definitionList[0].value
-          this._getDependItemList(definitionCode).then(depTasksList => {
+          this. _getDependItemList(definitionCode).then(depTasksList => {
             let item = this.dependItemList[itemIndex]
             // init set depTaskCode All
             item.depTaskCode = DEP_ALL_TASK.code
