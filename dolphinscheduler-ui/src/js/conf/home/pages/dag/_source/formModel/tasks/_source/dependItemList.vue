@@ -85,11 +85,6 @@
       event: 'dependItemListEvent'
     },
     methods: {
-      beforeDestroy() {
-        sessionStorage.removeItem('definitionCacheList')
-        console.log("移除缓存")
-      },
-
       /**
        * add task
        */
@@ -310,6 +305,10 @@
       })
     },
     mounted () {
+    },
+    beforeDestroy() {
+      sessionStorage.removeItem('definitionCacheList')
+      console.log("移除缓存")
     },
     components: {}
   }
