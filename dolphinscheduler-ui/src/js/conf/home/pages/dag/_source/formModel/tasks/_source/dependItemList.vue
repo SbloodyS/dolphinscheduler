@@ -108,6 +108,8 @@
           if (!definitionList || definitionList.length === 0) {
             this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams('', [], [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
             sessionStorage.setItem('dependItemList', this.dependItemList)
+            console.log("dependItemList:", this.dependItemList)
+            console.log("definitionList:", definitionList)
             return
           }
           // dependItemList index
