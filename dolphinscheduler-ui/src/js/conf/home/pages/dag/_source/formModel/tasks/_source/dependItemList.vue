@@ -64,7 +64,7 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  let definitionCacheList
+  // let definitionCacheList
 
   export default {
     name: 'dep-list',
@@ -80,7 +80,8 @@ import disabledState from '@/module/mixin/disabledState'
     props: {
       dependItemList: Array,
       index: Number,
-      dependTaskList: Array
+      dependTaskList: Array,
+      definitionCacheList: Array
     },
     model: {
       prop: 'dependItemList',
@@ -140,21 +141,21 @@ import disabledState from '@/module/mixin/disabledState'
         })
       },
       _getProcessByProjectCode (code) {
-        console.log("definitionList:", definitionCacheList)
+        console.log("definitionList:", this.definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (definitionCacheList) {
+          if (this.definitionCacheList) {
             console.log("使用缓存")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionCacheList)
+            resolve(this.definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-              definitionCacheList = _.map(_.cloneDeep(res), v => {
+              this.definitionCacheList = _.map(_.cloneDeep(res), v => {
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name
                 }
               })
-              resolve(definitionCacheList)
+              resolve(this.definitionCacheList)
             })
           }
         })
