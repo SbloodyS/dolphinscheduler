@@ -143,22 +143,35 @@
         })
       },
       _getProcessByProjectCode (code) {
-        if (sessionStorage.getItem('definitionList') === null) {
-          return new Promise((resolve, reject) => {
-            this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-              let definitionList = _.map(_.cloneDeep(res), v => {
-                return {
-                  value: v.processDefinition.code,
-                  label: v.processDefinition.name
-                }
-              })
-              sessionStorage.setItem('definitionList', definitionList)
-              resolve(definitionList)
+        console.log("definitionList:", sessionStorage.getItem('definitionList'))
+        return new Promise((resolve, reject) => {
+          this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
+            let definitionList = _.map(_.cloneDeep(res), v => {
+              return {
+                value: v.processDefinition.code,
+                label: v.processDefinition.name
+              }
             })
+            sessionStorage.setItem('definitionList', definitionList)
+            resolve(definitionList)
           })
-        } else {
-          return sessionStorage.getItem('definitionList')
-        }
+        })
+        // if (sessionStorage.getItem('definitionList') === null) {
+        //   return new Promise((resolve, reject) => {
+        //     this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
+        //       let definitionList = _.map(_.cloneDeep(res), v => {
+        //         return {
+        //           value: v.processDefinition.code,
+        //           label: v.processDefinition.name
+        //         }
+        //       })
+        //       sessionStorage.setItem('definitionList', definitionList)
+        //       resolve(definitionList)
+        //     })
+        //   })
+        // } else {
+        //   return sessionStorage.getItem('definitionList')
+        // }
       },
       /**
        * get dependItemList
