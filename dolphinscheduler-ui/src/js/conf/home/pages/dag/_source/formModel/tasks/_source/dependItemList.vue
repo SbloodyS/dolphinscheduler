@@ -157,7 +157,7 @@ import disabledState from '@/module/mixin/disabledState'
               })
               console.log("不使用缓存11")
               let definitionCacheMapTmp = {}
-              definitionCacheMapTmp.set(code, definitionCacheList)
+              definitionCacheMapTmp[code] = definitionCacheList
               sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMapTmp))
               resolve(definitionCacheList)
             })
