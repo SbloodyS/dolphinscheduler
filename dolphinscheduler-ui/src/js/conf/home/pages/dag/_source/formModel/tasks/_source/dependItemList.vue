@@ -140,11 +140,11 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         console.log("code:", code)
         return new Promise((resolve, reject) => {
-          let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
-          if (definitionCacheMap && definitionCacheMap.hasOwnProperty(code)) {
+          let definitionCacheList = JSON.parse(sessionStorage.getItem(code))
+          if (definitionCacheList) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionCacheMap[code])
+            resolve(definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
@@ -154,8 +154,8 @@ import disabledState from '@/module/mixin/disabledState'
                 }
               })
               console.log("不使用缓存11")
-              definitionCacheMap[code] = definitionCacheList
-              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
+              // definitionCacheMap[code] = definitionCacheList
+              sessionStorage.setItem(code, JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
           }
@@ -321,9 +321,6 @@ import disabledState from '@/module/mixin/disabledState'
 
           console.log("codes:", codes)
 
-          let definitionCacheMap = {}
-          sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
-
           // get item lis
           Promise.all(this.projectList.map(
             item => this._getProcessByProjectCode(item.value)
@@ -331,10 +328,10 @@ import disabledState from '@/module/mixin/disabledState'
             console.log("执行_getDependItemList")
             this._getDependItemList(codes, false).then(res => {
               _.map(this.dependItemList, (v, i) => {
-                let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
-                console.log("definitionCacheMap1:", definitionCacheMap)
+                // let definitionCacheMap = JSON.parse(sessionStorage.getItem(codes))
+                // console.log("definitionCacheMap1:", definitionCacheMap)
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  definitionCacheMap[v.projectCode],
+                  JSON.parse(sessionStorage.getItem(v.projectCode)),
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
                     code: v.code,
                     name: v.name
@@ -349,8 +346,10 @@ import disabledState from '@/module/mixin/disabledState'
     mounted () {
     },
     beforeDestroy() {
-      // sessionStorage.removeItem('definitionCacheList')
-      // console.log("移除缓存")
+      this.projectList.map(
+        item => sessionStorage.removeItem(item.value)
+      )
+      console.log("移除缓存")
     },
     components: {}
   }
