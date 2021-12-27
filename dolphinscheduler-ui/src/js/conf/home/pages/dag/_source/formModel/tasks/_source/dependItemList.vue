@@ -154,7 +154,7 @@ import disabledState from '@/module/mixin/disabledState'
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name,
-                  projectCode: v.processDefinition.projectCode
+                  projectCode: v.processTaskRelationList.projectCode
                 }
               })
               console.log("不使用缓存11")
