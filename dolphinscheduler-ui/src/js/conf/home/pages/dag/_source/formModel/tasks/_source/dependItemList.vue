@@ -308,16 +308,20 @@ import disabledState from '@/module/mixin/disabledState'
           // get definitionCode codes
           let codes = _.map(this.dependItemList, v => v.definitionCode).join(',')
 
-          this._getProcessByProjectCode(v.projectCode).then(definitionList => {
-            console.log("created else 执行")
-            sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionList))
+          let definitionCacheMap = {}
+
+          _.map(this.projectList, (v, i) => {
+            this._getProcessByProjectCode(v.projectCode).then(definitionList => {
+              console.log("查询projectCode执行")
+              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.put(v.projectCode, definitionList)))
+            })
           })
 
           // get item lis
           this._getDependItemList(codes, false).then(res => {
             _.map(this.dependItemList, (v, i) => {
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  JSON.parse(sessionStorage.getItem('definitionCacheList')),
+                  JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(v.projectCode),
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
                   code: v.code,
                   name: v.name
