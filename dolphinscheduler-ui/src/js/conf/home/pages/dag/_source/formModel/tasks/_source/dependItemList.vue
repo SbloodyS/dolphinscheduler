@@ -55,6 +55,7 @@
 import _ from 'lodash'
 import {cycleList, dateValueList} from './commcon'
 import disabledState from '@/module/mixin/disabledState'
+import { mapMutations } from 'vuex'
 
 // Depend on all tasks
   const DEP_ALL_TASK = {
@@ -87,6 +88,7 @@ import disabledState from '@/module/mixin/disabledState'
       event: 'dependItemListEvent'
     },
     methods: {
+      ...mapMutations('dag', ['setProjectCode']),
       /**
        * add task
        */
@@ -222,7 +224,7 @@ import disabledState from '@/module/mixin/disabledState'
           } else {
             /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
             let definitionCode = definitionList[0].value
-            this.state.projectCode = definitionList[0].projectCode
+            this.setProjectCode(definitionList[0].projectCode)
             this._getDependItemList(definitionCode).then(depTasksList => {
               let item = this.dependItemList[itemIndex]
               // init set depTaskCode All
