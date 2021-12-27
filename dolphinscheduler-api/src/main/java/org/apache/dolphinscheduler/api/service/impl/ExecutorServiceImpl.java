@@ -587,6 +587,9 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                 if (!CollectionUtils.isEmpty(listDate)) {
                     if (expectedParallelismNumber != null && expectedParallelismNumber != 0) {
                         createCount = Math.min(listDate.size(), expectedParallelismNumber);
+                        if (listDateSize < createCount) {
+                            createCount = listDateSize;
+                        }
                     }
                     logger.info("In parallel mode, current expectedParallelismNumber:{}", createCount);
 

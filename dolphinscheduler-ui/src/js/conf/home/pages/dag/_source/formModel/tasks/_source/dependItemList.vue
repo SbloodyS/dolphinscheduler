@@ -64,7 +64,9 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  let definitionCacheList
+  let definitionCacheList = null
+
+  let dependItemCacheList = null
 
   export default {
     name: 'dep-list',
@@ -80,8 +82,7 @@ import disabledState from '@/module/mixin/disabledState'
     props: {
       dependItemList: Array,
       index: Number,
-      dependTaskList: Array,
-      definitionCacheList: Array
+      dependTaskList: Array
     },
     model: {
       prop: 'dependItemList',
@@ -167,13 +168,19 @@ import disabledState from '@/module/mixin/disabledState'
         return new Promise((resolve, reject) => {
           if (is) {
             this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
-              resolve([{ ...DEP_ALL_TASK }].concat(_.map(res, v => {
-                return {
-                  code: v.code,
-                  name: v.name
-                }
-              })))
+              if (dependItemCacheList) {
+                dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
+                  return {
+                    code: v.code,
+                    name: v.name
+                  }
+                }))
+                resolve(dependItemCacheList)
+              } else {
+                resolve(dependItemCacheList)
+              }
             })
+
           } else {
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
               resolve(res)
