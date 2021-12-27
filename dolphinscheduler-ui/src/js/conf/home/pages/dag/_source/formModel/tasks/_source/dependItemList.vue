@@ -64,10 +64,6 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  let definitionCacheList = null
-
-  let dependItemCacheList = null
-
   export default {
     name: 'dep-list',
     data () {
@@ -144,18 +140,19 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (definitionCacheList) {
+          if (sessionStorage.getItem('definitionCacheList')) {
             // console.log("使用缓存")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionCacheList)
+            resolve(JSON.parse(sessionStorage.getItem('definitionCacheList')))
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
-              definitionCacheList = _.map(_.cloneDeep(res), v => {
+              let definitionCacheList = _.map(_.cloneDeep(res), v => {
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name
                 }
               })
+              sessionStorage.setItem(JSON.stringify('definitionCacheList'), definitionCacheList)
               resolve(definitionCacheList)
             })
           }
@@ -167,18 +164,19 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            if (dependItemCacheList) {
+            if (sessionStorage.getItem('dependItemCacheList')) {
               console.log("使用缓存")
-              resolve(dependItemCacheList)
+              resolve(JSON.parse(sessionStorage.getItem('dependItemCacheList')))
             } else {
               this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
-                dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
+                let dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
                   return {
                     code: v.code,
                     name: v.name
                   }
                 }))
                 console.log("不使用缓存1")
+                sessionStorage.setItem(JSON.stringify('dependItemCacheList'), dependItemCacheList)
                 resolve(dependItemCacheList)
               })
             }

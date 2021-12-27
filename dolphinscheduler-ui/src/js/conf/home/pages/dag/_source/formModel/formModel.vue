@@ -940,9 +940,7 @@
       })
     },
     updated () {},
-    beforeDestroy () {
-      console.log("页面销毁前通知")
-    },
+    beforeDestroy () {},
     destroyed () {},
     computed: {
       ...mapState('dag', ['processListS', 'taskInstances']),

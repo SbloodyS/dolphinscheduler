@@ -190,6 +190,8 @@
       }
     },
     beforeDestroy () {
+      sessionStorage.removeItem('definitionCacheList')
+      sessionStorage.removeItem('dependItemCacheList')
       this.resetParams()
       clearInterval(this.statusTimer)
       window.removeEventListener('resize', this.resizeDebounceFunc)
