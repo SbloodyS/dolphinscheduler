@@ -143,7 +143,7 @@ import disabledState from '@/module/mixin/disabledState'
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
           let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
-          if (definitionCacheMap) {
+          if (definitionCacheMap.has(code)) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
             resolve(definitionCacheMap.get(code))
@@ -309,16 +309,9 @@ import disabledState from '@/module/mixin/disabledState'
           // get definitionCode codes
           let codes = _.map(this.dependItemList, v => v.definitionCode).join(',')
 
-          let definitionCacheMap = {}
-
-
-          Promise.all(_.map(this.projectList, (v, i) => {
-            this._getProcessByProjectCode(v.projectCode).then(definitionList => {
-              console.log("查询projectCode执行")
-              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.set(v.projectCode,
-                definitionList)))
-            })
-          })).then((res) => {
+          Promise.all(this.projectList.map(
+            item => this._getProcessByProjectCode(item.projectCode)
+          )).then((res) => {
             console.log("执行_getDependItemList")
             this._getDependItemList(codes, false).then(res => {
               _.map(this.dependItemList, (v, i) => {
