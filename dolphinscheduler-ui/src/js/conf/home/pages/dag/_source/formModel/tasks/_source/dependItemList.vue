@@ -311,23 +311,34 @@ import disabledState from '@/module/mixin/disabledState'
 
           let definitionCacheMap = {}
 
-          _.map(this.projectList, (v, i) => {
+
+          Promise.all([_.map(this.projectList, (v, i) => {
             this._getProcessByProjectCode(v.projectCode).then(definitionList => {
               console.log("查询projectCode执行")
               sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.set(v.projectCode,
                 definitionList)))
             })
-          })
-
-          // get item lis
-          this._getDependItemList(codes, false).then(res => {
-            _.map(this.dependItemList, (v, i) => {
+          })]).then((res) => {
+            this._getDependItemList(codes, false).then(res => {
+              _.map(this.dependItemList, (v, i) => {
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
                   JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(v.projectCode),
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
-                  code: v.code,
-                  name: v.name
-                }))), v))
+                    code: v.code,
+                    name: v.name
+                  }))), v))
+            }
+          )
+
+          // get item lis
+          // this._getDependItemList(codes, false).then(res => {
+          //   _.map(this.dependItemList, (v, i) => {
+          //       this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
+          //         JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(v.projectCode),
+          //         [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
+          //         code: v.code,
+          //         name: v.name
+          //       }))), v))
 
               // this._getProcessByProjectCode(v.projectCode).then(definitionList => {
               //   console.log("created else 执行")
