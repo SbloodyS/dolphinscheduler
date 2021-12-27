@@ -152,7 +152,8 @@ import disabledState from '@/module/mixin/disabledState'
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
                 return {
                   value: v.processDefinition.code,
-                  label: v.processDefinition.name
+                  label: v.processDefinition.name,
+                  projectCode: v.projectCode
                 }
               })
               console.log("不使用缓存11")
@@ -220,6 +221,7 @@ import disabledState from '@/module/mixin/disabledState'
           } else {
             /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
             let definitionCode = definitionList[0].value
+            this.setProjectCode(definitionCode[0].projectCode)
             this._getDependItemList(definitionCode).then(depTasksList => {
               let item = this.dependItemList[itemIndex]
               // init set depTaskCode All
