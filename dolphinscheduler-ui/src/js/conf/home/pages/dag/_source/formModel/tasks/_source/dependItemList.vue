@@ -143,7 +143,7 @@ import disabledState from '@/module/mixin/disabledState'
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
           let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
-          if (definitionCacheMap.has(code)) {
+          if (definitionCacheMap && definitionCacheMap.has(code)) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
             resolve(definitionCacheMap.get(code))
