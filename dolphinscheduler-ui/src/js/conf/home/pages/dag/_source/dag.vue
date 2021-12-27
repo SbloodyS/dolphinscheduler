@@ -190,7 +190,7 @@
       }
     },
     beforeDestroy () {
-      sessionStorage.removeItem('definitionCacheList')
+      sessionStorage.removeItem('definitionCacheMap')
       sessionStorage.removeItem('dependItemCacheList')
       console.log("清除缓存数据")
       this.resetParams()

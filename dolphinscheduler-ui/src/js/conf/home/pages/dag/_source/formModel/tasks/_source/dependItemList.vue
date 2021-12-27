@@ -64,7 +64,7 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  let definitionCacheListTryTimes = 0
+  let definitionCacheMap = {}
 
   export default {
     name: 'dep-list',
@@ -142,10 +142,11 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (sessionStorage.getItem('definitionCacheList') && definitionCacheListTryTimes > 0) {
+          let definitionCacheList = JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(code)
+          if (definitionCacheList) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(JSON.parse(sessionStorage.getItem('definitionCacheList')))
+            resolve(definitionCacheList)
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
@@ -155,8 +156,8 @@ import disabledState from '@/module/mixin/disabledState'
                 }
               })
               console.log("不使用缓存11")
-              definitionCacheListTryTimes += 1
-              sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionCacheList))
+              definitionCacheMap.set(code, definitionCacheList)
+              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
               resolve(definitionCacheList)
             })
           }
@@ -313,7 +314,8 @@ import disabledState from '@/module/mixin/disabledState'
           _.map(this.projectList, (v, i) => {
             this._getProcessByProjectCode(v.projectCode).then(definitionList => {
               console.log("查询projectCode执行")
-              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.put(v.projectCode, definitionList)))
+              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.set(v.projectCode,
+                definitionList)))
             })
           })
 
