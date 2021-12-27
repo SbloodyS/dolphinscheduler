@@ -222,7 +222,7 @@ import disabledState from '@/module/mixin/disabledState'
           } else {
             /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
             let definitionCode = definitionList[0].value
-            this.setProjectCode(definitionList[0].projectCode)
+            this.state.projectCode = definitionList[0].projectCode
             this._getDependItemList(definitionCode).then(depTasksList => {
               let item = this.dependItemList[itemIndex]
               // init set depTaskCode All
