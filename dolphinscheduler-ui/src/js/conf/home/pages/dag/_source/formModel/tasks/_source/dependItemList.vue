@@ -167,11 +167,11 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
-              if (dependItemCacheList) {
-                console.log("使用缓存")
-                resolve(dependItemCacheList)
-              } else {
+            if (dependItemCacheList) {
+              console.log("使用缓存")
+              resolve(dependItemCacheList)
+            } else {
+              this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
                 dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
                   return {
                     code: v.code,
@@ -180,9 +180,8 @@ import disabledState from '@/module/mixin/disabledState'
                 }))
                 console.log("不使用缓存1")
                 resolve(dependItemCacheList)
-              }
-            })
-
+              })
+            }
           } else {
             console.log("不使用缓存2")
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
