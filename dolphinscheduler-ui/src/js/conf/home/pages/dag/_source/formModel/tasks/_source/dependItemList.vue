@@ -142,8 +142,8 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          if (sessionStorage.getItem('definitionCacheList')) {
-            // console.log("使用缓存")
+          if (sessionStorage.getItem('definitionCacheList') && definitionCacheListTryTimes > 0) {
+            console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
             resolve(JSON.parse(sessionStorage.getItem('definitionCacheList')))
           } else {
@@ -154,6 +154,8 @@ import disabledState from '@/module/mixin/disabledState'
                   label: v.processDefinition.name
                 }
               })
+              console.log("不使用缓存11")
+              definitionCacheListTryTimes += 1
               sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
@@ -166,7 +168,7 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            if (sessionStorage.getItem('dependItemCacheList') && definitionCacheListTryTimes > 0) {
+            if (sessionStorage.getItem('dependItemCacheList')) {
               console.log("使用缓存")
               resolve(JSON.parse(sessionStorage.getItem('dependItemCacheList')))
             } else {
@@ -178,7 +180,6 @@ import disabledState from '@/module/mixin/disabledState'
                   }
                 }))
                 console.log("不使用缓存1")
-                definitionCacheListTryTimes += 1
                 sessionStorage.setItem('dependItemCacheList', JSON.stringify(dependItemCacheList))
                 resolve(dependItemCacheList)
               })
