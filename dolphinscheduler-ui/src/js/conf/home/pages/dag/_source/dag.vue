@@ -192,6 +192,7 @@
     beforeDestroy () {
       sessionStorage.removeItem('definitionCacheList')
       sessionStorage.removeItem('dependItemCacheList')
+      console.log("清除缓存数据")
       this.resetParams()
       clearInterval(this.statusTimer)
       window.removeEventListener('resize', this.resizeDebounceFunc)

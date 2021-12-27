@@ -152,7 +152,7 @@ import disabledState from '@/module/mixin/disabledState'
                   label: v.processDefinition.name
                 }
               })
-              sessionStorage.setItem(JSON.stringify('definitionCacheList'), definitionCacheList)
+              sessionStorage.setItem('definitionCacheList', JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
           }
@@ -176,7 +176,7 @@ import disabledState from '@/module/mixin/disabledState'
                   }
                 }))
                 console.log("不使用缓存1")
-                sessionStorage.setItem(JSON.stringify('dependItemCacheList'), dependItemCacheList)
+                sessionStorage.setItem('dependItemCacheList', JSON.stringify(dependItemCacheList))
                 resolve(dependItemCacheList)
               })
             }
