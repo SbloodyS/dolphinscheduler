@@ -312,13 +312,14 @@ import disabledState from '@/module/mixin/disabledState'
           let definitionCacheMap = {}
 
 
-          Promise.all([_.map(this.projectList, (v, i) => {
+          Promise.all(_.map(this.projectList, (v, i) => {
             this._getProcessByProjectCode(v.projectCode).then(definitionList => {
               console.log("查询projectCode执行")
               sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap.set(v.projectCode,
                 definitionList)))
             })
-          })]).then((res) => {
+          })).then((res) => {
+            console.log("执行_getDependItemList")
             this._getDependItemList(codes, false).then(res => {
               _.map(this.dependItemList, (v, i) => {
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
