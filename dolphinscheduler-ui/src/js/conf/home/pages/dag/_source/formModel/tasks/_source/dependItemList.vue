@@ -169,14 +169,14 @@ import disabledState from '@/module/mixin/disabledState'
           if (is) {
             this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
               if (dependItemCacheList) {
+                resolve(dependItemCacheList)
+              } else {
                 dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
                   return {
                     code: v.code,
                     name: v.name
                   }
                 }))
-                resolve(dependItemCacheList)
-              } else {
                 resolve(dependItemCacheList)
               }
             })
@@ -318,6 +318,8 @@ import disabledState from '@/module/mixin/disabledState'
     beforeDestroy() {
       // sessionStorage.removeItem('definitionCacheList')
       definitionCacheList = null
+
+      dependItemCacheList = null
       // console.log("移除缓存")
     },
     components: {}
