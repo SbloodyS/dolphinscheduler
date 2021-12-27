@@ -169,6 +169,7 @@ import disabledState from '@/module/mixin/disabledState'
           if (is) {
             this.store.dispatch('dag/getProcessTasksList', { code: codes }).then(res => {
               if (dependItemCacheList) {
+                console.log("使用缓存")
                 resolve(dependItemCacheList)
               } else {
                 dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
@@ -177,11 +178,13 @@ import disabledState from '@/module/mixin/disabledState'
                     name: v.name
                   }
                 }))
+                console.log("不使用缓存1")
                 resolve(dependItemCacheList)
               }
             })
 
           } else {
+            console.log("不使用缓存2")
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
               resolve(res)
             })
