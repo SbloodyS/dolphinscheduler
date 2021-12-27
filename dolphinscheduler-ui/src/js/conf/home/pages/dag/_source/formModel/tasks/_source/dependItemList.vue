@@ -154,7 +154,6 @@ import disabledState from '@/module/mixin/disabledState'
                 }
               })
               console.log("不使用缓存11")
-              definitionCacheMap = {}
               definitionCacheMap[code] = definitionCacheList
               sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
               resolve(definitionCacheList)
@@ -321,6 +320,9 @@ import disabledState from '@/module/mixin/disabledState'
           let codes = _.map(this.dependItemList, v => v.definitionCode).join(',')
 
           console.log("codes:", codes)
+
+          let definitionCacheMap = {}
+          sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
 
           // get item lis
           Promise.all(this.projectList.map(
