@@ -64,6 +64,8 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
+  const projectCodePrefix = 'project_code_'
+
   export default {
     name: 'dep-list',
     data () {
@@ -140,7 +142,7 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         console.log("code:", code)
         return new Promise((resolve, reject) => {
-          let definitionCacheList = JSON.parse(sessionStorage.getItem(code))
+          let definitionCacheList = JSON.parse(sessionStorage.getItem(projectCodePrefix + code))
           if (definitionCacheList) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
@@ -155,7 +157,7 @@ import disabledState from '@/module/mixin/disabledState'
               })
               console.log("不使用缓存11")
               // definitionCacheMap[code] = definitionCacheList
-              sessionStorage.setItem(code, JSON.stringify(definitionCacheList))
+              sessionStorage.setItem(projectCodePrefix + code, JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
           }
@@ -331,7 +333,7 @@ import disabledState from '@/module/mixin/disabledState'
                 // let definitionCacheMap = JSON.parse(sessionStorage.getItem(codes))
                 // console.log("definitionCacheMap1:", definitionCacheMap)
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  JSON.parse(sessionStorage.getItem(v.projectCode)),
+                  JSON.parse(sessionStorage.getItem(projectCodePrefix + v.projectCode)),
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
                     code: v.code,
                     name: v.name
@@ -347,7 +349,7 @@ import disabledState from '@/module/mixin/disabledState'
     },
     beforeDestroy() {
       this.projectList.map(
-        item => sessionStorage.removeItem(item.value)
+        item => sessionStorage.removeItem(projectCodePrefix + item.value)
       )
       console.log("移除缓存")
     },
