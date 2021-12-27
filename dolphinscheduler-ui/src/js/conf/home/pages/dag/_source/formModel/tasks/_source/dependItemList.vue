@@ -150,10 +150,11 @@ import disabledState from '@/module/mixin/disabledState'
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
+                console.log("v:", v)
                 return {
                   value: v.processDefinition.code,
                   label: v.processDefinition.name,
-                  projectCode: v.projectCode
+                  projectCode: v.processDefinition.projectCode
                 }
               })
               console.log("不使用缓存11")
