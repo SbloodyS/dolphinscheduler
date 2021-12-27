@@ -154,7 +154,7 @@ import disabledState from '@/module/mixin/disabledState'
                 }
               })
               console.log("不使用缓存11")
-              // definitionCacheMap = {}
+              definitionCacheMap = {}
               definitionCacheMap[code] = definitionCacheList
               sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
               resolve(definitionCacheList)
@@ -181,6 +181,7 @@ import disabledState from '@/module/mixin/disabledState'
                   }
                 }))
                 console.log("不使用缓存1")
+                dependItemCacheMap = {}
                 dependItemCacheMap[codes] = dependItemCacheList
                 sessionStorage.setItem('dependItemCacheMap', JSON.stringify(dependItemCacheMap))
                 resolve(dependItemCacheList)
