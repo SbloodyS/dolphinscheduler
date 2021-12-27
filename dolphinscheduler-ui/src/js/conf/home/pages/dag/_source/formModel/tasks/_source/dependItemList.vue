@@ -217,17 +217,17 @@ import disabledState from '@/module/mixin/disabledState'
               state: '',
               depTaskCode: DEP_ALL_TASK.code
             }))
-            return
+          } else {
+            /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
+            let definitionCode = definitionList[0].value
+            this._getDependItemList(definitionCode).then(depTasksList => {
+              let item = this.dependItemList[itemIndex]
+              // init set depTaskCode All
+              item.depTaskCode = DEP_ALL_TASK.code
+              // set dependItemList item data
+              this.$set(this.dependItemList, itemIndex, this._cpOldParams(value, definitionCode, definitionList, depTasksList, item))
+            })
           }
-          /* this.$set(this.dependItemList, itemIndex, this._dlOldParams(value, definitionList, item)) */
-          let definitionCode = definitionList[0].value
-          this. _getDependItemList(definitionCode).then(depTasksList => {
-            let item = this.dependItemList[itemIndex]
-            // init set depTaskCode All
-            item.depTaskCode = DEP_ALL_TASK.code
-            // set dependItemList item data
-            this.$set(this.dependItemList, itemIndex, this._cpOldParams(value, definitionCode, definitionList, depTasksList, item))
-          })
         })
       },
       _onChangeDefinitionCode (value, itemIndex) {
