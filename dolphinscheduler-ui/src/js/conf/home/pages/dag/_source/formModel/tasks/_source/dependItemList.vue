@@ -297,6 +297,7 @@ import disabledState from '@/module/mixin/disabledState'
             if (definitionList && definitionList.length > 0) {
               let definitionCode = definitionList[0].value
               this._getDependItemList(definitionCode).then(depTasksList => {
+                console.log("created if 执行")
                 this.$emit('dependItemListEvent', _.concat(this.dependItemList, this._rtNewParams(definitionCode, definitionList, depTasksList || [_.cloneDeep(DEP_ALL_TASK)], projectCode)))
               })
             } else {
@@ -310,6 +311,7 @@ import disabledState from '@/module/mixin/disabledState'
           this._getDependItemList(codes, false).then(res => {
             _.map(this.dependItemList, (v, i) => {
               this._getProcessByProjectCode(v.projectCode).then(definitionList => {
+                console.log("created else 执行")
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode, definitionList, [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({ code: v.code, name: v.name }))), v))
               })
             })
