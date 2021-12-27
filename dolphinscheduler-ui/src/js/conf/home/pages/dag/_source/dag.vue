@@ -191,7 +191,7 @@
     },
     beforeDestroy () {
       sessionStorage.removeItem('definitionCacheMap')
-      sessionStorage.removeItem('dependItemCacheMap')
+      // sessionStorage.removeItem('dependItemCacheMap')
       console.log("清除缓存数据")
       this.resetParams()
       clearInterval(this.statusTimer)

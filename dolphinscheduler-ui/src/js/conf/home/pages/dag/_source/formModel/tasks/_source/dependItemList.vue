@@ -168,27 +168,36 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            let dependItemCacheMap = JSON.parse(sessionStorage.getItem('dependItemCacheMap'))
-            if (dependItemCacheMap && dependItemCacheMap.hasOwnProperty(codes)) {
-              console.log("使用缓存")
-              resolve(dependItemCacheMap[codes])
-            } else {
-              this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
-                let dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
-                  return {
-                    code: v.code,
-                    name: v.name
-                  }
-                }))
-                console.log("不使用缓存1")
-                dependItemCacheMap = {}
-                dependItemCacheMap[codes] = dependItemCacheList
-                sessionStorage.setItem('dependItemCacheMap', JSON.stringify(dependItemCacheMap))
-                resolve(dependItemCacheList)
-              })
-            }
+            this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
+              let dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
+                return {
+                  code: v.code,
+                  name: v.name
+                }
+              }))
+              resolve(dependItemCacheList)
+            })
+            // let dependItemCacheMap = JSON.parse(sessionStorage.getItem('dependItemCacheMap'))
+            // if (dependItemCacheMap && dependItemCacheMap.hasOwnProperty(codes)) {
+            //   console.log("使用缓存")
+            //   resolve(dependItemCacheMap[codes])
+            // } else {
+            //   this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
+            //     let dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
+            //       return {
+            //         code: v.code,
+            //         name: v.name
+            //       }
+            //     }))
+            //     console.log("不使用缓存1")
+            //     dependItemCacheMap = {}
+            //     dependItemCacheMap[codes] = dependItemCacheList
+            //     sessionStorage.setItem('dependItemCacheMap', JSON.stringify(dependItemCacheMap))
+            //     resolve(dependItemCacheList)
+            //   })
+            // }
           } else {
-            console.log("不使用缓存2")
+            // console.log("不使用缓存2")
             this.store.dispatch('dag/getTaskListDefIdAll', { codes: codes }).then(res => {
               resolve(res)
             })
