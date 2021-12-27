@@ -317,9 +317,6 @@ import disabledState from '@/module/mixin/disabledState'
     },
     beforeDestroy() {
       // sessionStorage.removeItem('definitionCacheList')
-      definitionCacheList = null
-
-      dependItemCacheList = null
       // console.log("移除缓存")
     },
     components: {}
