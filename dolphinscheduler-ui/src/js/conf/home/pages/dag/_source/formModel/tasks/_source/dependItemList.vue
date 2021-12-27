@@ -309,8 +309,10 @@ import disabledState from '@/module/mixin/disabledState'
           // get definitionCode codes
           let codes = _.map(this.dependItemList, v => v.definitionCode).join(',')
 
+          console.log("projectList: ", this.projectList , this.projectList.length)
+
           Promise.all(this.projectList.map(
-            item => this._getProcessByProjectCode(item.projectCode)
+            item => this._getProcessByProjectCode(item.value)
           )).then((res) => {
             console.log("执行_getDependItemList")
             this._getDependItemList(codes, false).then(res => {
