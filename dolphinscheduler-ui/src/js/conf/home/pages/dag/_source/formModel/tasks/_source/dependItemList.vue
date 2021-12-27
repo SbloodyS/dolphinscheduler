@@ -64,8 +64,6 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
-  let definitionCacheMap = {}
-
   export default {
     name: 'dep-list',
     data () {
@@ -156,9 +154,9 @@ import disabledState from '@/module/mixin/disabledState'
                 }
               })
               console.log("不使用缓存11")
-              let definitionCacheMapTmp = {}
-              definitionCacheMapTmp[code] = definitionCacheList
-              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMapTmp))
+              // definitionCacheMap = {}
+              definitionCacheMap[code] = definitionCacheList
+              sessionStorage.setItem('definitionCacheMap', JSON.stringify(definitionCacheMap))
               resolve(definitionCacheList)
             })
           }
@@ -170,9 +168,10 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            if (sessionStorage.getItem('dependItemCacheList')) {
+            let dependItemCacheMap = JSON.parse(sessionStorage.getItem('dependItemCacheMap'))
+            if (dependItemCacheMap && dependItemCacheMap.hasOwnProperty(codes)) {
               console.log("使用缓存")
-              resolve(JSON.parse(sessionStorage.getItem('dependItemCacheList')))
+              resolve(dependItemCacheMap[codes])
             } else {
               this.store.dispatch('dag/getProcessTasksList', {code: codes}).then(res => {
                 let dependItemCacheList = [{...DEP_ALL_TASK}].concat(_.map(res, v => {
@@ -182,7 +181,8 @@ import disabledState from '@/module/mixin/disabledState'
                   }
                 }))
                 console.log("不使用缓存1")
-                sessionStorage.setItem('dependItemCacheList', JSON.stringify(dependItemCacheList))
+                dependItemCacheMap[codes] = dependItemCacheList
+                sessionStorage.setItem('dependItemCacheMap', JSON.stringify(dependItemCacheMap))
                 resolve(dependItemCacheList)
               })
             }
