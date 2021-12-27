@@ -321,7 +321,7 @@ import disabledState from '@/module/mixin/disabledState'
                 let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
                 console.log("definitionCacheMap1:", definitionCacheMap)
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  definitionCacheMap.get(v.projectCode),
+                  definitionCacheMap[v.projectCode],
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
                     code: v.code,
                     name: v.name
