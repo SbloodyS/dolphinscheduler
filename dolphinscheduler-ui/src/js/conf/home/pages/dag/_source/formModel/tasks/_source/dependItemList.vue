@@ -142,11 +142,11 @@ import disabledState from '@/module/mixin/disabledState'
       _getProcessByProjectCode (code) {
         // console.log("definitionList:", definitionCacheList)
         return new Promise((resolve, reject) => {
-          let definitionCacheList = JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(code)
-          if (definitionCacheList) {
+          let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
+          if (definitionCacheMap) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionCacheList)
+            resolve(definitionCacheMap.get(code))
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
