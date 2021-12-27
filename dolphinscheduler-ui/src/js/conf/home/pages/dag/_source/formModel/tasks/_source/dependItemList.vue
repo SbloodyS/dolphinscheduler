@@ -140,7 +140,7 @@ import disabledState from '@/module/mixin/disabledState'
         })
       },
       _getProcessByProjectCode (code) {
-        // console.log("definitionList:", definitionCacheList)
+        console.log("code:", code)
         return new Promise((resolve, reject) => {
           let definitionCacheMap = JSON.parse(sessionStorage.getItem('definitionCacheMap'))
           if (definitionCacheMap && definitionCacheMap.has(code)) {
