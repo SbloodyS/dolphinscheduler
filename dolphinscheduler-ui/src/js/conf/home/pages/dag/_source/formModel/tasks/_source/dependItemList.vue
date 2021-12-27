@@ -64,6 +64,8 @@ import disabledState from '@/module/mixin/disabledState'
 
   const dependentList = []
 
+  let definitionCacheListTryTimes = 0
+
   export default {
     name: 'dep-list',
     data () {
@@ -164,7 +166,7 @@ import disabledState from '@/module/mixin/disabledState'
       _getDependItemList (codes, is = true) {
         return new Promise((resolve, reject) => {
           if (is) {
-            if (sessionStorage.getItem('dependItemCacheList')) {
+            if (sessionStorage.getItem('dependItemCacheList') && definitionCacheListTryTimes > 0) {
               console.log("使用缓存")
               resolve(JSON.parse(sessionStorage.getItem('dependItemCacheList')))
             } else {
@@ -176,6 +178,7 @@ import disabledState from '@/module/mixin/disabledState'
                   }
                 }))
                 console.log("不使用缓存1")
+                definitionCacheListTryTimes += 1
                 sessionStorage.setItem('dependItemCacheList', JSON.stringify(dependItemCacheList))
                 resolve(dependItemCacheList)
               })
