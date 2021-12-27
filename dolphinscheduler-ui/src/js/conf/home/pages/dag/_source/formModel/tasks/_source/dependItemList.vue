@@ -318,6 +318,7 @@ import disabledState from '@/module/mixin/disabledState'
             console.log("执行_getDependItemList")
             this._getDependItemList(codes, false).then(res => {
               _.map(this.dependItemList, (v, i) => {
+                console.log("definitionCacheMap1:", JSON.parse(sessionStorage.getItem('definitionCacheMap')))
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
                   JSON.parse(sessionStorage.getItem('definitionCacheMap')).get(v.projectCode),
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
