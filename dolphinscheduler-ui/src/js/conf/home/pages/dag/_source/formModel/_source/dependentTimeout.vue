@@ -32,11 +32,11 @@
       <div class="text-box">
         <span>{{$t('Waiting Dependent start')}}</span>
       </div>
-      <div class="cont-box">
+      <span class="cont-box">
         <label class="label-box">
-          <div style="padding: 5px 0;">
+          <span class="text-box">
             <el-switch v-model="waitStartTimeout.enable" size="small" @change="_onSwitch(1, $event)" :disabled="isDetails"></el-switch>
-          </div>
+          </span>
         </label>
       </div>
     </div>
