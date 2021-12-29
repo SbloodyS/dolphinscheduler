@@ -44,9 +44,9 @@
       <div class="cont-box">
         <label class="label-box">
 <!--          <div style="padding: 5px 0;">-->
-              <span class="text-box">
+              <div class="text-box">
                 <span>{{$t('Timeout period')}}</span>
-              </span>
+              </div>
               <el-input v-model="waitStartTimeout.interval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
                 <span slot="append">{{$t('Minute')}}</span>
               </el-input>
@@ -61,7 +61,8 @@
               </span>
               <div style="padding-top: 6px;">
                 <el-checkbox-group size="small" v-model="waitStartTimeout.strategy">
-                  <el-checkbox label="FAILED" :disabled="true">{{$t('Timeout failure')}}</el-checkbox>
+                  <el-checkbox label="WARN" :disabled="isDetails">{{$t('Timeout alarm')}}</el-checkbox>
+                  <el-checkbox label="FAILED" :disabled="isDetails">{{$t('Timeout failure')}}</el-checkbox>
                 </el-checkbox-group>
               </div>
 <!--          </div>-->
