@@ -333,9 +333,17 @@ import { mapMutations } from 'vuex'
 
           // get item lis
           this._getDependItemList(codes, false).then(res => {
-              _.map(this.dependItemList, (v, i) => {
-                this._getProcessByProjectCode(v.projectCode).then(definitionList => {
-                  this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode, definitionList, [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({ code: v.code, name: v.name }))), v))
+            _.map(this.dependItemList, (v, i) => {
+              this._getProcessByProjectCode(v.projectCode).then(definitionList => {
+                this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode, definitionList, [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
+                  code: v.code,
+                  name: v.name
+                }))), v))
+              })
+            })
+          })
+        }
+      })
           // Promise.all(this.projectList.map(
           //   item => this._getProcessByProjectCode(item.value)
           // )).then((res) => {
@@ -354,8 +362,8 @@ import { mapMutations } from 'vuex'
           //     )
           // })
           // })
-        }
-      })
+        // }
+      // })
     },
     mounted () {
     },
