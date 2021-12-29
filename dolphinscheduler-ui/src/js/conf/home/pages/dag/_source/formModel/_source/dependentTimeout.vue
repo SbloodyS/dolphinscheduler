@@ -44,7 +44,6 @@
       <div class="cont-box">
         <label class="label-box">
 <!--          <div style="padding: 5px 0;">-->
-            <div class="text-box">
               <span class="text-box">
                 <span>{{$t('Timeout period')}}</span>
               </span>
@@ -65,7 +64,6 @@
                   <el-checkbox label="FAILED" :disabled="true">{{$t('Timeout failure')}}</el-checkbox>
                 </el-checkbox-group>
               </div>
-            </div>
 <!--          </div>-->
         </label>
       </div>
