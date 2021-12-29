@@ -74,7 +74,8 @@ import { mapMutations } from 'vuex'
         list: [],
         projectList: [],
         cycleList: cycleList,
-        isInstance: false
+        isInstance: false,
+        definitionCacheList: {}
       }
     },
     mixins: [disabledState],
@@ -144,24 +145,23 @@ import { mapMutations } from 'vuex'
       _getProcessByProjectCode (code) {
         console.log("code:", code)
         return new Promise((resolve, reject) => {
-          let definitionCacheList = JSON.parse(sessionStorage.getItem(projectCodePrefix + code))
-          if (definitionCacheList) {
+          // let definitionCacheList = JSON.parse(sessionStorage.getItem(projectCodePrefix + code))
+          if (this.definitionCacheList[code]) {
             console.log("使用缓存00")
             // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(definitionCacheList)
+            resolve(this.definitionCacheList[code])
           } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
                 console.log("v:", v)
                 return {
                   value: v.processDefinition.code,
-                  label: v.processDefinition.name,
-                  projectCode: v.processTaskRelationList.projectCode
+                  label: v.processDefinition.name
                 }
               })
               console.log("不使用缓存11")
-              // definitionCacheMap[code] = definitionCacheList
-              sessionStorage.setItem(projectCodePrefix + code, JSON.stringify(definitionCacheList))
+              this.definitionCacheList[code] = definitionCacheList
+              // sessionStorage.setItem(projectCodePrefix + code, JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
           }
@@ -338,7 +338,7 @@ import { mapMutations } from 'vuex'
                 // let definitionCacheMap = JSON.parse(sessionStorage.getItem(codes))
                 // console.log("definitionCacheMap1:", definitionCacheMap)
                 this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  JSON.parse(sessionStorage.getItem(projectCodePrefix + v.projectCode)),
+                  this.definitionCacheList[v.projectCode],
                   [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
                     code: v.code,
                     name: v.name
@@ -352,12 +352,12 @@ import { mapMutations } from 'vuex'
     },
     mounted () {
     },
-    beforeDestroy() {
-      this.projectList.map(
-        item => sessionStorage.removeItem(projectCodePrefix + item.value)
-      )
-      console.log("移除缓存")
-    },
+    // beforeDestroy() {
+    //   this.projectList.map(
+    //     item => sessionStorage.removeItem(projectCodePrefix + item.value)
+    //   )
+    //   console.log("移除缓存")
+    // },
     components: {}
   }
 </script>
