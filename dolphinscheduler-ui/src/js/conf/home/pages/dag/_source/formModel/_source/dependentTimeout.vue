@@ -47,7 +47,7 @@
       </div>
       <div class="cont-box">
         <label class="label-box">
-          <div style="padding-top: 5px;">
+          <div style="padding-top: 6px;">
               <el-input v-model="waitStartTimeout.interval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
                 <span slot="append">{{$t('Minute')}}</span>
               </el-input>
@@ -62,7 +62,7 @@
       </div>
       <div class="cont-box">
         <label class="label-box">
-          <div style="padding-top: 5px;">
+          <div style="padding-top: 6px;">
               <el-input v-model="waitStartTimeout.checkInterval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
                 <span slot="append">{{$t('Minute')}}</span>
               </el-input>
@@ -106,7 +106,7 @@
         </div>
       <div class="cont-box">
         <label class="label-box">
-          <div style="padding-top: 5px;">
+          <div style="padding-top: 6px;">
           <el-input v-model="waitCompleteTimeout.interval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
             <span slot="append">{{$t('Minute')}}</span>
           </el-input>
