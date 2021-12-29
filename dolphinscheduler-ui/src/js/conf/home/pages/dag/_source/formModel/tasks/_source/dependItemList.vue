@@ -144,13 +144,16 @@ import { mapMutations } from 'vuex'
       },
       _getProcessByProjectCode (code) {
         console.log("code:", code)
+        if (this.definitionCacheList[code]) {
+          return Promise.resolve(this.definitionCacheList[code])
+        }
         return new Promise((resolve, reject) => {
           // let definitionCacheList = JSON.parse(sessionStorage.getItem(projectCodePrefix + code))
-          if (this.definitionCacheList[code]) {
-            console.log("使用缓存00")
-            // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
-            resolve(this.definitionCacheList[code])
-          } else {
+          // if (this.definitionCacheList[code]) {
+          //   console.log("使用缓存00")
+          //   // let definitionList = JSON.parse(sessionStorage.getItem('definitionCacheList'))
+          //   resolve(this.definitionCacheList[code])
+          // } else {
             this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
               let definitionCacheList = _.map(_.cloneDeep(res), v => {
                 console.log("v:", v)
@@ -164,7 +167,7 @@ import { mapMutations } from 'vuex'
               // sessionStorage.setItem(projectCodePrefix + code, JSON.stringify(definitionCacheList))
               resolve(definitionCacheList)
             })
-          }
+          // }
         })
       },
       /**
@@ -329,24 +332,28 @@ import { mapMutations } from 'vuex'
           console.log("codes:", codes)
 
           // get item lis
-          Promise.all(this.projectList.map(
-            item => this._getProcessByProjectCode(item.value)
-          )).then((res) => {
-            console.log("执行_getDependItemList")
-            this._getDependItemList(codes, false).then(res => {
+          this._getDependItemList(codes, false).then(res => {
               _.map(this.dependItemList, (v, i) => {
-                // let definitionCacheMap = JSON.parse(sessionStorage.getItem(codes))
-                // console.log("definitionCacheMap1:", definitionCacheMap)
-                this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
-                  this.definitionCacheList[v.projectCode],
-                  [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
-                    code: v.code,
-                    name: v.name
-                  }))), v))
-                }
-              )
-          })
-          })
+                this._getProcessByProjectCode(v.projectCode).then(definitionList => {
+                  this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode, definitionList, [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({ code: v.code, name: v.name }))), v))
+          // Promise.all(this.projectList.map(
+          //   item => this._getProcessByProjectCode(item.value)
+          // )).then((res) => {
+          //   console.log("执行_getDependItemList")
+          //   this._getDependItemList(codes, false).then(res => {
+          //     _.map(this.dependItemList, (v, i) => {
+          //       // let definitionCacheMap = JSON.parse(sessionStorage.getItem(codes))
+          //       // console.log("definitionCacheMap1:", definitionCacheMap)
+          //       this.$set(this.dependItemList, i, this._rtOldParams(v.definitionCode,
+          //         this.definitionCacheList[v.projectCode],
+          //         [_.cloneDeep(DEP_ALL_TASK)].concat(_.map(res[v.definitionCode] || [], v => ({
+          //           code: v.code,
+          //           name: v.name
+          //         }))), v))
+          //       }
+          //     )
+          // })
+          // })
         }
       })
     },
