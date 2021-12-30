@@ -328,12 +328,12 @@
         <m-list-box>
           <div slot="text">{{$t('Hive Target Dir')}}</div>
           <div slot="content">
-            <x-input
+            <el-input
               :disabled="isDetails"
               type="text"
               v-model="targetHiveParams.hiveTargetDir"
               :placeholder="$t('Please enter hive target dir')">
-            </x-input>
+            </el-input>
           </div>
         </m-list-box>
         <m-list-box>
