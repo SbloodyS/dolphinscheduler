@@ -638,6 +638,7 @@ export default {
   CreateHiveTable: 'CreateHiveTable',
   DropDelimiter: 'DropDelimiter',
   OverWriteSrc: 'OverWriteSrc',
+  'Hive Target Dir': 'Hive Target Dir',
   ReplaceDelimiter: 'ReplaceDelimiter',
   Concurrency: 'Concurrency',
   Form: 'Form',

@@ -637,6 +637,7 @@ export default {
   CreateHiveTable: '是否创建新表',
   DropDelimiter: '是否删除分隔符',
   OverWriteSrc: '是否覆盖数据源',
+  'Hive Target Dir': 'Hive临时目录',
   ReplaceDelimiter: '替换分隔符',
   Concurrency: '并发度',
   Form: '表单',
