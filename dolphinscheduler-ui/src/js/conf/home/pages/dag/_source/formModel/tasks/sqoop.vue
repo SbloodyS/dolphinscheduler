@@ -331,6 +331,7 @@
             <el-input
               :disabled="isDetails"
               type="text"
+              size="small"
               v-model="targetHiveParams.hiveTargetDir"
               :placeholder="$t('Please enter hive target dir')">
             </el-input>
