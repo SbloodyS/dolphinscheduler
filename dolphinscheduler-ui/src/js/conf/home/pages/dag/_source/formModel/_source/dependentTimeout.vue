@@ -40,36 +40,53 @@
         </label>
       </div>
     </div>
+
     <div class="clearfix list" v-if="enable && waitStartTimeout.enable">
+      <div class="text-box">
+        <span>{{$t('Timeout period')}}</span>
+      </div>
       <div class="cont-box">
         <label class="label-box">
-<!--          <div style="padding: 5px 0;">-->
-            <div class="text-box">
-              <span class="text-box">
-                <span>{{$t('Timeout period')}}</span>
-              </span>
+          <div style="padding-top: 6px;">
               <el-input v-model="waitStartTimeout.interval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
                 <span slot="append">{{$t('Minute')}}</span>
               </el-input>
-              <span class="text-box">
-                <span>{{$t('Check interval')}}</span>
-              </span>
-              <el-input v-model="waitStartTimeout.checkInterval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
-                <span slot="append">{{$t('Minute')}}</span>
-              </el-input>
-              <span class="text-box">
-                <span>{{$t('Timeout strategy')}}</span>
-              </span>
-              <div style="padding-top: 6px;">
-                <el-checkbox-group size="small" v-model="waitStartTimeout.strategy">
-                  <el-checkbox label="FAILED" :disabled="true">{{$t('Timeout failure')}}</el-checkbox>
-                </el-checkbox-group>
-              </div>
-            </div>
-<!--          </div>-->
+          </div>
         </label>
       </div>
     </div>
+
+    <div class="clearfix list" v-if="enable && waitStartTimeout.enable">
+      <div class="text-box">
+        <span>{{$t('Check interval')}}</span>
+      </div>
+      <div class="cont-box">
+        <label class="label-box">
+          <div style="padding-top: 6px;">
+              <el-input v-model="waitStartTimeout.checkInterval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
+                <span slot="append">{{$t('Minute')}}</span>
+              </el-input>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="clearfix list" v-if="enable && waitStartTimeout.enable">
+      <div class="text-box">
+        <span>{{$t('Timeout strategy')}}</span>
+      </div>
+      <div class="cont-box">
+        <label class="label-box">
+          <div style="padding-top: 5px;">
+              <el-checkbox-group size="small" v-model="waitStartTimeout.strategy">
+                <el-checkbox label="WARN" :disabled="isDetails">{{$t('Timeout alarm')}}</el-checkbox>
+                <el-checkbox label="FAILED" :disabled="isDetails">{{$t('Timeout failure')}}</el-checkbox>
+              </el-checkbox-group>
+          </div>
+        </label>
+      </div>
+    </div>
+
     <div class="clearfix list" v-if="enable">
       <div class="text-box">
         <span>{{$t('Waiting Dependent complete')}}</span>
@@ -82,19 +99,29 @@
         </label>
       </div>
     </div>
+
     <div class="clearfix list" v-if="enable && waitCompleteTimeout.enable">
+        <div class="text-box">
+          <span>{{$t('Timeout period')}}</span>
+        </div>
       <div class="cont-box">
         <label class="label-box">
-          <span class="text-box">
-            <span>{{$t('Timeout period')}}</span>
-          </span>
+          <div style="padding-top: 6px;">
           <el-input v-model="waitCompleteTimeout.interval" size="small" style="width: 100px;" :disabled="isDetails" maxlength="9">
             <span slot="append">{{$t('Minute')}}</span>
           </el-input>
-          <span class="text-box">
-            <span>{{$t('Timeout strategy')}}</span>
-          </span>
-          <div style="padding-top: 6px;">
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="clearfix list" v-if="enable && waitCompleteTimeout.enable">
+      <div class="text-box">
+        <span>{{$t('Timeout strategy')}}</span>
+      </div>
+      <div class="cont-box">
+        <label class="label-box">
+          <div style="padding-top: 5px;">
             <el-checkbox-group size="small" v-model="waitCompleteTimeout.strategy">
               <el-checkbox label="WARN" :disabled="isDetails">{{$t('Timeout alarm')}}</el-checkbox>
               <el-checkbox label="FAILED" :disabled="isDetails">{{$t('Timeout failure')}}</el-checkbox>
