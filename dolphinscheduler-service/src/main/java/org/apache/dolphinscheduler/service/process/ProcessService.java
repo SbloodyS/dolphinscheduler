@@ -993,7 +993,7 @@ public class ProcessService {
         Map<String, String> subMap = subPropertyList.stream().collect(Collectors.toMap(Property::getProp, Property::getValue));
 
         for (Property parent : parentPropertyList) {
-            if (!subMap.containsKey(parent.getProp())) {
+            if (subMap.containsKey(parent.getProp())) {
                 subPropertyList.add(parent);
             }
         }
