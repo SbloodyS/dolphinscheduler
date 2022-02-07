@@ -181,28 +181,28 @@
               </el-button>
 
               <!--Pause-->
-              <span>
-                <el-button
-                  v-show="scope.row.state !== 'PAUSE'"
-                  type="warning"
-                  size="mini"
-                  circle
-                  icon="el-icon-close"
-                  disabled="true">
-                </el-button>
-              </span>
-
-              <!--Stop-->
 <!--              <span>-->
 <!--                <el-button-->
-<!--                  v-show="scope.row.state !== 'STOP'"-->
+<!--                  v-show="scope.row.state !== 'PAUSE'"-->
 <!--                  type="warning"-->
 <!--                  size="mini"-->
 <!--                  circle-->
-<!--                  icon="el-icon-video-pause"-->
+<!--                  icon="el-icon-close"-->
 <!--                  disabled="true">-->
 <!--                </el-button>-->
 <!--              </span>-->
+
+              <!--Stop-->
+              <span>
+                <el-button
+                  v-show="scope.row.state !== 'STOP'"
+                  type="warning"
+                  size="mini"
+                  circle
+                  icon="el-icon-video-pause"
+                  disabled="true">
+                </el-button>
+              </span>
 
               <!--Delete-->
               <el-button
