@@ -2514,7 +2514,12 @@ public class ProcessService {
             taskDefinitionLogs = genTaskDefineList(taskRelationList);
         }
         Map<Long, TaskDefinitionLog> taskDefinitionLogMap = taskDefinitionLogs.stream()
-                .collect(Collectors.toMap(TaskDefinitionLog::getCode, taskDefinitionLog -> taskDefinitionLog));
+            .collect(
+                Collectors.toMap(
+                    TaskDefinitionLog::getCode,
+                    taskDefinitionLog -> taskDefinitionLog,
+                    (taskDefinitionCode , taskDefinitionLog) -> taskDefinitionCode)
+            );
         List<TaskNode> taskNodeList = new ArrayList<>();
         for (Entry<Long, List<Long>> code : taskCodeMap.entrySet()) {
             TaskDefinitionLog taskDefinitionLog = taskDefinitionLogMap.get(code.getKey());
