@@ -329,6 +329,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             }
             putMsg(result, Status.SUCCESS);
         } catch (Exception e) {
+            logger.error("error:", e);
             result.put(Constants.STATUS, Status.REQUEST_PARAMS_NOT_VALID_ERROR);
             result.put(Constants.MSG, e.getMessage());
         }
