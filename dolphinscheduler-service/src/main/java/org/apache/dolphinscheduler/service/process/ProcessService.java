@@ -2351,7 +2351,13 @@ public class ProcessService {
         Map<Long, TaskDefinitionLog> taskDefinitionLogMap = null;
         if (CollectionUtils.isNotEmpty(taskDefinitionLogs)) {
             taskDefinitionLogMap = taskDefinitionLogs.stream()
-                    .collect(Collectors.toMap(TaskDefinition::getCode, taskDefinitionLog -> taskDefinitionLog));
+                    .collect(
+                        Collectors.toMap(
+                            TaskDefinition::getCode,
+                            taskDefinitionLog -> taskDefinitionLog,
+                            (taskDefinitionCode , taskDefinitionLog) -> taskDefinitionCode
+                        )
+                    );
         }
         Date now = new Date();
         for (ProcessTaskRelationLog processTaskRelationLog : taskRelationList) {
