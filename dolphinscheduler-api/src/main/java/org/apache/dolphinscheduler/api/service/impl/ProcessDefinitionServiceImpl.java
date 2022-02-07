@@ -1070,7 +1070,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * @return check result code
      */
     @Override
-    public Map<String, Object> checkProcessNodeList(String processTaskRelationJson) {
+    public Map<String, Object> checkProcessNodeList(String processTaskRelationJson, List<TaskDefinitionLog> taskDefinitionLogsList) {
         Map<String, Object> result = new HashMap<>();
         try {
             if (processTaskRelationJson == null) {
@@ -1081,7 +1081,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
 
             List<ProcessTaskRelation> taskRelationList = JSONUtils.toList(processTaskRelationJson, ProcessTaskRelation.class);
             // Check whether the task node is normal
-            List<TaskNode> taskNodes = processService.transformTask(taskRelationList, Lists.newArrayList());
+            List<TaskNode> taskNodes = processService.transformTask(taskRelationList, taskDefinitionLogsList);
 
             if (CollectionUtils.isEmpty(taskNodes)) {
                 logger.error("process node info is empty");
