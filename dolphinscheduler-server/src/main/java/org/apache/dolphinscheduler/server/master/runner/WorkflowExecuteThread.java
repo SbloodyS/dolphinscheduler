@@ -414,7 +414,6 @@ public class WorkflowExecuteThread implements Runnable {
                 errorTaskList.put(Long.toString(task.getTaskCode()), task);
                 if (processInstance.getFailureStrategy() == FailureStrategy.END) {
                     killAllTasks();
-                    removeTaskFromStandbyList(task);
                 }
             }
         }
@@ -1117,7 +1116,8 @@ public class WorkflowExecuteThread implements Runnable {
             List<TaskInstance> killList = getCompleteTaskByState(ExecutionStatus.KILL);
             if (CollectionUtils.isNotEmpty(stopList)
                     || CollectionUtils.isNotEmpty(killList)
-                    || !isComplementEnd()) {
+                    || !isComplementEnd()
+                    || processInstance.getState() == ExecutionStatus.READY_STOP) {
                 return ExecutionStatus.STOP;
             } else {
                 return ExecutionStatus.SUCCESS;
@@ -1276,6 +1276,9 @@ public class WorkflowExecuteThread implements Runnable {
         for (int taskId : activeTaskProcessorMaps.keySet()) {
             TaskInstance taskInstance = processService.findTaskInstanceById(taskId);
             if (taskInstance == null || taskInstance.getState().typeIsFinished()) {
+                if (taskInstance != null && readyToSubmitTaskQueue.size() > 0) {
+                    removeTaskFromStandbyList(taskInstance);
+                }
                 continue;
             }
             ITaskProcessor taskProcessor = activeTaskProcessorMaps.get(taskId);
