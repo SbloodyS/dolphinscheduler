@@ -158,8 +158,12 @@ public class TaskResponsePersistThread implements Runnable {
                         logger.debug("ACTION_STOP: task instance id:{}, process instance id:{}", taskResponseEvent.getTaskInstanceId(), taskResponseEvent.getProcessInstanceId());
                     }
                 }
+
                 TaskKillAckCommand taskKillAckCommand = new TaskKillAckCommand(ExecutionStatus.SUCCESS.getCode(), taskResponseEvent.getTaskInstanceId());
-                channel.writeAndFlush(taskKillAckCommand.convert2Command());
+                
+                if (taskKillAckCommand.convert2Command() != null) {
+                    channel.writeAndFlush(taskKillAckCommand.convert2Command());
+                }
                 break;
             default:
                 throw new IllegalArgumentException("invalid event type : " + event);
