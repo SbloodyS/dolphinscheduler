@@ -378,7 +378,7 @@ public class WorkflowExecuteThread implements Runnable {
                 processInstance.getId(),
                 task.getId(),
                 task.getState());
-        if (task.taskCanRetry() && processInstance.getState() != ExecutionStatus.READY_STOP) {
+        if (task.taskCanRetry()) {
             addTaskToStandByList(task);
             if (!task.retryTaskIntervalOverTime()) {
                 logger.info("failure task will be submitted: process id: {}, task instance id: {} state:{} retry times:{} / {}, interval:{}",
