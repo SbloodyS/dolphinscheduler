@@ -414,6 +414,7 @@ public class WorkflowExecuteThread implements Runnable {
                 errorTaskList.put(Long.toString(task.getTaskCode()), task);
                 if (processInstance.getFailureStrategy() == FailureStrategy.END) {
                     killAllTasks();
+                    removeTaskFromStandbyList(task);
                 }
             }
         }
