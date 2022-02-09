@@ -751,6 +751,9 @@ public class WorkflowExecuteThread implements Runnable {
         TaskInstance taskInstance = findTaskIfExists(taskNode.getCode(), taskNode.getVersion());
         if (taskInstance == null) {
             taskInstance = new TaskInstance();
+
+            taskInstance.setProcessInstance(processInstance);
+
             taskInstance.setTaskCode(taskNode.getCode());
             taskInstance.setTaskDefinitionVersion(taskNode.getVersion());
             // task name
@@ -901,7 +904,6 @@ public class WorkflowExecuteThread implements Runnable {
                 logger.info("task {} stopped, the state is {}, task id:{}", task.getName(), task.getState(), task.getId());
             } else {
                 addTaskToStandByList(task);
-                task.setProcessInstance(processInstance);
             }
         }
         submitStandByTask();
