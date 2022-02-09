@@ -588,7 +588,7 @@ public class TaskInstance implements Serializable {
         }
         if (this.getState() == ExecutionStatus.NEED_FAULT_TOLERANCE) {
             return true;
-        } else if (processInstance.getState() == ExecutionStatus.READY_STOP) {
+        } else if (this.getState() == ExecutionStatus.READY_STOP) {
             return false;
         } else {
             return (this.getState().typeIsFailure()
