@@ -74,7 +74,7 @@ public class TaskResponsePersistThread implements Runnable {
                     logger.error("persist meta error, task id:{}, instance id:{}", event.getTaskInstanceId(), event.getProcessInstanceId());
                 }
             } catch (Exception e) {
-                logger.error("persist error, task id:{}, instance id:{}", event.getTaskInstanceId(), event.getProcessInstanceId(), e);
+                logger.error("persist error, task id:{}, instance id:{}, error: {}", event.getTaskInstanceId(), event.getProcessInstanceId(), e);
             } finally {
                 this.events.remove(event);
             }
