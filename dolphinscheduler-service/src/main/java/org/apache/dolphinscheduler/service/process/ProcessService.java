@@ -2350,6 +2350,7 @@ public class ProcessService {
         }
         Map<Long, TaskDefinitionLog> taskDefinitionLogMap = null;
         if (CollectionUtils.isNotEmpty(taskDefinitionLogs)) {
+//            logger.info(String.format("taskDefinitionLogs: %s", taskDefinitionLogs));
             taskDefinitionLogMap = taskDefinitionLogs.stream()
                     .collect(
                         Collectors.toMap(
@@ -2519,6 +2520,7 @@ public class ProcessService {
         if (CollectionUtils.isEmpty(taskDefinitionLogs)) {
             taskDefinitionLogs = genTaskDefineList(taskRelationList);
         }
+//        logger.info(String.format("taskDefinitionLogs1: %s", taskDefinitionLogs));
         Map<Long, TaskDefinitionLog> taskDefinitionLogMap = taskDefinitionLogs.stream()
             .collect(
                 Collectors.toMap(
