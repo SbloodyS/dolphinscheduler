@@ -1095,10 +1095,6 @@ public class WorkflowExecuteThread implements Runnable {
             // active task and retry task exists
             return runningState(state);
         }
-        // process failure
-        if (processFailed()) {
-            return ExecutionStatus.FAILURE;
-        }
 
         // waiting thread
         if (hasWaitingThreadTask()) {
@@ -1124,6 +1120,11 @@ public class WorkflowExecuteThread implements Runnable {
 //            else {
 //                return ExecutionStatus.SUCCESS;
 //            }
+        }
+
+        // process failure
+        if (processFailed()) {
+            return ExecutionStatus.FAILURE;
         }
 
         // success
