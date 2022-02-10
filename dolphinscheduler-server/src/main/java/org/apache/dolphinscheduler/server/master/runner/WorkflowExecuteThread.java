@@ -1283,6 +1283,7 @@ public class WorkflowExecuteThread implements Runnable {
             TaskInstance taskInstance = processService.findTaskInstanceById(taskId);
             if (taskInstance == null || taskInstance.getState().typeIsFinished()) {
                 if (taskInstance != null && readyToSubmitTaskQueue.size() > 0) {
+                    logger.info("before kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
                     removeTaskFromStandbyList(taskInstance);
                 }
                 continue;
