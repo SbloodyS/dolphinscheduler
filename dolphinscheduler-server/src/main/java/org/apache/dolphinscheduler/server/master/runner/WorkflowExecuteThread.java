@@ -1111,6 +1111,7 @@ public class WorkflowExecuteThread implements Runnable {
             List<TaskInstance> stopList = getCompleteTaskByState(ExecutionStatus.STOP);
             List<TaskInstance> killList = getCompleteTaskByState(ExecutionStatus.KILL);
             List<TaskInstance> failList = getCompleteTaskByState(ExecutionStatus.FAILURE);
+            logger.info("processInstanceId: {} | failListSize: {}", instance.getId(), failList.size());
             if (CollectionUtils.isNotEmpty(stopList)
                     || CollectionUtils.isNotEmpty(killList)
                     || CollectionUtils.isNotEmpty(failList)
