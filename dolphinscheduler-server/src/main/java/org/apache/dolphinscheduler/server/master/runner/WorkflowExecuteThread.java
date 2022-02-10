@@ -378,7 +378,7 @@ public class WorkflowExecuteThread implements Runnable {
                 processInstance.getId(),
                 task.getId(),
                 task.getState());
-        if (task.taskCanRetry()) {
+        if (task.taskCanRetry() && processInstance.getState() != ExecutionStatus.READY_STOP) {
             addTaskToStandByList(task);
             if (!task.retryTaskIntervalOverTime()) {
                 logger.info("failure task will be submitted: process id: {}, task instance id: {} state:{} retry times:{} / {}, interval:{}",
@@ -751,9 +751,6 @@ public class WorkflowExecuteThread implements Runnable {
         TaskInstance taskInstance = findTaskIfExists(taskNode.getCode(), taskNode.getVersion());
         if (taskInstance == null) {
             taskInstance = new TaskInstance();
-
-            taskInstance.setProcessInstance(processInstance);
-
             taskInstance.setTaskCode(taskNode.getCode());
             taskInstance.setTaskDefinitionVersion(taskNode.getVersion());
             // task name
@@ -1117,14 +1114,16 @@ public class WorkflowExecuteThread implements Runnable {
         if (state == ExecutionStatus.READY_STOP) {
             List<TaskInstance> stopList = getCompleteTaskByState(ExecutionStatus.STOP);
             List<TaskInstance> killList = getCompleteTaskByState(ExecutionStatus.KILL);
+            List<TaskInstance> failList = getCompleteTaskByState(ExecutionStatus.FAILURE);
             if (CollectionUtils.isNotEmpty(stopList)
                     || CollectionUtils.isNotEmpty(killList)
-                    || !isComplementEnd()
-                    || processInstance.getState() == ExecutionStatus.READY_STOP) {
+                    || CollectionUtils.isNotEmpty(failList)
+                    || !isComplementEnd()) {
                 return ExecutionStatus.STOP;
-            } else {
-                return ExecutionStatus.SUCCESS;
             }
+//            else {
+//                return ExecutionStatus.SUCCESS;
+//            }
         }
 
         // success
