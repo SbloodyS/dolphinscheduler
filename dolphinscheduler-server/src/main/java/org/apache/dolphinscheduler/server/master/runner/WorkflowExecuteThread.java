@@ -1248,8 +1248,11 @@ public class WorkflowExecuteThread implements Runnable {
         logger.info("remove task from stand by list, id: {} name:{}",
                 taskInstance.getId(),
                 taskInstance.getName());
+
+        boolean removeFlag;
         try {
-            readyToSubmitTaskQueue.remove(taskInstance);
+            removeFlag = readyToSubmitTaskQueue.remove(taskInstance);
+            logger.info("process instance id: {} | removeFlag: {}",  taskInstance.getProcessInstanceId(),removeFlag);
         } catch (Exception e) {
             logger.error("remove task instance from readyToSubmitTaskQueue error, task id:{}, Name: {}",
                     taskInstance.getId(),
