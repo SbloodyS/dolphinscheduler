@@ -1091,9 +1091,8 @@ public class WorkflowExecuteThread implements Runnable {
     private ExecutionStatus getProcessInstanceState(ProcessInstance instance) {
         ExecutionStatus state = instance.getState();
 
-        if ((activeTaskProcessorMaps.size() > 0 && state != ExecutionStatus.READY_STOP) || hasRetryTaskInStandBy()) {
+        if ((activeTaskProcessorMaps.size() > 0 || hasRetryTaskInStandBy()) && state != ExecutionStatus.READY_STOP) {
             // active task and retry task exists
-            logger.info("{} in runningState, readyToSubmitTaskQueueSize: {}", instance.getId(), readyToSubmitTaskQueue.size());
             return runningState(state);
         }
         // process failure
@@ -1249,10 +1248,8 @@ public class WorkflowExecuteThread implements Runnable {
                 taskInstance.getId(),
                 taskInstance.getName());
 
-        boolean removeFlag;
         try {
-            removeFlag = readyToSubmitTaskQueue.remove(taskInstance);
-            logger.info("process instance id: {} | removeFlag: {}",  taskInstance.getProcessInstanceId(),removeFlag);
+            readyToSubmitTaskQueue.remove(taskInstance);
         } catch (Exception e) {
             logger.error("remove task instance from readyToSubmitTaskQueue error, task id:{}, Name: {}",
                     taskInstance.getId(),
@@ -1287,7 +1284,7 @@ public class WorkflowExecuteThread implements Runnable {
             if (taskInstance == null || taskInstance.getState().typeIsFinished()) {
                 if (taskInstance != null && readyToSubmitTaskQueue.size() > 0) {
                     logger.info("before kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
-                    removeTaskFromStandbyList(taskInstance);
+                    readyToSubmitTaskQueue.clear();
                     logger.info("after kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
                 }
                 continue;

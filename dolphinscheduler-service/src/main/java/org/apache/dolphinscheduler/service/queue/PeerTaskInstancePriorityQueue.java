@@ -138,6 +138,14 @@ public class PeerTaskInstancePriorityQueue implements TaskPriorityQueue<TaskInst
     }
 
     /**
+     * clear task
+     *
+     */
+    public void clear() {
+        queue.clear();
+    }
+
+    /**
      * get iterator
      *
      * @return Iterator
