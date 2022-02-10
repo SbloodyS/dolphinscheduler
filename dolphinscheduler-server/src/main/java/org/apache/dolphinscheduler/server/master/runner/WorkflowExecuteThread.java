@@ -1091,7 +1091,7 @@ public class WorkflowExecuteThread implements Runnable {
     private ExecutionStatus getProcessInstanceState(ProcessInstance instance) {
         ExecutionStatus state = instance.getState();
 
-        if (activeTaskProcessorMaps.size() > 0 || hasRetryTaskInStandBy()) {
+        if ((activeTaskProcessorMaps.size() > 0 && state != ExecutionStatus.READY_STOP) || hasRetryTaskInStandBy()) {
             // active task and retry task exists
             return runningState(state);
         }
