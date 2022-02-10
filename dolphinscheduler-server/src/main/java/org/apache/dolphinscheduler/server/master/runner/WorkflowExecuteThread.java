@@ -1171,6 +1171,7 @@ public class WorkflowExecuteThread implements Runnable {
     private void updateProcessInstanceState() {
         ProcessInstance instance = processService.findProcessInstanceById(processInstance.getId());
         ExecutionStatus state = getProcessInstanceState(instance);
+        logger.info("processInstanceId: {}, processInstance.getState(): {}, state: {}", instance.getId(), processInstance.getState(), state);
         if (processInstance.getState() != state) {
             logger.info(
                     "work flow process instance [id: {}, name:{}], state change from {} to {}, cmd type: {}",
