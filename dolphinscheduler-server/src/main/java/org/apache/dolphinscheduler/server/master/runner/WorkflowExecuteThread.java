@@ -1285,6 +1285,7 @@ public class WorkflowExecuteThread implements Runnable {
                 if (taskInstance != null && readyToSubmitTaskQueue.size() > 0) {
                     logger.info("before kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
                     removeTaskFromStandbyList(taskInstance);
+                    logger.info("after kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
                 }
                 continue;
             }
