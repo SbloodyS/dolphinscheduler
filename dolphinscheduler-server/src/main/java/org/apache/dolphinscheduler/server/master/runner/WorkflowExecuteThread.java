@@ -1265,6 +1265,8 @@ public class WorkflowExecuteThread implements Runnable {
     private boolean hasRetryTaskInStandBy() {
         for (Iterator<TaskInstance> iter = readyToSubmitTaskQueue.iterator(); iter.hasNext(); ) {
             if (iter.next().getState().typeIsFailure()) {
+                TaskInstance task = readyToSubmitTaskQueue.peek();
+                logger.info("readyToSubmitTask: {} | {}", task.getId(), task.getName());
                 return true;
             }
         }
