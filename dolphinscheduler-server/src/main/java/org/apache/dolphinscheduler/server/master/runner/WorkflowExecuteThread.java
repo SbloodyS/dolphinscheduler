@@ -1093,7 +1093,7 @@ public class WorkflowExecuteThread implements Runnable {
 
         if ((activeTaskProcessorMaps.size() > 0 && state != ExecutionStatus.READY_STOP) || hasRetryTaskInStandBy()) {
             // active task and retry task exists
-            logger.info("{} in runningState", instance.getId());
+            logger.info("{} in runningState, readyToSubmitTaskQueue: {}", instance.getId(), readyToSubmitTaskQueue.toString());
             return runningState(state);
         }
         // process failure
