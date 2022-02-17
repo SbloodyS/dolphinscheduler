@@ -45,6 +45,7 @@ import org.apache.dolphinscheduler.common.utils.DateUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.NetUtils;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
+import org.apache.dolphinscheduler.dao.entity.Command;
 import org.apache.dolphinscheduler.dao.entity.Environment;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
@@ -435,6 +436,12 @@ public class WorkflowExecuteThread implements Runnable {
         try {
             logger.info("process:{} state {} change to {}", processInstance.getId(), processInstance.getState(), stateEvent.getExecutionStatus());
             processInstance = processService.findProcessInstanceById(this.processInstance.getId());
+
+            if (stateEvent.getExecutionStatus() == ExecutionStatus.STOP) {
+                this.updateProcessInstanceState(stateEvent);
+                return true;
+            }
+
             if (processComplementData()) {
                 return true;
             }
@@ -480,28 +487,44 @@ public class WorkflowExecuteThread implements Runnable {
                     processInstance.getScheduleTime(),
                     complementListDate.toString());
             scheduleDate = complementListDate.get(index + 1);
-            //the next process complement
-            processInstance.setId(0);
         }
-        processInstance.setScheduleTime(scheduleDate);
+
+        this.taskInstanceHashMap.clear();
+
+        //the next process complement
+        int create = this.createComplementDataCommand(scheduleDate);
+        if (create > 0) {
+            logger.info("create complement data command successfully.");
+        }
+
+        return true;
+    }
+
+    private int createComplementDataCommand(Date scheduleDate) {
+        Command command = new Command();
+        command.setScheduleTime(scheduleDate);
+        command.setCommandType(CommandType.COMPLEMENT_DATA);
+        command.setProcessDefinitionCode(processInstance.getProcessDefinitionCode());
         Map<String, String> cmdParam = JSONUtils.toMap(processInstance.getCommandParam());
         if (cmdParam.containsKey(Constants.CMD_PARAM_RECOVERY_START_NODE_STRING)) {
             cmdParam.remove(Constants.CMD_PARAM_RECOVERY_START_NODE_STRING);
-            processInstance.setCommandParam(JSONUtils.toJsonString(cmdParam));
         }
-
-        processInstance.setState(ExecutionStatus.RUNNING_EXECUTION);
-        processInstance.setGlobalParams(ParameterUtils.curingGlobalParams(
-                processDefinition.getGlobalParamMap(),
-                processDefinition.getGlobalParamList(),
-                CommandType.COMPLEMENT_DATA, processInstance.getScheduleTime()));
-        processInstance.setStartTime(new Date());
-        processInstance.setRestartTime(processInstance.getStartTime());
-        processInstance.setEndTime(null);
-        processService.saveProcessInstance(processInstance);
-        this.taskInstanceHashMap.clear();
-        startProcess();
-        return true;
+        cmdParam.replace(CMDPARAM_COMPLEMENT_DATA_START_DATE, DateUtils.format(scheduleDate, "yyyy-MM-dd HH:mm:ss"));
+        command.setCommandParam(JSONUtils.toJsonString(cmdParam));
+        command.setTaskDependType(processInstance.getTaskDependType());
+        command.setFailureStrategy(processInstance.getFailureStrategy());
+        command.setWarningType(processInstance.getWarningType());
+        command.setWarningGroupId(processInstance.getWarningGroupId());
+        command.setStartTime(new Date());
+        command.setExecutorId(processInstance.getExecutorId());
+        command.setUpdateTime(new Date());
+        command.setProcessInstancePriority(processInstance.getProcessInstancePriority());
+        command.setWorkerGroup(processInstance.getWorkerGroup());
+        command.setEnvironmentCode(processInstance.getEnvironmentCode());
+        command.setDryRun(processInstance.getDryRun());
+        command.setProcessInstanceId(0);
+        command.setProcessDefinitionVersion(processInstance.getProcessDefinitionVersion());
+        return processService.createCommand(command);
     }
 
     private boolean needComplementProcess() {
@@ -1193,6 +1216,26 @@ public class WorkflowExecuteThread implements Runnable {
     }
 
     /**
+     * stateEvent's execution status as process instance state
+     */
+    private void updateProcessInstanceState(StateEvent stateEvent) {
+        ExecutionStatus state = stateEvent.getExecutionStatus();
+        if (processInstance.getState() != state) {
+            logger.info(
+                    "work flow process instance [id: {}, name:{}], state change from {} to {}, cmd type: {}",
+                    processInstance.getId(), processInstance.getName(),
+                    processInstance.getState(), state,
+                    processInstance.getCommandType());
+
+            processInstance.setState(state);
+            if (state.typeIsFinished()) {
+                processInstance.setEndTime(new Date());
+            }
+            processService.updateProcessInstance(processInstance);
+        }
+    }
+
+    /**
      * get task dependency result
      *
      * @param taskInstance task instance
@@ -1281,14 +1324,14 @@ public class WorkflowExecuteThread implements Runnable {
     private void killAllTasks() {
         logger.info("kill called on process instance id: {}, num: {}", processInstance.getId(),
                 activeTaskProcessorMaps.size());
+
+        if (readyToSubmitTaskQueue.size() > 0) {
+            readyToSubmitTaskQueue.clear();
+        }
+
         for (int taskId : activeTaskProcessorMaps.keySet()) {
             TaskInstance taskInstance = processService.findTaskInstanceById(taskId);
             if (taskInstance == null || taskInstance.getState().typeIsFinished()) {
-                if (taskInstance != null && readyToSubmitTaskQueue.size() > 0) {
-                    logger.info("before kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
-                    readyToSubmitTaskQueue.clear();
-                    logger.info("after kill readyToSubmitTaskQueueSize: {}", readyToSubmitTaskQueue.size());
-                }
                 continue;
             }
             ITaskProcessor taskProcessor = activeTaskProcessorMaps.get(taskId);
