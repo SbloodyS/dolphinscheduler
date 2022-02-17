@@ -78,7 +78,7 @@ public final class Constants {
      */
     public static final String ALERT_PLUGIN_BINDING = "alert.plugin.binding";
     public static final String ALERT_PLUGIN_DIR = "alert.plugin.dir";
-    public static final int ALERT_RPC_PORT = 45052;
+    public static final int ALERT_RPC_PORT = 40052;
 
     /**
      * registry properties
@@ -393,7 +393,7 @@ public final class Constants {
      *
      * rpc port
      */
-    public static final int RPC_PORT = 45051;
+    public static final int RPC_PORT = 40051;
 
     /**
      * forbid running task
