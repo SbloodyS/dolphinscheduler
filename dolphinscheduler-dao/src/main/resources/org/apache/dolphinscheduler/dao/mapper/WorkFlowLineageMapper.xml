@@ -62,6 +62,20 @@
         </if>
     </select>
 
+    <select id="queryUpstreamDependentParamsByProcessDefinitionCode"
+            resultType="org.apache.dolphinscheduler.dao.entity.DependentProcessDefinition">
+        SELECT
+        DISTINCT c.task_params
+        FROM
+        t_ds_process_definition a
+        JOIN t_ds_process_task_relation b ON a.code = b.process_definition_code AND a.version = b.process_definition_version AND a.project_code = b.project_code
+        JOIN t_ds_task_definition c ON c.code = b.pre_task_code and c.version = b.pre_task_version
+        WHERE 1=1
+        AND a.code = #{code}
+        AND c.task_type = 'DEPENDENT'
+        ;
+    </select>
+
     <select id="queryWorkFlowLineageByLineage" resultType="org.apache.dolphinscheduler.dao.entity.WorkFlowLineage">
         select tepd.code as work_flow_code,tepd.name as work_flow_name,
                '' as source_work_flow_code,
