@@ -793,6 +793,7 @@ public final class Constants {
     public static final String CONTENT = "content";
     public static final String DEPENDENT_SPLIT = ":||";
     public static final String DEPENDENT_ALL = "ALL";
+    public static final String DEPENDENT_RULES = "rules:";
     public static final long DEPENDENT_ALL_TASK_CODE = 0;
 
 

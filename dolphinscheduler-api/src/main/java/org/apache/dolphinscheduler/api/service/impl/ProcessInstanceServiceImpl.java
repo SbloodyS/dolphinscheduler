@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.api.service.impl;
 
 import static org.apache.dolphinscheduler.common.Constants.DATA_LIST;
+import static org.apache.dolphinscheduler.common.Constants.DEPENDENT_RULES;
 import static org.apache.dolphinscheduler.common.Constants.DEPENDENT_SPLIT;
 import static org.apache.dolphinscheduler.common.Constants.GLOBAL_PARAMS;
 import static org.apache.dolphinscheduler.common.Constants.LOCAL_PARAMS;
@@ -44,6 +45,7 @@ import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.TaskType;
 import org.apache.dolphinscheduler.common.graph.DAG;
+import org.apache.dolphinscheduler.common.model.DependentTaskModel;
 import org.apache.dolphinscheduler.common.model.TaskNode;
 import org.apache.dolphinscheduler.common.model.TaskNodeRelation;
 import org.apache.dolphinscheduler.common.process.Property;
@@ -378,19 +380,14 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
                 StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
         String line;
         while ((line = br.readLine()) != null) {
-            if (line.contains(DEPENDENT_SPLIT)) {
-                String[] tmpStringArray = line.split(":\\|\\|");
-                if (tmpStringArray.length != 2) {
+            if (line.contains(DEPENDENT_RULES)) {
+                String[] tmpStringArray = line.split(",");
+                if (tmpStringArray.length != 4) {
                     continue;
                 }
-                String dependResultString = tmpStringArray[1];
-                String[] dependStringArray = dependResultString.split(",");
-                if (dependStringArray.length != 2) {
-                    continue;
-                }
-                String key = dependStringArray[0].trim();
-                DependResult dependResult = DependResult.valueOf(dependStringArray[1].trim());
-                resultMap.put(key, dependResult);
+                String dependResultString = tmpStringArray[2].split(DEPENDENT_RULES)[1].trim();
+                DependResult dependResult = DependResult.valueOf(tmpStringArray[3].split(":")[1].trim());
+                resultMap.put(dependResultString, dependResult);
             }
         }
         return resultMap;
