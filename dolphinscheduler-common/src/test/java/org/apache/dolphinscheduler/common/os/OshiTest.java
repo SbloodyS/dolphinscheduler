@@ -51,7 +51,6 @@ public class OshiTest {
 
 
         logger.info("Checking CPU...");
-        printCpu(hal.getProcessor());
 
     }
 
@@ -62,5 +61,5 @@ public class OshiTest {
         logger.info("memory avail:{} MB" , memory.getAvailable() / 1024 / 1024 );//memory avail:6863 MB
         logger.info("memory total:{} MB" , memory.getTotal() / 1024 / 1024 );//memory total:16384 MB
     }
-    
+
 }
