@@ -61,8 +61,10 @@
         </filter>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log.base}/dolphinscheduler-master.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>
-            <maxHistory>168</maxHistory>
+            <maxHistory>36</maxHistory>
             <maxFileSize>200MB</maxFileSize>
+            <totalSizeCap>5GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
             <pattern>

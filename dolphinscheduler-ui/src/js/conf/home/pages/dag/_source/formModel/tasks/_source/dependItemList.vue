@@ -141,11 +141,11 @@
           return Promise.resolve(this.projectDefinitionsCache[code])
         }
         return new Promise((resolve, reject) => {
-          this.store.dispatch('dag/getProcessByProjectCode', code).then(res => {
+          this.store.dispatch('dag/getProcessByProjectCodeForDependent', code).then(res => {
             let definitionList = _.map(_.cloneDeep(res), v => {
               return {
-                value: v.processDefinition.code,
-                label: v.processDefinition.name
+                value: v.code,
+                label: v.name
               }
             })
             this.$emit('addProjectDefinitionsCache', {

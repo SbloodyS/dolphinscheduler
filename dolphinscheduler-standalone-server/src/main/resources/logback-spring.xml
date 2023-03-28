@@ -16,20 +16,37 @@
   ~ limitations under the License.
   -->
 
-<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
-<configuration scan="true" scanPeriod="120 seconds"> <!--debug="true" -->
-
+<configuration scan="true" scanPeriod="120 seconds">
     <property name="log.base" value="logs"/>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                [%level] %date{yyyy-MM-dd HH:mm:ss.SSS} %logger{96}:[%line] - %msg%n
+                [%level] %date{yyyy-MM-dd HH:mm:ss.SSS Z} %logger{96}:[%line] - [WorkflowInstance-%X{workflowInstanceId:-0}][TaskInstance-%X{taskInstanceId:-0}] - %msg%n
             </pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <!-- worker server logback config start -->
+    <appender name="STANDALONELOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.base}/dolphinscheduler-standalone.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.base}/dolphinscheduler-standalone.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>
+            <maxHistory>168</maxHistory>
+            <maxFileSize>200MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                [%level] %date{yyyy-MM-dd HH:mm:ss.SSS Z} %logger{96}:[%line] - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.zookeeper" level="WARN"/>
+    <logger name="org.apache.hbase" level="WARN"/>
+    <logger name="org.apache.hadoop" level="WARN"/>
+
     <conversionRule conversionWord="messsage"
                     converterClass="org.apache.dolphinscheduler.server.log.SensitiveDataConverter"/>
     <appender name="TASKLOGFILE" class="ch.qos.logback.classic.sift.SiftingAppender">
@@ -54,30 +71,11 @@
             </appender>
         </sift>
     </appender>
-    <appender name="WORKERLOGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.base}/dolphinscheduler-worker.log</file>
-        <!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter> -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.base}/dolphinscheduler-worker.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>
-            <maxHistory>36</maxHistory>
-            <maxFileSize>200MB</maxFileSize>
-            <totalSizeCap>5GB</totalSizeCap>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
-        </rollingPolicy>
-        <encoder>
-            <pattern>
-                [%level] %date{yyyy-MM-dd HH:mm:ss.SSS} %logger{96}:[%line] - %messsage%n
-            </pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-    <!-- worker server logback config end -->
 
     <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="STANDALONELOGFILE"/>
         <appender-ref ref="TASKLOGFILE"/>
-        <appender-ref ref="WORKERLOGFILE"/>
     </root>
 
 </configuration>

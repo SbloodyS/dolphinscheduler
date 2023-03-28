@@ -23,6 +23,7 @@ import org.apache.dolphinscheduler.api.service.LoggerService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.utils.PropertyUtils;
 import org.apache.dolphinscheduler.dao.entity.Project;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
@@ -217,7 +218,7 @@ public class LoggerServiceImpl extends BaseServiceImpl implements LoggerService 
         String host = getHost(taskInstance.getHost());
 
         logger.info("log host : {} , logPath : {} , logServer port : {}", host, taskInstance.getLogPath(),
-                Constants.RPC_PORT);
+            PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
 
         StringBuilder log = new StringBuilder();
         if (skipLineNum == 0) {
@@ -229,7 +230,7 @@ public class LoggerServiceImpl extends BaseServiceImpl implements LoggerService 
         }
 
         log.append(logClient
-                .rollViewLog(host, Constants.RPC_PORT, taskInstance.getLogPath(), skipLineNum, limit));
+                .rollViewLog(host, PropertyUtils.getInt(Constants.LOGGER_RPC_PORT), taskInstance.getLogPath(), skipLineNum, limit));
 
         return log.toString();
     }
@@ -247,6 +248,6 @@ public class LoggerServiceImpl extends BaseServiceImpl implements LoggerService 
                 host,
                 Constants.SYSTEM_LINE_SEPARATOR).getBytes(StandardCharsets.UTF_8);
         return Bytes.concat(head,
-                logClient.getLogBytes(host, Constants.RPC_PORT, taskInstance.getLogPath()));
+                logClient.getLogBytes(host, PropertyUtils.getInt(Constants.LOGGER_RPC_PORT), taskInstance.getLogPath()));
     }
 }

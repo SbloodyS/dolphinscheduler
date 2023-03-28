@@ -133,7 +133,7 @@ public class WorkerServer implements IStoppable {
         PropertyUtils.setValue(SPRING_DATASOURCE_DRIVER_CLASS_NAME, driverClassName);
 
         // alert-server client registry
-        alertClientService = new AlertClientService(workerConfig.getAlertListenHost(), Constants.ALERT_RPC_PORT);
+        alertClientService = new AlertClientService(workerConfig.getAlertListenHost(), PropertyUtils.getInt(Constants.ALERT_LISTEN_PORT));
 
         // init remoting server
         NettyServerConfig serverConfig = new NettyServerConfig();

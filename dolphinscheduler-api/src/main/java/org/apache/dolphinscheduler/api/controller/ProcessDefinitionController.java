@@ -676,6 +676,24 @@ public class ProcessDefinitionController extends BaseController {
     }
 
     /**
+     * query all process definition by project code
+     *
+     * @param loginUser login user
+     * @param projectCode project code
+     * @return process definition list
+     */
+    @ApiOperation(value = "queryAllByProjectCode", notes = "QUERY_PROCESS_DEFINITION_All_BY_PROJECT_CODE_NOTES")
+    @GetMapping(value = "/all-dependent")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(QUERY_PROCESS_DEFINITION_LIST)
+    @AccessLogAnnotation(ignoreRequestArgs = "loginUser")
+    public Result queryAllProcessDefinitionByProjectCodeForDependent(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                                                         @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode) {
+        Map<String, Object> result = processDefinitionService.queryAllProcessDefinitionByProjectCodeForDependent(loginUser, projectCode);
+        return returnDataList(result);
+    }
+
+    /**
      * import process definition
      *
      * @param loginUser login user

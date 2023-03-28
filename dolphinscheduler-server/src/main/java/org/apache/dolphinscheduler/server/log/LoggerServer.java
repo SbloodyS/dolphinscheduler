@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.server.log;
 
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.utils.PropertyUtils;
 import org.apache.dolphinscheduler.remote.NettyRemotingServer;
 import org.apache.dolphinscheduler.remote.command.CommandType;
 import org.apache.dolphinscheduler.remote.config.NettyServerConfig;
@@ -49,7 +50,8 @@ public class LoggerServer {
 
     public LoggerServer() {
         this.serverConfig = new NettyServerConfig();
-        this.serverConfig.setListenPort(Constants.RPC_PORT);
+//        this.serverConfig.setListenPort(Constants.RPC_PORT);
+        this.serverConfig.setListenPort(PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
         this.server = new NettyRemotingServer(serverConfig);
         this.requestProcessor = new LoggerRequestProcessor();
         this.server.registerProcessor(CommandType.GET_LOG_BYTES_REQUEST, requestProcessor, requestProcessor.getExecutor());
@@ -72,7 +74,7 @@ public class LoggerServer {
      */
     public void start()  {
         this.server.start();
-        logger.info("logger server started, listening on port : {}", Constants.RPC_PORT);
+        logger.info("logger server started, listening on port : {}", PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
