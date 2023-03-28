@@ -19,6 +19,7 @@ package org.apache.dolphinscheduler.server;
 
 import org.apache.dolphinscheduler.alert.AlertServer;
 import org.apache.dolphinscheduler.api.ApiApplicationServer;
+import org.apache.dolphinscheduler.server.log.LoggerServer;
 import org.apache.dolphinscheduler.server.master.MasterServer;
 import org.apache.dolphinscheduler.server.worker.WorkerServer;
 
@@ -35,11 +36,14 @@ public class StandaloneServer {
         final TestingServer server = new TestingServer(true);
         System.setProperty("registry.servers", server.getConnectString());
 
+        new LoggerServer().start();
+
         new SpringApplicationBuilder(
             ApiApplicationServer.class,
             MasterServer.class,
             WorkerServer.class,
-            AlertServer.class
-        ).profiles("master", "worker", "api", "alert", "h2", "standalone").run(args);
+            AlertServer.class,
+            LoggerServer.class
+        ).profiles("master", "worker", "api", "alert", "h2", "standalone", "logger-server").run(args);
     }
 }

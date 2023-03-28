@@ -94,6 +94,14 @@
         where project_code = #{projectCode}
         order by create_time desc
     </select>
+    <select id="queryAllDefinitionListForDependent" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinitionForDependent">
+        select
+            code,
+            name
+        from t_ds_process_definition
+        where project_code = #{projectCode}
+        order by create_time desc
+    </select>
     <select id="queryDefinitionListByTenant" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinition">
         select
         <include refid="baseSql"/>

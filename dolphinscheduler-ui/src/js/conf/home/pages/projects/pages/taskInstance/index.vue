@@ -55,10 +55,13 @@
   import listUrlParamHandle from '@/module/mixin/listUrlParamHandle'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   import mInstanceConditions from '@/conf/home/pages/projects/pages/_source/conditions/instance/taskInstance'
+  import {formatDate} from "../../../../../../module/filter/filter";
 
   export default {
     name: 'task-instance-list-index',
     data () {
+      let today = new Date();
+
       return {
         isLoading: true,
         total: null,
@@ -77,9 +80,9 @@
           // state
           stateType: '',
           // start date
-          startDate: '',
+          startDate: formatDate(today.toString(), 'YYYY-MM-DD 00:00:00'),
           // end date
-          endDate: '',
+          endDate: formatDate(new Date(today.setDate(today.getDate()+1)).toString(), 'YYYY-MM-DD 23:59:59'),
           // Exectuor Name
           executorName: '',
           processInstanceName: ''
