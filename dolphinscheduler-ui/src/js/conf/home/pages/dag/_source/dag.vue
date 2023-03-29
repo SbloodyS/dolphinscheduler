@@ -94,6 +94,7 @@
   import edgeEditModel from './canvas/edgeEditModel.vue'
   import mVersions from '../../projects/pages/definition/pages/list/_source/versions.vue'
   import mLog from './formModel/log.vue'
+  import {formatDate} from "../../../../../module/filter/filter";
 
   const DEFAULT_NODE_DATA = {
     id: null,
@@ -527,11 +528,18 @@
         })
       },
       seeHistory (taskName) {
+        let startDate = new Date()
+        let endDate = new Date()
+        startDate = formatDate(new Date(startDate.setDate(startDate.getDate()-365)).toString(), 'YYYY-MM-DD 00:00:00')
+        endDate = formatDate(new Date(endDate.setDate(endDate.getDate()+1)).toString(), 'YYYY-MM-DD 23:59:59')
+
         this.$router.push({
           name: 'task-instance',
           query: {
             processInstanceId: this.instanceId,
-            taskName: taskName
+            taskName: taskName,
+            startDate: startDate,
+            endDate: endDate
           }
         })
       },
