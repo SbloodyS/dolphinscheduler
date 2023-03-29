@@ -86,7 +86,7 @@
       backfillItem: Object
     },
     methods: {
-      ...mapActions('dag', ['getProcessByProjectCode']),
+      ...mapActions('dag', ['getProcessByProjectCode', 'getProcessByProjectCodeForDependent']),
       _addDep () {
         if (!this.isLoading) {
           this.isLoading = true
@@ -134,11 +134,11 @@
       },
       _getProcessByProjectCode (code) {
         return new Promise((resolve, reject) => {
-          this.getProcessByProjectCode(code).then(res => {
+          this.getProcessByProjectCodeForDependent(code).then(res => {
             let definitionList = _.map(_.cloneDeep(res), v => {
               return {
-                value: v.processDefinition.code,
-                label: v.processDefinition.name
+                value: v.code,
+                label: v.name
               }
             })
             resolve({
