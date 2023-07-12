@@ -72,6 +72,7 @@
         </if>
         <if test="searchVal != null and searchVal != ''">
             and d.alias like concat('%', #{searchVal}, '%')
+            or d.description like concat('%', #{searchVal}, '%')
         </if>
         order by d.update_time desc
     </select>

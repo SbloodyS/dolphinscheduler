@@ -163,6 +163,17 @@
       width="auto">
       <m-resource-child-update :type="type" :id="id" @onProgressResourceChildUpdate="onProgressResourceChildUpdate" @onUpdateResourceChildUpdate="onUpdateResourceChildUpdate" @onArchiveFileChildUpdate="onArchiveResourceChildUpdate" @closeResourceChildUpdate="closeResourceChildUpdate"></m-resource-child-update>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="fileUploadDialog"
+      append-to-body="true"
+      width="auto">
+      <m-file-upload
+        :originalFileData="originalFileData"
+        @onUploadFile="onUploadFile"
+        @closeFileUpload="closeFileUpload">
+      </m-file-upload>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -176,6 +187,7 @@
   import mDefinitionUpdate from '@/module/components/fileUpdate/definitionUpdate'
   import mProgressBar from '@/module/components/progressBar/progressBar'
   import { findLocale, localeList } from '@/module/i18n/config'
+  import mFileUpload from '@/module/components/fileUpdate/fileReUpload'
 
   export default {
     name: 'roof-nav',
@@ -202,7 +214,11 @@
         fileUpdateDialog: false,
         fileChildUpdateDialog: false,
         id: null,
-        resourceChildUpdateDialog: false
+        fileName: '',
+        description: '',
+        originalFileData: {},
+        resourceChildUpdateDialog: false,
+        fileUploadDialog: false
       }
     },
 
@@ -270,6 +286,19 @@
         this.progress = 0
         this.fileUpdateDialog = false
       },
+
+      onUploadFile () {
+        let self = this
+        findComponentDownward(self.$root, 'resource-list-index-FILE')._updateList()
+        this.isUpdate = false
+        this.progress = 0
+        this.fileUploadDialog = false
+      },
+      closeFileUpload () {
+        this.progress = 0
+        this.fileUploadDialog = false
+      },
+
       onArchiveFileUpdate () {
         this.isUpdate = true
       },
@@ -286,6 +315,15 @@
         this.type = type
         this.id = data
         this.fileChildUpdateDialog = true
+      },
+
+      _fileReUpload (item) {
+        if (this.progress) {
+          this._toggleArchive()
+          return
+        }
+        this.originalFileData = item
+        this.fileUploadDialog = true
       },
 
       onProgressFileChildUpdate (val) {
@@ -365,7 +403,7 @@
     computed: {
       ...mapState('user', ['userInfo'])
     },
-    components: { mFileUpdate, mProgressBar, mDefinitionUpdate, mFileChildUpdate, mResourceChildUpdate }
+    components: { mFileUpdate, mProgressBar, mDefinitionUpdate, mFileChildUpdate, mResourceChildUpdate, mFileUpload }
   }
 </script>
 
