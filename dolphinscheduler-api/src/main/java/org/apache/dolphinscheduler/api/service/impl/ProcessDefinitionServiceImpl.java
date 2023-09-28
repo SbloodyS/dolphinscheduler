@@ -55,6 +55,7 @@ import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.TaskParametersUtils;
 import org.apache.dolphinscheduler.dao.entity.DagData;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
+import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionForDependent;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionLog;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
 import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelation;
@@ -1222,6 +1223,27 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         result.put(Constants.DATA_LIST, dagData.getTaskDefinitionList());
         putMsg(result, Status.SUCCESS);
 
+        return result;
+    }
+
+    /**
+     * query process definition all by project code for dependent
+     *
+     * @param loginUser   loginUser
+     * @param projectCode project code
+     * @return process definitions in the project
+     */
+    @Override
+    public Map<String, Object> queryAllProcessDefinitionByProjectCodeForDependent(User loginUser, long projectCode) {
+        Project project = projectMapper.queryByCode(projectCode);
+        //check user access for project
+        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+        if (result.get(Constants.STATUS) != Status.SUCCESS) {
+            return result;
+        }
+        List<ProcessDefinitionForDependent> processDefinitionForDependentList = processDefinitionMapper.queryAllDefinitionListForDependent(projectCode);
+        result.put(Constants.DATA_LIST, processDefinitionForDependentList);
+        putMsg(result, Status.SUCCESS);
         return result;
     }
 

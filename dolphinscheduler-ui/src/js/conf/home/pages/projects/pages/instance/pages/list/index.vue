@@ -55,10 +55,13 @@
   import mNoData from '@/module/components/noData/noData'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   import mInstanceConditions from '@/conf/home/pages/projects/pages/_source/conditions/instance/processInstance'
+  import {formatDate} from "../../../../../../../../module/filter/filter";
 
   export default {
     name: 'instance-list-index',
     data () {
+      let today = new Date();
+
       return {
         // loading
         isLoading: true,
@@ -79,9 +82,9 @@
           // State
           stateType: '',
           // Start Time
-          startDate: '',
+          startDate: formatDate(today.toString(), 'YYYY-MM-DD 00:00:00'),
           // End Time
-          endDate: '',
+          endDate: formatDate(new Date(today.setDate(today.getDate()+1)).toString(), 'YYYY-MM-DD 23:59:59'),
           // Exectuor Name
           executorName: ''
         },

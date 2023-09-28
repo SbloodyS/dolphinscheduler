@@ -55,7 +55,10 @@ const config = merge.smart(baseConfig, {
   plugins: [
     new ProgressPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new MiniCssExtractPlugin({ filename: 'css/[name].css' })
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+      ignoreOrder: true
+    })
   ],
   mode: 'development'
 })

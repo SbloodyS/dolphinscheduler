@@ -257,29 +257,9 @@ const tasksType = {
     desc: 'SHELL',
     color: '#646464'
   },
-  SUB_PROCESS: {
-    desc: 'SUB_PROCESS',
-    color: '#0097e0'
-  },
-  PROCEDURE: {
-    desc: 'PROCEDURE',
-    color: '#525CCD'
-  },
   SQL: {
     desc: 'SQL',
     color: '#7A98A1'
-  },
-  SPARK: {
-    desc: 'SPARK',
-    color: '#E46F13'
-  },
-  FLINK: {
-    desc: 'FLINK',
-    color: '#E46F13'
-  },
-  MR: {
-    desc: 'MapReduce',
-    color: '#A0A5CC'
   },
   PYTHON: {
     desc: 'PYTHON',
@@ -293,18 +273,6 @@ const tasksType = {
     desc: 'HTTP',
     color: '#E46F13'
   },
-  DATAX: {
-    desc: 'DataX',
-    color: '#1fc747'
-  },
-  PIGEON: {
-    desc: 'PIGEON',
-    color: '#1fc747'
-  },
-  SQOOP: {
-    desc: 'SQOOP',
-    color: '#E46F13'
-  },
   CONDITIONS: {
     desc: 'CONDITIONS',
     color: '#E46F13'
@@ -312,10 +280,6 @@ const tasksType = {
   SWITCH: {
     desc: 'SWITCH',
     color: '#E46F13'
-  },
-  WATERDROP: {
-    desc: 'WATERDROP',
-    color: '#646465'
   }
 }
 

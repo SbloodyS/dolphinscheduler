@@ -59,9 +59,12 @@
   import _ from 'lodash'
   import { stateType } from './common'
   import mConditions from '@/module/components/conditions/conditions'
+  import {formatDate} from "../../../../../../../../module/filter/filter";
   export default {
     name: 'process-instance-conditions',
     data () {
+      let today = new Date();
+
       return {
         // state(list)
         stateTypeList: stateType,
@@ -69,9 +72,9 @@
           // state
           stateType: '',
           // start date
-          startDate: '',
+          startDate: formatDate(today.toString(), 'YYYY-MM-DD 00:00:00'),
           // end date
-          endDate: '',
+          endDate: formatDate(new Date(today.setDate(today.getDate()+1)).toString(), 'YYYY-MM-DD 23:59:59'),
           // search value
           searchVal: '',
           // host

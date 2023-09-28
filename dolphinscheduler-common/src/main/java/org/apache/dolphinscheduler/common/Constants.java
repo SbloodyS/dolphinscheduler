@@ -80,6 +80,8 @@ public final class Constants {
     public static final String ALERT_PLUGIN_DIR = "alert.plugin.dir";
     public static final int ALERT_RPC_PORT = 50052;
 
+    public static final String ALERT_LISTEN_PORT = "alert.listen.port";
+
     /**
      * registry properties
      */
@@ -395,6 +397,8 @@ public final class Constants {
      * forbid running task
      */
     public static final String FLOWNODE_RUN_FLAG_FORBIDDEN = "FORBIDDEN";
+
+    public static final String LOGGER_RPC_PORT = "logger.listen.port";
 
     /**
      * normal running task

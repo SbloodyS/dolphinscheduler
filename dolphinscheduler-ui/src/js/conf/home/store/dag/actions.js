@@ -415,6 +415,18 @@ export default {
     })
   },
   /**
+   * Get a list of process definitions by project code for dependent
+   */
+  getProcessByProjectCodeForDependent ({ state }, code) {
+    return new Promise((resolve, reject) => {
+      io.get(`projects/${code}/process-definition/all-dependent`, res => {
+        resolve(res.data)
+      }).catch(res => {
+        reject(res)
+      })
+    })
+  },
+  /**
    * get datasource
    */
   getDatasourceList ({ state }, payload) {
