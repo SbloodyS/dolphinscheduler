@@ -280,6 +280,10 @@ const tasksType = {
   SWITCH: {
     desc: 'SWITCH',
     color: '#E46F13'
+  },
+  TRINO: {
+    desc: 'TRINO',
+    color: '#E46F13'
   }
 }
 

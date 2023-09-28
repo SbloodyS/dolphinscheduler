@@ -90,9 +90,9 @@
               <el-tooltip :content="scope.row.state === 'STOP' ? $t('Recovery Suspend') : $t('Stop')" placement="top" :enterable="false">
                 <span><el-button type="danger" size="mini" :disabled="scope.row.state !== 'RUNNING_EXECUTION' && scope.row.state !== 'STOP'"  :icon="scope.row.state === 'STOP' ? 'el-icon-video-play' : 'el-icon-close'" @click="_stop(scope.row,scope.$index)" circle></el-button></span>
               </el-tooltip>
-              <el-tooltip :content="scope.row.state === 'PAUSE' ? $t('Recovery Suspend') : $t('Pause')" placement="top" :enterable="false">
-                <span><el-button type="warning" size="mini" :icon="scope.row.state === 'PAUSE' ? 'el-icon-video-play' : 'el-icon-video-pause'" :disabled="scope.row.state !== 'RUNNING_EXECUTION' && scope.row.state !== 'PAUSE'" @click="_suspend(scope.row,scope.$index)" circle></el-button></span>
-              </el-tooltip>
+<!--              <el-tooltip :content="scope.row.state === 'PAUSE' ? $t('Recovery Suspend') : $t('Pause')" placement="top" :enterable="false">-->
+<!--                <span><el-button type="warning" size="mini" :icon="scope.row.state === 'PAUSE' ? 'el-icon-video-play' : 'el-icon-video-pause'" :disabled="scope.row.state !== 'RUNNING_EXECUTION' && scope.row.state !== 'PAUSE'" @click="_suspend(scope.row,scope.$index)" circle></el-button></span>-->
+<!--              </el-tooltip>-->
               <el-tooltip :content="$t('Delete')" placement="top" :enterable="false">
                 <el-popconfirm
                   :confirmButtonText="$t('Confirm')"
@@ -181,16 +181,16 @@
               </el-button>
 
               <!--Pause-->
-              <span>
-                <el-button
-                  v-show="scope.row.state !== 'PAUSE'"
-                  type="warning"
-                  size="mini"
-                  circle
-                  icon="el-icon-close"
-                  disabled="true">
-                </el-button>
-              </span>
+<!--              <span>-->
+<!--                <el-button-->
+<!--                  v-show="scope.row.state !== 'PAUSE'"-->
+<!--                  type="warning"-->
+<!--                  size="mini"-->
+<!--                  circle-->
+<!--                  icon="el-icon-close"-->
+<!--                  disabled="true">-->
+<!--                </el-button>-->
+<!--              </span>-->
 
               <!--Stop-->
               <span>

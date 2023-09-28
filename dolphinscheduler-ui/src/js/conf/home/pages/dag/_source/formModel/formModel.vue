@@ -255,6 +255,15 @@
             :backfill-item="backfillItem"
           >
           </m-shell>
+          <!-- trino node -->
+          <m-trino
+            v-if="nodeData.taskType === 'TRINO'"
+            @on-params="_onParams"
+            @on-cache-params="_onCacheParams"
+            ref="TRINO"
+            :backfill-item="backfillItem"
+          >
+          </m-trino>
           <!-- sub_process node -->
           <m-sub-process
             v-if="nodeData.taskType === 'SUB_PROCESS'"
@@ -420,6 +429,7 @@
   import i18n from '@/module/i18n'
   import mListBox from './tasks/_source/listBox'
   import mShell from './tasks/shell'
+  import mTrino from './tasks/trino'
   import mWaterdrop from './tasks/waterdrop'
   import mSpark from './tasks/spark'
   import mFlink from './tasks/flink'
@@ -961,6 +971,7 @@
       mListBox,
       mMr,
       mShell,
+      mTrino,
       mWaterdrop,
       mSubProcess,
       mProcedure,

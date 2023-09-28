@@ -111,6 +111,9 @@
           &.icos-switch {
             background-image: url("../images/task-icos/switch.png");
           }
+          &.icos-trino {
+            background-image: url("../images/task-icos/trino.png");
+          }
         }
 
         span {
@@ -170,6 +173,9 @@
             }
             &.icos-switch {
               background-image: url("../images/task-icos/switch_hover.png");
+            }
+            &.icos-trino {
+              background-image: url("../images/task-icos/trino_hover.png");
             }
           }
         }

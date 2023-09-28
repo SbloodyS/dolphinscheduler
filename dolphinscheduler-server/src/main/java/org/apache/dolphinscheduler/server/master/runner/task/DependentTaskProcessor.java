@@ -27,6 +27,7 @@ import org.apache.dolphinscheduler.common.model.DependentTaskModel;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
 import org.apache.dolphinscheduler.common.utils.DependentUtils;
 import org.apache.dolphinscheduler.common.utils.NetUtils;
+import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
 import org.apache.dolphinscheduler.server.utils.DependentExecute;
 import org.apache.dolphinscheduler.server.utils.LogUtils;
@@ -184,15 +185,21 @@ public class DependentTaskProcessor extends BaseTaskProcessor {
     private boolean allDependentTaskFinish() {
         boolean finish = true;
         for (DependentExecute dependentExecute : dependentTaskList) {
+            if (!dependentExecute.finish(dependentDate)) {
+                finish = false;
+            }
+
             for (Map.Entry<String, DependResult> entry : dependentExecute.getDependResultMap().entrySet()) {
+                logger.info("dependentTaskList: {}", entry.toString());
                 if (!dependResultMap.containsKey(entry.getKey())) {
                     dependResultMap.put(entry.getKey(), entry.getValue());
                     //save depend result to log
-                    logger.info("dependent item complete {} {},{}", DEPENDENT_SPLIT, entry.getKey(), entry.getValue());
+                    Long processDefinitionCode = Long.valueOf(entry.getKey().split("-")[0]);
+                    ProcessDefinition processDefinition = processService
+                            .findProcessDefinitionByCode(processDefinitionCode);
+                    logger.info("Dependent item complete, processDefinitionName: {}, rules: {}, result: {}",
+                            processDefinition.getName(), entry.getKey(), entry.getValue());
                 }
-            }
-            if (!dependentExecute.finish(dependentDate)) {
-                finish = false;
             }
         }
         return finish;
@@ -210,7 +217,7 @@ public class DependentTaskProcessor extends BaseTaskProcessor {
             dependResultList.add(dependResult);
         }
         result = DependentUtils.getDependResultForRelation(this.dependentParameters.getRelation(), dependResultList);
-        logger.info("dependent task completed, dependent result:{}", result);
+        logger.info("All dependent task completed, dependent result: {}", result);
         return result;
     }
 

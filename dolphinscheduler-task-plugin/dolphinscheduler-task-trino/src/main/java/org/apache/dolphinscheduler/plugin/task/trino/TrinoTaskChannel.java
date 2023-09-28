@@ -15,30 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.common.model;
+package org.apache.dolphinscheduler.plugin.task.trino;
 
-import lombok.Data;
-import org.apache.dolphinscheduler.common.enums.DependResult;
-import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
+import org.apache.dolphinscheduler.spi.task.TaskChannel;
+import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 
-/**
- * dependent item
- */
-@Data
-public class DependentItem {
-    private long projectCode;
-    private long definitionCode;
-    private long depTaskCode;
-    private String cycle;
-    private String dateValue;
-    private DependResult dependResult;
-    private ExecutionStatus status;
+public class TrinoTaskChannel implements TaskChannel {
 
-    public String getKey() {
-        return String.format("%d-%d-%s-%s",
-                getDefinitionCode(),
-                getDepTaskCode(),
-                getCycle(),
-                getDateValue());
+    @Override
+    public void cancelApplication(boolean status) {
+
     }
+
+    @Override
+    public TrinoTask createTask(TaskRequest taskRequest) {
+        return new TrinoTask(taskRequest);
+    }
+
 }

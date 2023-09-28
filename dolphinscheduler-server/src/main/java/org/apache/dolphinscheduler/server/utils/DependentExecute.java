@@ -112,14 +112,18 @@ public class DependentExecute {
         for (DateInterval dateInterval : dateIntervals) {
             ProcessInstance processInstance = findLastProcessInterval(dependentItem.getDefinitionCode(), dateInterval);
             if (processInstance == null) {
-                logger.info("Cannot find dependent processInstance, waiting for workflow to run, processDefiniteCode:{}, taskCode:{}",
-                        dependentItem.getDefinitionCode(), dependentItem.getDepTaskCode());
+                logger.info("Cannot find dependent processInstance, waiting for workflow to run," +
+                                "processDefinitionCode: {}," +
+                                "taskCode: {}",
+                        dependentItem.getDefinitionCode(),
+                        dependentItem.getDepTaskCode()
+                );
                 return DependResult.WAITING;
             }
             // need to check workflow for updates, so get all task and check the task state
             if (dependentItem.getDepTaskCode() == Constants.DEPENDENT_ALL_TASK_CODE) {
                 if (!processInstance.getState().typeIsFinished()) {
-                    logger.info("Wait for the dependent workflow to complete, processDefiniteCode:{}, taskCode:{}, processInstanceId:{}, processInstance state:{}",
+                    logger.info("Wait for the dependent workflow to complete, processDefiniteCode: {}, taskCode: {}, processInstanceId: {}, processInstance state: {}",
                         dependentItem.getDefinitionCode(), dependentItem.getDepTaskCode(), processInstance.getId(), processInstance.getState());
                     return DependResult.WAITING;
                 }

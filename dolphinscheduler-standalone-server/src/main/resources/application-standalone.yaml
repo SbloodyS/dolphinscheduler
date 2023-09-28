@@ -31,6 +31,11 @@ spring:
       - schedule
     caffeine:
       spec: maximumSize=100,expireAfterWrite=300s,recordStats
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.16.92.171:15506/ds_test?useUnicode=true&characterEncoding=UTF-8
+    username: ds
+    password: j54KN6q64riUdBzR
 
 server:
   port: 12345

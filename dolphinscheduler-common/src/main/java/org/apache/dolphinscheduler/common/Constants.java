@@ -790,7 +790,7 @@ public final class Constants {
     public static final String DEPENDENT_ALL = "ALL";
     public static final long DEPENDENT_ALL_TASK_CODE = 0;
 
-
+    public static final String DEPENDENT_RULES = "rules:";
 
     /**
      * preview schedule execute count
