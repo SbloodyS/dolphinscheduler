@@ -24,5 +24,7 @@ export JAVA_HOME=${JAVA_HOME:-/opt/soft/java}
 export HIVE_HOME=/opt/soft/hive
 export FLINK_HOME=/opt/soft/flink
 export DATAX_HOME=/opt/soft/datax
+export TRINO_HOME=/opt/soft/trino
+
 
 export PATH=$HADOOP_HOME/bin:$SPARK_HOME1/bin:$SPARK_HOME2/bin:$PYTHON_HOME/bin:$JAVA_HOME/bin:$HIVE_HOME/bin:$FLINK_HOME/bin:$DATAX_HOME/bin:$PATH

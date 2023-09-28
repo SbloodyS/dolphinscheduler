@@ -31,25 +31,6 @@
         </div>
       </div>
     </m-list-box>
-    <m-list-box>
-      <div slot="text">{{$t('Resources')}}</div>
-      <div slot="content">
-        <treeselect  v-model="resourceList" :multiple="true" maxHeight="200" :options="options" :normalizer="normalizer" :disabled="isDetails" :value-consists-of="valueConsistsOf" :placeholder="$t('Please select resources')">
-          <div slot="value-label" slot-scope="{ node }">{{ node.raw.fullName }} <span  class="copy-path" @mousedown="_copyPath($event, node)" >&nbsp; <em class="el-icon-copy-document" data-container="body"  data-toggle="tooltip" :title="$t('Copy path')" ></em> &nbsp;  </span></div>
-        </treeselect>
-      </div>
-    </m-list-box>
-    <m-list-box>
-      <div slot="text">{{$t('Custom Parameters')}}</div>
-      <div slot="content">
-        <m-local-params
-                ref="refLocalParams"
-                @on-local-params="_onLocalParams"
-                :udp-list="localParams"
-                :hide="true">
-        </m-local-params>
-      </div>
-    </m-list-box>
     <el-dialog
       :visible.sync="scriptBoxDialog"
       append-to-body="true"
@@ -163,25 +144,8 @@
           return false
         }
 
-        // localParams Subcomponent verification
-        if (!this.$refs.refLocalParams._verifProp()) {
-          return false
-        }
-        // noRes
-        if (this.noRes.length > 0) {
-          this.$message.warning(`${i18n.$t('Please delete all non-existent resources')}`)
-          return false
-        }
-        // Process resourcelist
-        let dataProcessing = _.map(this.resourceList, v => {
-          return {
-            id: v
-          }
-        })
         // storage
         this.$emit('on-params', {
-          resourceList: dataProcessing,
-          localParams: this.localParams,
           rawScript: editor.getValue()
         })
         return true

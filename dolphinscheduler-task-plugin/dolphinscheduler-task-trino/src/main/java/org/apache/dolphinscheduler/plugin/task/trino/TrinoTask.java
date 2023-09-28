@@ -17,13 +17,10 @@
 
 package org.apache.dolphinscheduler.plugin.task.trino;
 
-import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILURE;
-import static org.apache.dolphinscheduler.spi.task.TaskConstants.RWXR_XR_X;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.ShellCommandExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.TaskResponse;
-import org.apache.dolphinscheduler.plugin.task.util.OSUtils;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.Property;
 import org.apache.dolphinscheduler.spi.task.paramparser.ParamUtils;
@@ -31,18 +28,15 @@ import org.apache.dolphinscheduler.spi.task.paramparser.ParameterUtils;
 import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
 
-import org.apache.commons.collections4.MapUtils;
-
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILURE;
 
 /**
  * shell task
@@ -119,36 +113,14 @@ public class TrinoTask extends AbstractTaskExecutor {
      * @throws Exception exception
      */
     private String buildCommand() throws Exception {
-        // generate scripts
-        String fileName = String.format("%s/%s_node.%s",
-                taskExecutionContext.getExecutePath(),
-                taskExecutionContext.getTaskAppId(), OSUtils.isWindows() ? "bat" : "sh");
+        // generate the content of this trino script
+        String trinoScriptContent = buildTrinoScriptContent();
+        // generate the file path of this trino script
+        String trinoScriptFile = buildTrinoCommandFilePath();
 
-        Path path = new File(fileName).toPath();
+        createTrinoCommandFileIfNotExists(trinoScriptContent, trinoScriptFile);
 
-        if (Files.exists(path)) {
-            return fileName;
-        }
-
-        String script = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
-        script = parseScript(script);
-        trinoParameters.setRawScript(script);
-
-        logger.info("raw script : {}", trinoParameters.getRawScript());
-        logger.info("task execute path : {}", taskExecutionContext.getExecutePath());
-
-        Set<PosixFilePermission> perms = PosixFilePermissions.fromString(RWXR_XR_X);
-        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
-
-        if (OSUtils.isWindows()) {
-            Files.createFile(path);
-        } else {
-            Files.createFile(path, attr);
-        }
-
-        Files.write(path, trinoParameters.getRawScript().getBytes(), StandardOpenOption.APPEND);
-
-        return fileName;
+        return "${JAVA_HOME}/bin/java -jar ${TRINO_HOME} -f " + trinoScriptFile;
     }
 
     @Override
@@ -156,15 +128,55 @@ public class TrinoTask extends AbstractTaskExecutor {
         return trinoParameters;
     }
 
-    private String parseScript(String script) {
-        // combining local and global parameters
-        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, getParameters());
-        if (MapUtils.isEmpty(paramsMap)) {
+    /**
+     * build trino command file path
+     *
+     * @return trino command file path
+     */
+    protected String buildTrinoCommandFilePath() {
+        return String.format("%s/%s.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
+    }
+
+    /**
+     * build trino script content
+     *
+     * @return raw trino script
+     */
+    private String buildTrinoScriptContent() {
+        String rawPythonScript = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
+
+        // replace placeholder
+        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, trinoParameters);
+        if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isEmpty(paramsMap)) {
             paramsMap = new HashMap<>();
         }
-        if (MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
+        if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
             paramsMap.putAll(taskExecutionContext.getParamsMap());
         }
-        return ParameterUtils.convertParameterPlaceholders(script, ParamUtils.convert(paramsMap));
+        rawPythonScript = ParameterUtils.convertParameterPlaceholders(rawPythonScript, ParamUtils.convert(paramsMap));
+
+        logger.info("raw trino script : {}", trinoParameters.getRawScript());
+
+        return rawPythonScript;
+    }
+
+    /**
+     * create trino command file if not exists
+     *
+     * @param trinoScript exec trino script
+     * @param trinoScriptFile trino script file
+     * @throws IOException io exception
+     */
+    protected void createTrinoCommandFileIfNotExists(String trinoScript, String trinoScriptFile) throws IOException {
+        logger.info("tenantCode: {}, task dir: {}", taskExecutionContext.getTenantCode(), taskExecutionContext.getExecutePath());
+
+        if (!Files.exists(Paths.get(trinoScriptFile))) {
+            logger.info("generate trino script file:{}", trinoScriptFile);
+
+            // write data to file
+            FileUtils.writeStringToFile(new File(trinoScriptFile),
+                    trinoScript,
+                    StandardCharsets.UTF_8);
+        }
     }
 }

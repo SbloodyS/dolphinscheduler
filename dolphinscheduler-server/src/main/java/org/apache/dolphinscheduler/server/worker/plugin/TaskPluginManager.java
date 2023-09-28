@@ -91,7 +91,7 @@ public class TaskPluginManager {
         });
 
         // put WATERDROP task
-        taskChannelMap.put(TaskType.WATERDROP.getDesc(), taskChannelMap.get(TaskType.SHELL.getDesc()));
+//        taskChannelMap.put(TaskType.WATERDROP.getDesc(), taskChannelMap.get(TaskType.SHELL.getDesc()));
 
     }
 }

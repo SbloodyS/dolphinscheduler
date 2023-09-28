@@ -378,18 +378,6 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         String line;
         while ((line = br.readLine()) != null) {
             if (line.contains(DEPENDENT_RULES) && line.contains("Dependent item complete")) {
-//                String[] tmpStringArray = line.split(":\\|\\|");
-//                if (tmpStringArray.length != 2) {
-//                    continue;
-//                }
-//                String dependResultString = tmpStringArray[1];
-//                String[] dependStringArray = dependResultString.split(",");
-//                if (dependStringArray.length != 2) {
-//                    continue;
-//                }
-//                String key = dependStringArray[0].trim();
-//                DependResult dependResult = DependResult.valueOf(dependStringArray[1].trim());
-//                resultMap.put(key, dependResult);
                 String[] tmpStringArray = line.split(",");
                 if (tmpStringArray.length != 4) {
                     continue;
