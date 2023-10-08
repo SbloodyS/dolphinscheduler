@@ -264,6 +264,15 @@
             :backfill-item="backfillItem"
           >
           </m-trino>
+          <!-- datasync node -->
+          <m-data-sync
+            v-if="nodeData.taskType === 'DATASYNC'"
+            @on-params="_onParams"
+            @on-cache-params="_onCacheParams"
+            ref="DATASYNC"
+            :backfill-item="backfillItem"
+          >
+          </m-data-sync>
           <!-- sub_process node -->
           <m-sub-process
             v-if="nodeData.taskType === 'SUB_PROCESS'"
@@ -443,6 +452,7 @@
   import mSwitch from './tasks/switch.vue'
   import mSqoop from './tasks/sqoop'
   import mSubProcess from './tasks/sub_process'
+  import mDataSync from './tasks/datasync'
   // import mSelectInput from './_source/selectInput'
   import mTimeoutAlarm from './_source/timeoutAlarm'
   import mDependentTimeout from './_source/dependentTimeout'
@@ -993,7 +1003,8 @@
       mPriority,
       mWorkerGroups,
       mRelatedEnvironment,
-      mPreTasks
+      mPreTasks,
+      mDataSync
       // ReferenceFromTask
     }
   }

@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.ShellCommandExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.TaskResponse;
+import org.apache.dolphinscheduler.plugin.task.util.MapUtils;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.Property;
 import org.apache.dolphinscheduler.spi.task.paramparser.ParamUtils;
@@ -74,12 +75,12 @@ public class TrinoTask extends AbstractTaskExecutor {
 
     @Override
     public void init() {
-        logger.info("shell task params {}", taskExecutionContext.getTaskParams());
+        logger.info("trino task params {}", taskExecutionContext.getTaskParams());
 
         trinoParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), TrinoParameters.class);
 
         if (!trinoParameters.checkParameters()) {
-            throw new RuntimeException("shell task params is not valid");
+            throw new RuntimeException("trino task params is not valid");
         }
     }
 
@@ -94,7 +95,7 @@ public class TrinoTask extends AbstractTaskExecutor {
             setProcessId(commandExecuteResult.getProcessId());
             trinoParameters.dealOutParam(shellCommandExecutor.getVarPool());
         } catch (Exception e) {
-            logger.error("shell task error", e);
+            logger.error("trino task error", e);
             setExitStatusCode(EXIT_CODE_FAILURE);
             throw e;
         }
@@ -143,21 +144,21 @@ public class TrinoTask extends AbstractTaskExecutor {
      * @return raw trino script
      */
     private String buildTrinoScriptContent() {
-        String rawPythonScript = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
+        String rawTrinoScript = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
 
         // replace placeholder
         Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, trinoParameters);
-        if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isEmpty(paramsMap)) {
+        if (MapUtils.isEmpty(paramsMap)) {
             paramsMap = new HashMap<>();
         }
         if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
             paramsMap.putAll(taskExecutionContext.getParamsMap());
         }
-        rawPythonScript = ParameterUtils.convertParameterPlaceholders(rawPythonScript, ParamUtils.convert(paramsMap));
+        rawTrinoScript = ParameterUtils.convertParameterPlaceholders(rawTrinoScript, ParamUtils.convert(paramsMap));
 
         logger.info("raw trino script : {}", trinoParameters.getRawScript());
 
-        return rawPythonScript;
+        return rawTrinoScript;
     }
 
     /**

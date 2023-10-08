@@ -17,18 +17,31 @@
 <template>
   <div class="shell-model">
     <m-list-box>
-      <div slot="text">{{$t('Script')}}</div>
+      <div slot="text">{{$t('DataSyncSourceTable')}}</div>
       <div slot="content">
-        <div class="form-mirror">
-          <textarea
-            id="code-shell-mirror"
-            name="code-shell-mirror"
-            style="opacity: 0">
-          </textarea>
-          <a class="ans-modal-box-max">
-            <em class="el-icon-full-screen" @click="setEditorVal"></em>
-          </a>
-        </div>
+        <el-input
+          :autosize="{minRows:1}"
+          :disabled="isDetails"
+          type="textarea"
+          size="small"
+          v-model="sourceTable"
+          :placeholder="$t('Please Enter DataSync Source Table')"
+          autocomplete="off">
+        </el-input>
+      </div>
+    </m-list-box>
+    <m-list-box>
+      <div slot="text">{{$t('DataSyncTargetTable')}}</div>
+      <div slot="content">
+        <el-input
+          :autosize="{minRows:1}"
+          :disabled="isDetails"
+          type="textarea"
+          size="small"
+          v-model="targetTable"
+          :placeholder="$t('Please Enter DataSync Target Table')"
+          autocomplete="off">
+        </el-input>
       </div>
     </m-list-box>
     <el-dialog
@@ -46,19 +59,18 @@
   import mScriptBox from './_source/scriptBox'
   import disabledState from '@/module/mixin/disabledState'
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-  import codemirror from '@/conf/home/pages/resource/pages/file/pages/_source/codemirror'
   import Clipboard from 'clipboard'
   import { diGuiTree, searchTree } from './_source/resourceTree'
 
   let editor
 
   export default {
-    name: 'trino',
+    name: 'datasync',
     data () {
       return {
         valueConsistsOf: 'LEAF_PRIORITY',
-        // script
-        rawScript: '',
+        sourceTable: '',
+        targetTable: '',
         // Custom parameter
         localParams: [],
         // resource(list)
@@ -136,41 +148,23 @@
        * verification
        */
       _verification () {
-        // rawScript verification
-        if (!editor.getValue()) {
-          this.$message.warning(`${i18n.$t('Please enter script(required)')}`)
+        // input params verification
+        if (!this.sourceTable) {
+          this.$message.warning(`${i18n.$t('Please Enter DataSync Source Table')}`)
+          return false
+        }
+
+        if (!this.targetTable) {
+          this.$message.warning(`${i18n.$t('Please Enter DataSync Target Table')}`)
           return false
         }
 
         // storage
         this.$emit('on-params', {
-          rawScript: editor.getValue()
+          sourceTable: this.sourceTable,
+          targetTable: this.targetTable
         })
         return true
-      },
-      /**
-       * Processing code highlighting
-       */
-      _handlerEditor () {
-        // editor
-        editor = codemirror('code-shell-mirror', {
-          mode: 'sql',
-          readOnly: this.isDetails
-        })
-
-        this.keypress = () => {
-          if (!editor.getOption('readOnly')) {
-            editor.showHint({
-              completeSingle: false
-            })
-          }
-        }
-
-        // Monitor keyboard
-        editor.on('keypress', this.keypress)
-        editor.setValue(this.rawScript)
-
-        return editor
       },
       dataProcess (backResource) {
         let isResourceId = []
@@ -271,7 +265,8 @@
 
       // Non-null objects represent backfill
       if (!_.isEmpty(o)) {
-        this.rawScript = o.params.rawScript || ''
+        this.sourceTable = o.params.sourceTable || ''
+        this.targetTable = o.params.targetTable || ''
 
         // backfill resourceList
         let backResource = o.params.resourceList || []
@@ -305,15 +300,6 @@
       }
     },
     mounted () {
-      setTimeout(() => {
-        this._handlerEditor()
-      }, 200)
-    },
-    destroyed () {
-      if (editor) {
-        editor.toTextArea() // Uninstall
-        editor.off($('.code-shell-mirror'), 'keypress', this.keypress)
-      }
     },
     components: { mListBox, mScriptBox }
   }

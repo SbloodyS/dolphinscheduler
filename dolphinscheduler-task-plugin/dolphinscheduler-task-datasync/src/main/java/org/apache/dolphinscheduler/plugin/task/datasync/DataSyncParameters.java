@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.trino;
+package org.apache.dolphinscheduler.plugin.task.datasync;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,31 +24,24 @@ import org.apache.dolphinscheduler.spi.task.ResourceInfo;
 
 import java.util.List;
 
+
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TrinoParameters extends AbstractParameters {
+public class DataSyncParameters extends AbstractParameters {
 
-    /**
-     * shell script
-     */
-    private String rawScript;
+    private String sourceTable;
 
-    /**
-     * resource list
-     */
-    private List<ResourceInfo> resourceList;
-
-    public void setResourceList(List<ResourceInfo> resourceList) {
-        this.resourceList = resourceList;
-    }
+    private String targetTable;
 
     @Override
     public boolean checkParameters() {
-        return rawScript != null && !rawScript.isEmpty();
+        return sourceTable != null && !sourceTable.isEmpty()
+                && targetTable != null && !targetTable.isEmpty();
     }
 
     @Override
     public List<ResourceInfo> getResourceFilesList() {
-        return resourceList;
+        return null;
     }
+
 }

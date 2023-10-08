@@ -772,5 +772,9 @@ export default {
   scheduleEndTime: '定时结束时间',
   crontabExpression: 'Crontab',
   workflowPublishStatus: '工作流上线状态',
-  schedulePublishStatus: '定时状态'
+  schedulePublishStatus: '定时状态',
+  DataSyncSourceTable: '来源表名称',
+  DataSyncTargetTable: '目的表名称',
+  'Please Enter DataSync Source Table': '请输入来源表名称(必填项)',
+  'Please Enter DataSync Target Table': '请输入目标表名称(必填项)'
 }

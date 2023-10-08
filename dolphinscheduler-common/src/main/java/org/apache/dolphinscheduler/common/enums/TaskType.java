@@ -39,6 +39,7 @@ public enum TaskType {
      * 13 WATERDROP
      * 15 PIGEON
      * 16 Trino
+     * 17 DataSync
      */
     SHELL(0, "SHELL"),
     SQL(1, "SQL"),
@@ -56,7 +57,8 @@ public enum TaskType {
     WATERDROP(13, "WATERDROP"),
     SWITCH(14, "SWITCH"),
     PIGEON(15, "PIGEON"),
-    TRINO(16, "TRINO");
+    TRINO(16, "TRINO"),
+    DATASYNC(17, "DATASYNC");
 
     TaskType(int code, String desc) {
         this.code = code;

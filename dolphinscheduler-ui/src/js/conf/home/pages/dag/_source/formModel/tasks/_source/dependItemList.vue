@@ -55,6 +55,7 @@
   import _ from 'lodash'
   import { cycleList, dateValueList } from './commcon'
   import disabledState from '@/module/mixin/disabledState'
+  import clipboard from 'clipboard'
 
   // Depend on all tasks
   const DEP_ALL_TASK = {
@@ -211,6 +212,14 @@
           // set dependItemList item data
           this.$set(this.dependItemList, itemIndex, this._rtOldParams(value, item.definitionList, depTasksList, item))
         })
+        for (let key in this.projectDefinitionsCache) {
+          this.projectDefinitionsCache[key].forEach(item => {
+            if (item.value === value) {
+              clipboard.copy(item.label)
+              return item.label
+            }
+          })
+        }
       },
       _onChangeCycle (value, itemIndex) {
         let list = _.cloneDeep(dateValueList[value])

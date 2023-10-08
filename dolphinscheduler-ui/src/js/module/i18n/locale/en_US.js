@@ -772,5 +772,9 @@ export default {
   scheduleEndTime: 'Schedule End Time',
   crontabExpression: 'Crontab',
   workflowPublishStatus: 'Workflow Publish Status',
-  schedulePublishStatus: 'Schedule Publish Status'
+  schedulePublishStatus: 'Schedule Publish Status',
+  DataSyncSourceTable: 'source table name',
+  DataSyncTargetTable: 'target table name',
+  'Please Enter DataSync Source Table': 'Please Enter DataSync Source Table(required)',
+  'Please Enter DataSync Target Table': 'Please Enter DataSync Target Table(required)'
 }

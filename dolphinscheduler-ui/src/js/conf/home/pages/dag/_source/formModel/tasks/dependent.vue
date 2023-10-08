@@ -51,7 +51,7 @@
               :dependTaskList='dependTaskList'
               :projectDefinitionsCache='projectDefinitionsCache'
               v-model="el.dependItemList"
-              @on-delete-all="_onDeleteAll"
+              @on-delete-all="_onDeleteAll  "
               @getDependTaskList="getDependTaskList"
               @addProjectDefinitionsCache="addProjectDefinitionsCache"
               :index="$index">

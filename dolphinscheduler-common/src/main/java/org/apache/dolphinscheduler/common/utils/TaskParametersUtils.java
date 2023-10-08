@@ -19,6 +19,7 @@ package org.apache.dolphinscheduler.common.utils;
 
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.conditions.ConditionsParameters;
+import org.apache.dolphinscheduler.common.task.datasync.DataSyncParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
 import org.apache.dolphinscheduler.common.task.flink.FlinkParameters;
@@ -91,6 +92,8 @@ public class TaskParametersUtils {
                 return JSONUtils.parseObject(parameter, PigeonCommonParameters.class);
             case "TRINO":
                 return JSONUtils.parseObject(parameter, TrinoParameters.class);
+            case "DATASYNC":
+                return JSONUtils.parseObject(parameter, DataSyncParameters.class);
             default:
                 logger.error("not support task type: {}", taskType);
                 return null;

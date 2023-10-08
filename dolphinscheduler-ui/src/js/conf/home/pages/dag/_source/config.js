@@ -284,6 +284,10 @@ const tasksType = {
   TRINO: {
     desc: 'TRINO',
     color: '#E46F13'
+  },
+  DATASYNC: {
+    desc: 'DATASYNC',
+    color: '#E46F13'
   }
 }
 

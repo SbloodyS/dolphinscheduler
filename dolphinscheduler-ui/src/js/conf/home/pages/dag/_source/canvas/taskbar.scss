@@ -114,6 +114,9 @@
           &.icos-trino {
             background-image: url("../images/task-icos/trino.png");
           }
+          &.icos-datasync {
+            background-image: url("../images/task-icos/datasync.png");
+          }
         }
 
         span {
@@ -176,6 +179,9 @@
             }
             &.icos-trino {
               background-image: url("../images/task-icos/trino_hover.png");
+            }
+            &.icos-datasync {
+              background-image: url("../images/task-icos/datasync_hover.png");
             }
           }
         }
