@@ -183,10 +183,10 @@
       return {
         store,
         processDefinitionId: 0,
-        failureStrategy: 'CONTINUE',
+        failureStrategy: 'END',
         warningTypeList: warningTypeList,
         availableTimezoneIDList: moment.tz.names(),
-        warningType: 'NONE',
+        warningType: 'FAILURE',
         notifyGroupList: [],
         warningGroupId: '',
         spinnerLoading: false,
@@ -195,7 +195,7 @@
         timezoneId: moment.tz.guess(),
         cronPopover: false,
         i18n: i18n.globalScope.LOCALE,
-        processInstancePriority: 'MEDIUM',
+        processInstancePriority: 'LOWEST',
         workerGroup: '',
         environmentCode: '',
         previewTimes: []

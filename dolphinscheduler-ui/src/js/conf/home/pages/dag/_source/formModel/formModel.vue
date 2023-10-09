@@ -502,7 +502,7 @@
         // The second echo problem caused by the node data is specifically which node hook caused the unfinished special treatment
         isContentBox: false,
         // Number of failed retries
-        maxRetryTimes: '0',
+        maxRetryTimes: '3',
         // Failure retry interval
         retryInterval: '1',
         // Delay execution time
@@ -512,7 +512,7 @@
         // (For Dependent nodes) Wait start timeout alarm
         waitStartTimeout: {},
         // Task priority
-        taskInstancePriority: 'MEDIUM',
+        taskInstancePriority: 'LOWEST',
         // worker group id
         workerGroup: 'default',
         // selected environment

@@ -214,10 +214,10 @@
       return {
         store,
         processDefinitionId: 0,
-        failureStrategy: 'CONTINUE',
+        failureStrategy: 'END',
         warningTypeList: warningTypeList,
         workflowName: '',
-        warningType: '',
+        warningType: 'FAILURE',
         notifyGroupList: [],
         warningGroupId: '',
         scheduleTime: '',
@@ -227,7 +227,7 @@
         parallismNumber: null,
         taskDependType: 'TASK_POST',
         runMode: 'RUN_MODE_SERIAL',
-        processInstancePriority: 'MEDIUM',
+        processInstancePriority: 'LOWEST',
         workerGroup: 'default',
         environmentCode: '',
         // Global custom parameters
@@ -359,7 +359,6 @@
       }
     },
     created () {
-      this.warningType = this.warningTypeList[0].id
       this.workflowName = this.startData.name
       this._getGlobalParams()
       let stateWorkerGroupsList = this.store.state.security.workerGroupsListAll || []
