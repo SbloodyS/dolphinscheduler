@@ -113,15 +113,15 @@
             <outputDirectory>conf</outputDirectory>
         </fileSet>
 
-        <fileSet>
-            <directory>${basedir}/../dolphinscheduler-python/src/main/resources</directory>
-            <includes>
-                <include>**/*.yaml</include>
-                <include>**/*.xml</include>
-                <include>**/*.properties</include>
-            </includes>
-            <outputDirectory>conf</outputDirectory>
-        </fileSet>
+<!--        <fileSet>-->
+<!--            <directory>${basedir}/../dolphinscheduler-python/src/main/resources</directory>-->
+<!--            <includes>-->
+<!--                <include>**/*.yaml</include>-->
+<!--                <include>**/*.xml</include>-->
+<!--                <include>**/*.properties</include>-->
+<!--            </includes>-->
+<!--            <outputDirectory>conf</outputDirectory>-->
+<!--        </fileSet>-->
 
         <fileSet>
             <directory>${basedir}/../dolphinscheduler-dist/target/dolphinscheduler-dist-${project.version}</directory>
