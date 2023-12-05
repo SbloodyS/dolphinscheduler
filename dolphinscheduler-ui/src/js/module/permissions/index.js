@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import _ from 'lodash'
 import Vue from 'vue'
 import store from '@/conf/home/store'
 
@@ -28,19 +27,19 @@ Permissions.prototype = {
   request () {
     return new Promise((resolve, reject) => {
       store.dispatch('user/getUserInfo').then(res => {
-        if (res.userType !== 'GENERAL_USER') {
+        if (res.userType !== 'ADMIN_USER') {
           this.isAuth = false
         }
-        this.ps(res)
+        this.ps(this.isAuth)
         resolve()
       })
     })
   },
   // Command authority status
-  ps (res) {
+  ps (isAuth) {
     Vue.directive('ps', {
       bind: function (el, binding, vnode) {
-        if (!Vue.prototype.$_ps(binding.value)) {
+        if (!isAuth) {
           if ($(el).prop('tagName') === 'BUTTON') {
             $(el).attr('disabled', true)
           } else {
@@ -50,10 +49,6 @@ Permissions.prototype = {
         }
       }
     })
-    // Permission check method
-    Vue.prototype.$_ps = function (valueArr) {
-      return _.indexOf(valueArr, res.userType) !== -1
-    }
   },
   // External access permission status
   getAuth () {

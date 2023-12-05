@@ -14,6 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Supported values: ``postgresql``, ``mysql`, `h2``.
+DATABASE_TYPE=${DATABASE_TYPE:-"h2"}
+
+# Spring datasource url, following <HOST>:<PORT>/<database>?<parameter> format, If you using mysql, you could use jdbc
+# string jdbc:mysql://127.0.0.1:3306/dolphinscheduler?useUnicode=true&characterEncoding=UTF-8 as example
+SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-"jdbc:h2:mem:dolphinscheduler;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=true"}
+
+# Spring datasource username
+SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-"sa"}
+
+# Spring datasource password
+SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-""}
 
 export HADOOP_HOME=/opt/soft/hadoop
 export HADOOP_CONF_DIR=/opt/soft/hadoop/etc/hadoop

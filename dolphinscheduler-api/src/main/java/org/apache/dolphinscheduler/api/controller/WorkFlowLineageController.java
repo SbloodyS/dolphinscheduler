@@ -99,7 +99,7 @@ public class WorkFlowLineageController extends BaseController {
     public Result<Map<String, Object>> queryWorkFlowLineage(@ApiIgnore @RequestAttribute(value = SESSION_USER) User loginUser,
                                                                  @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode) {
         try {
-            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineage(projectCode);
+            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineage(projectCode, loginUser);
             return returnDataList(result);
         } catch (Exception e) {
             logger.error(QUERY_WORKFLOW_LINEAGE_ERROR.getMsg(), e);

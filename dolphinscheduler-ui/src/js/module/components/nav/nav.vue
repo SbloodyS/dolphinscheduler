@@ -35,6 +35,13 @@
         </div>
       </div>
       <div class="clearfix list">
+        <div class="nav-links" v-ps="">
+          <router-link :to="{ path: '/all-project'}" tag="a" active-class="active">
+            <span><em class="ansiconfont el-icon-tickets"></em>{{$t('All Project')}}</span><strong></strong>
+          </router-link>
+        </div>
+      </div>
+      <div class="clearfix list">
         <div class="nav-links">
           <router-link :to="{ path: '/resource'}" tag="a" active-class="active">
             <span><em class="ansiconfont el-icon-folder"></em>{{$t('Resources manage')}}</span><strong></strong>
@@ -42,7 +49,7 @@
         </div>
       </div>
       <div class="clearfix list">
-        <div class="nav-links">
+        <div class="nav-links" v-ps="">
           <router-link :to="{ path: '/datasource'}" tag="a" active-class="active">
             <span><em class="ansfont ri-database-2-line"></em>{{$t('Datasource manage')}}</span><strong></strong>
           </router-link>
@@ -56,8 +63,8 @@
         </div>
       </div>
       <div class="clearfix list" >
-        <div class="nav-links">
-          <router-link :to="{ path: '/security'}" tag="a" active-class="active" v-ps="['ADMIN_USER']">
+        <div class="nav-links" v-ps="">
+          <router-link :to="{ path: '/security'}" tag="a" active-class="active">
             <span><em class="ansfont ri-shield-check-line"></em>{{$t('Security')}}</span><strong></strong>
           </router-link>
         </div>
@@ -123,11 +130,11 @@
               <em class="el-icon-folder"></em>
               <span>{{$t('Resources manage')}}</span>
             </router-link>
-            <router-link :to="{ path: '/datasource'}" tag="li" active-class="active">
+            <router-link :to="{ path: '/datasource'}" tag="li" active-class="active" v-ps="">
               <em class="ansfont ri-database-2-line"></em>
               <span>{{$t('Datasource manage')}}</span>
             </router-link>
-            <router-link :to="{ path: '/security'}" tag="li" active-class="active" v-ps="['ADMIN_USER']">
+            <router-link :to="{ path: '/security'}" tag="li" active-class="active" v-ps="">
               <em class="ansfont ri-shield-check-line"></em>
               <span>{{$t('Security')}}</span>
             </router-link>

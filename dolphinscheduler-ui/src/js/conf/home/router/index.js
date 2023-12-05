@@ -229,6 +229,162 @@ const router = new Router({
       ]
     },
     {
+      path: '/all-project',
+      name: 'all-project',
+      component: resolve => require(['../pages/all-project/index'], resolve),
+      meta: {
+        title: `${i18n.$t('Project')}`
+      },
+      beforeEnter: (to, from, next) => {
+        store.commit('dag/setProjectId', 0)
+        store.commit('dag/setProjectCode', 0)
+        store.commit('dag/setProjectName', '所有项目')
+        localStore.setItem('projectId', 0)
+        localStore.setItem('projectCode', 0)
+        localStore.setItem('projectName', '所有项目')
+        next()
+      },
+      redirect: {
+        name: 'all-project-index'
+      },
+      children: [
+        // {
+        //   path: '/all-project/list',
+        //   name: 'all-project-list',
+        //   component: resolve => require(['../pages/all-project/pages/list/index'], resolve),
+        //   meta: {
+        //     title: `${i18n.$t('Project')}`,
+        //     refreshInSwitchedTab: config.refreshInSwitchedTab
+        //   }
+        // },
+        {
+          path: '/all-project/0/index',
+          name: 'all-project-index',
+          component: resolve => require(['../pages/all-project/pages/index/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Project Home')}`,
+            refreshInSwitchedTab: config.refreshInSwitchedTab
+          }
+        },
+        {
+          path: '/all-project/0/kinship',
+          name: 'all-project-kinship-index',
+          component: resolve => require(['../pages/all-project/pages/kinship/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Kinship')}`,
+            refreshInSwitchedTab: config.refreshInSwitchedTab
+          }
+        },
+        {
+          path: '/all-project/0/definition',
+          name: 'process-definition-index',
+          component: resolve => require(['../pages/all-project/pages/definition/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Process definition')}`,
+            refreshInSwitchedTab: config.refreshInSwitchedTab
+          },
+          redirect: {
+            name: 'all-project-definition-list'
+          },
+          children: [
+            {
+              path: '/all-project/0/definition/list',
+              name: 'all-project-definition-list',
+              component: resolve => require(['../pages/all-project/pages/definition/pages/list/index'], resolve),
+              meta: {
+                title: `${i18n.$t('Process definition')}`,
+                refreshInSwitchedTab: config.refreshInSwitchedTab
+              }
+            },
+            {
+              path: '/all-project/0/definition/list/:code',
+              name: 'all-project-definition-details',
+              component: resolve => require(['../pages/all-project/pages/definition/pages/details/index'], resolve),
+              meta: {
+                title: `${i18n.$t('Process definition details')}`,
+                refreshInSwitchedTab: config.refreshInSwitchedTab
+              }
+            },
+            {
+              path: '/all-project/0/definition/create',
+              name: 'definition-create',
+              component: resolve => require(['../pages/all-project/pages/definition/pages/create/index'], resolve),
+              meta: {
+                title: `${i18n.$t('Create process definition')}`
+              }
+            },
+            {
+              path: '/all-project/0/definition/tree/:code',
+              name: 'definition-tree-view-index',
+              component: resolve => require(['../pages/all-project/pages/definition/pages/tree/index'], resolve),
+              meta: {
+                title: `${i18n.$t('TreeView')}`,
+                refreshInSwitchedTab: config.refreshInSwitchedTab
+              }
+            },
+            {
+              path: '/all-project/0/definition/list/timing/:code',
+              name: 'definition-timing-details',
+              component: resolve => require(['../pages/all-project/pages/definition/timing/index'], resolve),
+              meta: {
+                title: `${i18n.$t('Scheduled task list')}`,
+                refreshInSwitchedTab: config.refreshInSwitchedTab
+              }
+            }
+          ]
+        },
+        {
+          path: '/all-project/0/instance',
+          name: 'all-project-instance-index',
+          component: resolve => require(['../pages/all-project/pages/instance/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Process Instance')}`
+          },
+          redirect: {
+            name: 'all-project-instance-list'
+          },
+          children: [
+            {
+              path: '/all-project/0/instance/list',
+              name: 'all-project-instance-list',
+              component: resolve => require(['../pages/all-project/pages/instance/pages/list/index'], resolve),
+              meta: {
+                title: `${i18n.$t('Process Instance')}`,
+                refreshInSwitchedTab: config.refreshInSwitchedTab
+              }
+            }
+          ]
+        },
+        {
+          path: '/all-project/0/task-instance',
+          name: 'all-project-task-instance-index',
+          component: resolve => require(['../pages/all-project/pages/taskInstance/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Task Instance')}`,
+            refreshInSwitchedTab: config.refreshInSwitchedTab
+          }
+        }
+        // {
+        //   path: '/all-project/0/task-record',
+        //   name: 'task-record',
+        //   component: resolve => require(['../pages/all-project/pages/taskRecord'], resolve),
+        //   meta: {
+        //     title: `${i18n.$t('Task record')}`,
+        //     refreshInSwitchedTab: config.refreshInSwitchedTab
+        //   }
+        // },
+        // {
+        //   path: '/all-project/0/history-task-record',
+        //   name: 'history-task-record',
+        //   component: resolve => require(['../pages/all-project/pages/historyTaskRecord'], resolve),
+        //   meta: {
+        //     title: `${i18n.$t('History task record')}`,
+        //     refreshInSwitchedTab: config.refreshInSwitchedTab
+        //   }
+        // }
+      ]
+    },
+    {
       path: '/resource',
       name: 'resource',
       component: resolve => require(['../pages/resource/index'], resolve),

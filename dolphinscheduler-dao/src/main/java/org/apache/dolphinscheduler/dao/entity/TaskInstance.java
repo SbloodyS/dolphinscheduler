@@ -20,6 +20,7 @@ package org.apache.dolphinscheduler.dao.entity;
 import static org.apache.dolphinscheduler.common.Constants.SEC_2_MINUTES_TIME_UNIT;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.Data;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.Flag;
@@ -43,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * task instance
  */
+@Data
 @TableName("t_ds_task_instance")
 public class TaskInstance implements Serializable {
 
@@ -157,6 +159,12 @@ public class TaskInstance implements Serializable {
      */
     @TableField(exist = false)
     private TaskDefinition taskDefine;
+
+    @TableField(exist = false)
+    private long projectCode;
+
+    @TableField(exist = false)
+    private String projectName;
 
     /**
      * process id
@@ -275,186 +283,6 @@ public class TaskInstance implements Serializable {
         this.executePath = executePath;
     }
 
-    public String getVarPool() {
-        return varPool;
-    }
-
-    public void setVarPool(String varPool) {
-        this.varPool = varPool;
-    }
-
-    public ProcessInstance getProcessInstance() {
-        return processInstance;
-    }
-
-    public void setProcessInstance(ProcessInstance processInstance) {
-        this.processInstance = processInstance;
-    }
-
-    public ProcessDefinition getProcessDefine() {
-        return processDefine;
-    }
-
-    public void setProcessDefine(ProcessDefinition processDefine) {
-        this.processDefine = processDefine;
-    }
-
-    public TaskDefinition getTaskDefine() {
-        return taskDefine;
-    }
-
-    public void setTaskDefine(TaskDefinition taskDefine) {
-        this.taskDefine = taskDefine;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
-    }
-
-    public int getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(int processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public ExecutionStatus getState() {
-        return state;
-    }
-
-    public void setState(ExecutionStatus state) {
-        this.state = state;
-    }
-
-    public Date getFirstSubmitTime() {
-        return firstSubmitTime;
-    }
-
-    public void setFirstSubmitTime(Date firstSubmitTime) {
-        this.firstSubmitTime = firstSubmitTime;
-    }
-
-    public Date getSubmitTime() {
-        return submitTime;
-    }
-
-    public void setSubmitTime(Date submitTime) {
-        this.submitTime = submitTime;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getExecutePath() {
-        return executePath;
-    }
-
-    public void setExecutePath(String executePath) {
-        this.executePath = executePath;
-    }
-
-    public String getLogPath() {
-        return logPath;
-    }
-
-    public void setLogPath(String logPath) {
-        this.logPath = logPath;
-    }
-
-    public Flag getAlertFlag() {
-        return alertFlag;
-    }
-
-    public void setAlertFlag(Flag alertFlag) {
-        this.alertFlag = alertFlag;
-    }
-
-    public int getRetryTimes() {
-        return retryTimes;
-    }
-
-    public void setRetryTimes(int retryTimes) {
-        this.retryTimes = retryTimes;
-    }
-
-    public Boolean isTaskSuccess() {
-        return this.state == ExecutionStatus.SUCCESS;
-    }
-
-    public int getPid() {
-        return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
-    }
-
-    public String getAppLink() {
-        return appLink;
-    }
-
-    public void setAppLink(String appLink) {
-        this.appLink = appLink;
-    }
-
-    public Long getEnvironmentCode() {
-        return this.environmentCode;
-    }
-
-    public void setEnvironmentCode(Long environmentCode) {
-        this.environmentCode = environmentCode;
-    }
-
-    public String getEnvironmentConfig() {
-        return this.environmentConfig;
-    }
-
-    public void setEnvironmentConfig(String environmentConfig) {
-        this.environmentConfig = environmentConfig;
-    }
-
     public DependentParameters getDependency() {
         if (this.dependency == null) {
             Map<String, Object> taskParamsMap = JSONUtils.parseObject(this.getTaskParams(), new TypeReference<Map<String, Object>>() {});
@@ -479,70 +307,6 @@ public class TaskInstance implements Serializable {
         Map<String, Object> taskParamsMap = JSONUtils.parseObject(this.getTaskParams(), new TypeReference<Map<String, Object>>() {});
         taskParamsMap.put(Constants.SWITCH_RESULT,JSONUtils.toJsonString(switchDependency));
         this.setTaskParams(JSONUtils.toJsonString(taskParamsMap));
-    }
-
-    public Flag getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Flag flag) {
-        this.flag = flag;
-    }
-
-    public String getProcessInstanceName() {
-        return processInstanceName;
-    }
-
-    public void setProcessInstanceName(String processInstanceName) {
-        this.processInstanceName = processInstanceName;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
-    public int getMaxRetryTimes() {
-        return maxRetryTimes;
-    }
-
-    public void setMaxRetryTimes(int maxRetryTimes) {
-        this.maxRetryTimes = maxRetryTimes;
-    }
-
-    public int getRetryInterval() {
-        return retryInterval;
-    }
-
-    public void setRetryInterval(int retryInterval) {
-        this.retryInterval = retryInterval;
-    }
-
-    public int getExecutorId() {
-        return executorId;
-    }
-
-    public void setExecutorId(int executorId) {
-        this.executorId = executorId;
-    }
-
-    public String getExecutorName() {
-        return executorName;
-    }
-
-    public void setExecutorName(String executorName) {
-        this.executorName = executorName;
-    }
-
-    public int getDryRun() {
-        return dryRun;
-    }
-
-    public void setDryRun(int dryRun) {
-        this.dryRun = dryRun;
     }
 
     public boolean isTaskComplete() {
@@ -610,46 +374,6 @@ public class TaskInstance implements Serializable {
         long failedTimeInterval = DateUtils.differSec(now, getEndTime());
         // task retry does not over time, return false
         return getRetryInterval() * SEC_2_MINUTES_TIME_UNIT < failedTimeInterval;
-    }
-
-    public Priority getTaskInstancePriority() {
-        return taskInstancePriority;
-    }
-
-    public void setTaskInstancePriority(Priority taskInstancePriority) {
-        this.taskInstancePriority = taskInstancePriority;
-    }
-
-    public Priority getProcessInstancePriority() {
-        return processInstancePriority;
-    }
-
-    public void setProcessInstancePriority(Priority processInstancePriority) {
-        this.processInstancePriority = processInstancePriority;
-    }
-
-    public String getWorkerGroup() {
-        return workerGroup;
-    }
-
-    public void setWorkerGroup(String workerGroup) {
-        this.workerGroup = workerGroup;
-    }
-
-    public String getDependentResult() {
-        return dependentResult;
-    }
-
-    public void setDependentResult(String dependentResult) {
-        this.dependentResult = dependentResult;
-    }
-
-    public int getDelayTime() {
-        return delayTime;
-    }
-
-    public void setDelayTime(int delayTime) {
-        this.delayTime = delayTime;
     }
 
     @Override

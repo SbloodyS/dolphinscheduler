@@ -44,6 +44,7 @@ import org.apache.dolphinscheduler.common.enums.DependResult;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.TaskType;
+import org.apache.dolphinscheduler.common.enums.UserType;
 import org.apache.dolphinscheduler.common.graph.DAG;
 import org.apache.dolphinscheduler.common.model.TaskNode;
 import org.apache.dolphinscheduler.common.model.TaskNodeRelation;
@@ -247,13 +248,19 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
                                            ExecutionStatus stateType, String host, Integer pageNo, Integer pageSize) {
 
         Result result = new Result();
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        Status resultEnum = (Status) checkResult.get(Constants.STATUS);
-        if (resultEnum != Status.SUCCESS) {
-            putMsg(result, resultEnum);
-            return result;
+        Status resultEnum;
+        long queryProjectCode = projectCode;
+
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            resultEnum = (Status) checkResult.get(Constants.STATUS);
+            if (resultEnum != Status.SUCCESS) {
+                putMsg(result, resultEnum);
+                return result;
+            }
+            queryProjectCode = project.getCode();
         }
 
         int[] statusArray = null;
@@ -276,7 +283,7 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         int executorId = usersService.getUserIdByName(executorName);
 
         IPage<ProcessInstance> processInstanceList = processInstanceMapper.queryProcessInstanceListPaging(page,
-                project.getCode(), processDefineCode, searchVal, executorId, statusArray, host, start, end);
+                queryProjectCode, processDefineCode, searchVal, executorId, statusArray, host, start, end);
 
         List<ProcessInstance> processInstances = processInstanceList.getRecords();
         List<Integer> userIds = Collections.emptyList();

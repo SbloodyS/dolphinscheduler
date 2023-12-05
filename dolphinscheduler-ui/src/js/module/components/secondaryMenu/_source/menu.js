@@ -81,6 +81,55 @@ const menu = {
     }
   ],
 
+  allProject: [
+    {
+      name: `${i18n.$t('Project Home')}`,
+      id: 0,
+      path: 'all-project-index',
+      isOpen: true,
+      enabled: true,
+      icon: 'ri-home-4-line',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Kinship')}`,
+      id: 1,
+      path: 'all-project-kinship-index',
+      isOpen: true,
+      enabled: true,
+      icon: 'ri-node-tree',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Process')}`,
+      id: 2,
+      path: '',
+      isOpen: true,
+      enabled: true,
+      icon: 'el-icon-s-tools',
+      children: [
+        {
+          name: `${i18n.$t('Process definition')}`,
+          path: 'process-definition-index',
+          id: 0,
+          enabled: true
+        },
+        {
+          name: `${i18n.$t('Process Instance')}`,
+          path: 'all-project-instance-index',
+          id: 1,
+          enabled: true
+        },
+        {
+          name: `${i18n.$t('Task Instance')}`,
+          path: 'all-project-task-instance-index',
+          id: 2,
+          enabled: true
+        }
+      ]
+    }
+  ],
+
   security: [
     {
       name: `${i18n.$t('Tenant Manage')}`,

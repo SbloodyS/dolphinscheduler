@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.dao.entity;
 
+import lombok.Data;
 import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.ReleaseState;
 import org.apache.dolphinscheduler.common.process.Property;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * process definition
  */
+@Data
 @TableName("t_ds_process_definition")
 public class ProcessDefinition {
 
@@ -205,100 +207,12 @@ public class ProcessDefinition {
         this.flag = Flag.YES;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public ReleaseState getReleaseState() {
-        return releaseState;
-    }
-
-    public void setReleaseState(ReleaseState releaseState) {
-        this.releaseState = releaseState;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Flag getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Flag flag) {
-        this.flag = flag;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getGlobalParams() {
-        return globalParams;
-    }
-
     public void setGlobalParams(String globalParams) {
         this.globalParamList = JSONUtils.toList(globalParams, Property.class);
         if (this.globalParamList == null) {
             this.globalParamList = new ArrayList<>();
         }
         this.globalParams = globalParams;
-    }
-
-    public List<Property> getGlobalParamList() {
-        return globalParamList;
     }
 
     public void setGlobalParamList(List<Property> globalParamList) {
@@ -312,90 +226,6 @@ public class ProcessDefinition {
         }
 
         return globalParamMap;
-    }
-
-    public void setGlobalParamMap(Map<String, String> globalParamMap) {
-        this.globalParamMap = globalParamMap;
-    }
-
-    public String getLocations() {
-        return locations;
-    }
-
-    public void setLocations(String locations) {
-        this.locations = locations;
-    }
-
-    public ReleaseState getScheduleReleaseState() {
-        return scheduleReleaseState;
-    }
-
-    public void setScheduleReleaseState(ReleaseState scheduleReleaseState) {
-        this.scheduleReleaseState = scheduleReleaseState;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public int getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(int tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getTenantCode() {
-        return tenantCode;
-    }
-
-    public void setTenantCode(String tenantCode) {
-        this.tenantCode = tenantCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getModifyBy() {
-        return modifyBy;
-    }
-
-    public void setModifyBy(String modifyBy) {
-        this.modifyBy = modifyBy;
-    }
-
-    public long getCode() {
-        return code;
-    }
-
-    public void setCode(long code) {
-        this.code = code;
-    }
-
-    public long getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(long projectCode) {
-        this.projectCode = projectCode;
-    }
-
-    public int getWarningGroupId() {
-        return warningGroupId;
-    }
-
-    public void setWarningGroupId(int warningGroupId) {
-        this.warningGroupId = warningGroupId;
     }
 
     @Override

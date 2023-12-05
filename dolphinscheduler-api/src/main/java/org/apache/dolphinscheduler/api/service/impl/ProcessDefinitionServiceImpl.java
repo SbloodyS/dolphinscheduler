@@ -410,18 +410,23 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     @Override
     public Result queryProcessDefinitionListPaging(User loginUser, long projectCode, String searchVal, Integer userId, Integer pageNo, Integer pageSize) {
         Result result = new Result();
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        Status resultStatus = (Status) checkResult.get(Constants.STATUS);
-        if (resultStatus != Status.SUCCESS) {
-            putMsg(result, resultStatus);
-            return result;
+        long queryProjectCode = projectCode;
+
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            Status resultStatus = (Status) checkResult.get(Constants.STATUS);
+            if (resultStatus != Status.SUCCESS) {
+                putMsg(result, resultStatus);
+                return result;
+            }
+            queryProjectCode = project.getCode();
         }
 
         Page<ProcessDefinition> page = new Page<>(pageNo, pageSize);
         IPage<ProcessDefinition> processDefinitionIPage = processDefinitionMapper.queryDefineListPaging(
-                page, searchVal, userId, project.getCode(), isAdmin(loginUser));
+                page, searchVal, userId, queryProjectCode, isAdmin(loginUser));
 
         List<ProcessDefinition> records = processDefinitionIPage.getRecords();
         for (ProcessDefinition pd : records) {

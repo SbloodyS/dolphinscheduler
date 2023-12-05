@@ -71,6 +71,7 @@ export default {
   'Create Datasource': '创建数据源',
   'Project Home': '工作流监控',
   'Project Manage': '项目管理',
+  'All Project': '全部项目',
   'Create Project': '创建项目',
   'Cron Manage': '定时管理',
   'Copy Workflow': '复制工作流',

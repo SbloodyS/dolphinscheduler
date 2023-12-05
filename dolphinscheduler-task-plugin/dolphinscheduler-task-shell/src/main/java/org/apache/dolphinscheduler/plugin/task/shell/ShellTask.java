@@ -122,7 +122,7 @@ public class ShellTask extends AbstractTaskExecutor {
         // generate scripts
         String fileName = String.format("%s/%s_node.%s",
                 taskExecutionContext.getExecutePath(),
-                taskExecutionContext.getTaskAppId(), OSUtils.isWindows() ? "bat" : "sh");
+                taskExecutionContext.getTaskAppId(), OSUtils.isWindows() ? "bat" : "bash");
 
         Path path = new File(fileName).toPath();
 

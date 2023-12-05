@@ -41,7 +41,7 @@ public class ShellCommandExecutor extends AbstractCommandExecutor {
     /**
      * For Unix-like, using sh
      */
-    private static final String SH = "sh";
+    private static final String BASH = "bash";
 
     /**
      * For Windows, using cmd.exe
@@ -102,7 +102,7 @@ public class ShellCommandExecutor extends AbstractCommandExecutor {
                     }
                 }
             } else {
-                sb.append("#!/bin/sh\n");
+                sb.append("#!/bin/bash\n");
                 sb.append("BASEDIR=$(cd `dirname $0`; pwd)\n");
                 sb.append("cd $BASEDIR\n");
                 if (StringUtils.isNotBlank(taskRequest.getEnvironmentConfig())) {
@@ -123,7 +123,7 @@ public class ShellCommandExecutor extends AbstractCommandExecutor {
 
     @Override
     protected String commandInterpreter() {
-        return OSUtils.isWindows() ? CMD : SH;
+        return OSUtils.isWindows() ? CMD : BASH;
     }
 
 }

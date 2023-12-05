@@ -71,6 +71,7 @@ export default {
   'Create Datasource': 'Create Datasource',
   'Project Home': 'Workflow Monitor',
   'Project Manage': 'Project',
+  'All Project': 'All Project',
   'Create Project': 'Create Project',
   'Cron Manage': 'Cron Manage',
   'Copy Workflow': 'Copy Workflow',

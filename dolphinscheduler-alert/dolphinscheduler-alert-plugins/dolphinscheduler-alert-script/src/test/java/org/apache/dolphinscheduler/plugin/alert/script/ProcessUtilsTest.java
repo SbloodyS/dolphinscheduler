@@ -28,7 +28,7 @@ public class ProcessUtilsTest {
 
     private static final String shellFilPath = rootPath + "/dolphinscheduler-alert-plugins/dolphinscheduler-alert-script/src/test/script/shell/test.sh";
 
-    private String[] cmd = {"/bin/sh", "-c", shellFilPath + " -t 1"};
+    private String[] cmd = {"/bin/bash", "-c", shellFilPath + " -t 1"};
 
     @Test
     public void testExecuteScript() {

@@ -131,6 +131,7 @@
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <hibernate.validator.version>6.2.2.Final</hibernate.validator.version>
         <lombok.version>1.18.20</lombok.version>
+        <dropwizard.metrics.version>4.2.22</dropwizard.metrics.version>
     </properties>
 
     <dependencyManagement>
@@ -1162,6 +1163,11 @@
             <artifactId>auto-service</artifactId>
             <version>${auto-service.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${dropwizard.metrics.version}</version>
         </dependency>
     </dependencies>
 

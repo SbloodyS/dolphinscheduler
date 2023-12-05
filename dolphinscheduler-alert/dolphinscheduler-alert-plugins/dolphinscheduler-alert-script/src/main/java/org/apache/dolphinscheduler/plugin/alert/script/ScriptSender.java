@@ -68,7 +68,7 @@ public final class ScriptSender {
             return alertResult;
         }
 
-        String[] cmd = {"/bin/sh", "-c", scriptPath + ALERT_TITLE_OPTION + "'" + title + "'" + ALERT_CONTENT_OPTION + "'" + content + "'" + ALERT_USER_PARAMS_OPTION + "'" + userParams + "'"};
+        String[] cmd = {"/bin/bash", "-c", scriptPath + ALERT_TITLE_OPTION + "'" + title + "'" + ALERT_CONTENT_OPTION + "'" + content + "'" + ALERT_USER_PARAMS_OPTION + "'" + userParams + "'"};
         int exitCode = ProcessUtils.executeScript(cmd);
 
         if (exitCode == 0) {

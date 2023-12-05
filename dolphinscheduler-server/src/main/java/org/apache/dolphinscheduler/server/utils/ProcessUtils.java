@@ -119,7 +119,7 @@ public class ProcessUtils {
     private static void execYarnKillCommand(Logger logger, String tenantCode, String appId, String commandFile, String cmd) {
         try {
             StringBuilder sb = new StringBuilder();
-            sb.append("#!/bin/sh\n");
+            sb.append("#!/bin/bash\n");
             sb.append("BASEDIR=$(cd `dirname $0`; pwd)\n");
             sb.append("cd $BASEDIR\n");
             if (CommonUtils.getSystemEnvPath() != null) {
