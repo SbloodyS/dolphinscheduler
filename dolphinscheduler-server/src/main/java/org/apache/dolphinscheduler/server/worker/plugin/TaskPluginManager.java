@@ -87,9 +87,5 @@ public class TaskPluginManager {
                 throw new RuntimeException("Failed to update task plugin: " + name);
             }
         });
-
-        // put WATERDROP task
-//        taskChannelMap.put(TaskType.WATERDROP.getDesc(), taskChannelMap.get(TaskType.SHELL.getDesc()));
-
     }
 }

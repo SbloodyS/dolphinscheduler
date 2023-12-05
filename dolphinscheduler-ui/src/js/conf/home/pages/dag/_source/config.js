@@ -288,6 +288,10 @@ const tasksType = {
   DATASYNC: {
     desc: 'DATASYNC',
     color: '#E46F13'
+  },
+  HIVE: {
+    desc: 'HIVE',
+    color: '#E46F13'
   }
 }
 

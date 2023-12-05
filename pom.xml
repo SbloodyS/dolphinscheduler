@@ -455,6 +455,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
+                <artifactId>dolphinscheduler-task-hive</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dolphinscheduler</groupId>
                 <artifactId>dolphinscheduler-task-datasync</artifactId>
                 <version>${project.version}</version>
             </dependency>

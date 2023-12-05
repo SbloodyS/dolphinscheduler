@@ -23,6 +23,7 @@ import org.apache.dolphinscheduler.common.task.datasync.DataSyncParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
 import org.apache.dolphinscheduler.common.task.flink.FlinkParameters;
+import org.apache.dolphinscheduler.common.task.hive.HiveParameters;
 import org.apache.dolphinscheduler.common.task.http.HttpParameters;
 import org.apache.dolphinscheduler.common.task.mr.MapReduceParameters;
 import org.apache.dolphinscheduler.common.task.procedure.ProcedureParameters;
@@ -94,6 +95,8 @@ public class TaskParametersUtils {
                 return JSONUtils.parseObject(parameter, TrinoParameters.class);
             case "DATASYNC":
                 return JSONUtils.parseObject(parameter, DataSyncParameters.class);
+            case "HIVE":
+                return JSONUtils.parseObject(parameter, HiveParameters.class);
             default:
                 logger.error("not support task type: {}", taskType);
                 return null;

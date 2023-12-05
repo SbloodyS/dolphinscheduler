@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.trino;
+package org.apache.dolphinscheduler.plugin.task.hive;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;

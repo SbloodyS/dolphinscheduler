@@ -264,6 +264,15 @@
             :backfill-item="backfillItem"
           >
           </m-trino>
+          <!-- hive node -->
+          <m-hive
+            v-if="nodeData.taskType === 'HIVE'"
+            @on-params="_onParams"
+            @on-cache-params="_onCacheParams"
+            ref="HIVE"
+            :backfill-item="backfillItem"
+          >
+          </m-hive>
           <!-- datasync node -->
           <m-data-sync
             v-if="nodeData.taskType === 'DATASYNC'"
@@ -453,6 +462,7 @@
   import mSqoop from './tasks/sqoop'
   import mSubProcess from './tasks/sub_process'
   import mDataSync from './tasks/datasync'
+  import mHive from './tasks/hive'
   // import mSelectInput from './_source/selectInput'
   import mTimeoutAlarm from './_source/timeoutAlarm'
   import mDependentTimeout from './_source/dependentTimeout'
@@ -982,6 +992,7 @@
       mMr,
       mShell,
       mTrino,
+      mHive,
       mWaterdrop,
       mSubProcess,
       mProcedure,

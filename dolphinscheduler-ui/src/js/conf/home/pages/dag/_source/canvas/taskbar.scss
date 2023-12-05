@@ -117,6 +117,9 @@
           &.icos-datasync {
             background-image: url("../images/task-icos/datasync.png");
           }
+          &.icos-hive {
+            background-image: url("../images/task-icos/hive.png");
+          }
         }
 
         span {
@@ -182,6 +185,9 @@
             }
             &.icos-datasync {
               background-image: url("../images/task-icos/datasync_hover.png");
+            }
+            &.icos-hive {
+              background-image: url("../images/task-icos/hive_hover.png");
             }
           }
         }

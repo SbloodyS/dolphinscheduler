@@ -652,7 +652,7 @@
        * Unlock scroller
        */
       unlockScroller () {
-        this.graph.unlockScroller()
+        // this.graph.unlockScroller()
       },
       /**
        * set node status icon
