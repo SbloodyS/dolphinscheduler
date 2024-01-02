@@ -257,6 +257,10 @@ const tasksType = {
     desc: 'SHELL',
     color: '#646464'
   },
+  SQOOP: {
+    desc: 'SQOOP',
+    color: '#646464'
+  },
   SQL: {
     desc: 'SQL',
     color: '#7A98A1'
@@ -285,12 +289,16 @@ const tasksType = {
     desc: 'TRINO',
     color: '#E46F13'
   },
-  DATASYNC: {
-    desc: 'DATASYNC',
-    color: '#E46F13'
-  },
+  // DATASYNC: {
+  //   desc: 'DATASYNC',
+  //   color: '#E46F13'
+  // },
   HIVE: {
     desc: 'HIVE',
+    color: '#E46F13'
+  },
+  TOCK: {
+    desc: 'TOCK',
     color: '#E46F13'
   }
 }

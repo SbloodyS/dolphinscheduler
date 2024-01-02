@@ -32,7 +32,7 @@
   import mList from './_source/list'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   export default {
-    name: 'definition-timing-index',
+    name: 'all-project-definition-timing-index',
     methods: {
       _close () {
         this.$router.go(-1)

@@ -36,6 +36,7 @@ import org.apache.dolphinscheduler.common.task.subprocess.SubProcessParameters;
 import org.apache.dolphinscheduler.common.task.switchtask.SwitchParameters;
 import org.apache.dolphinscheduler.common.task.tis.PigeonCommonParameters;
 
+import org.apache.dolphinscheduler.common.task.tock.hive.ToCkParameters;
 import org.apache.dolphinscheduler.common.task.trino.TrinoParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,8 @@ public class TaskParametersUtils {
                 return JSONUtils.parseObject(parameter, DataSyncParameters.class);
             case "HIVE":
                 return JSONUtils.parseObject(parameter, HiveParameters.class);
+            case "TOCK":
+                return JSONUtils.parseObject(parameter, ToCkParameters.class);
             default:
                 logger.error("not support task type: {}", taskType);
                 return null;

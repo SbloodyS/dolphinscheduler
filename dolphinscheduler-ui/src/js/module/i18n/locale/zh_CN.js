@@ -777,5 +777,7 @@ export default {
   DataSyncSourceTable: '来源表名称',
   DataSyncTargetTable: '目的表名称',
   'Please Enter DataSync Source Table': '请输入来源表名称(必填项)',
-  'Please Enter DataSync Target Table': '请输入目标表名称(必填项)'
+  'Please Enter DataSync Target Table': '请输入目标表名称(必填项)',
+  'Push ClickHouse Spark Param': 'Spark高级参数',
+  'Push ClickHouse Table Param': '推送表参数'
 }

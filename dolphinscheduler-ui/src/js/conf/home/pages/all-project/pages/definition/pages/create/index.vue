@@ -20,7 +20,7 @@
 <script>
   import mCreateDag from '@/conf/home/pages/dag/index'
   export default {
-    name: 'definition-create-index',
+    name: 'all-project-definition-create-index',
     components: { mCreateDag }
   }
 </script>

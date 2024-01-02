@@ -194,7 +194,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     @Override
     public Map<String, Object> checkProcessDefinitionValid(long projectCode, ProcessDefinition processDefinition, long processDefineCode) {
         Map<String, Object> result = new HashMap<>();
-        if (processDefinition == null || projectCode != processDefinition.getProjectCode()) {
+        if (processDefinition == null || (projectCode != processDefinition.getProjectCode() && projectCode != 0)) {
             // check process definition exists
             putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, processDefineCode);
         } else if (processDefinition.getReleaseState() != ReleaseState.ONLINE) {
@@ -217,11 +217,14 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
      */
     @Override
     public Map<String, Object> execute(User loginUser, long projectCode, Integer processInstanceId, ExecuteType executeType) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
+        Map<String, Object> result = null;
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                return result;
+            }
         }
 
         // check master exists

@@ -163,7 +163,7 @@ public class MasterServer implements IStoppable {
         this.eventExecuteService.start();
         // scheduler start
         this.masterSchedulerService.init(this.processInstanceExecMaps);
-
+        this.masterSchedulerService.setMasterSchedulerServiceStoppable(this);
         this.masterSchedulerService.start();
 
         this.failoverExecuteThread.start();

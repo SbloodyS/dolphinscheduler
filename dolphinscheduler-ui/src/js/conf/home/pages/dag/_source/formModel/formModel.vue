@@ -282,6 +282,15 @@
             :backfill-item="backfillItem"
           >
           </m-data-sync>
+          <!-- tock node -->
+          <m-to-ck
+            v-if="nodeData.taskType === 'TOCK'"
+            @on-params="_onParams"
+            @on-cache-params="_onCacheParams"
+            ref="TOCK"
+            :backfill-item="backfillItem"
+          >
+          </m-to-ck>
           <!-- sub_process node -->
           <m-sub-process
             v-if="nodeData.taskType === 'SUB_PROCESS'"
@@ -463,6 +472,7 @@
   import mSubProcess from './tasks/sub_process'
   import mDataSync from './tasks/datasync'
   import mHive from './tasks/hive'
+  import mToCk from './tasks/tock'
   // import mSelectInput from './_source/selectInput'
   import mTimeoutAlarm from './_source/timeoutAlarm'
   import mDependentTimeout from './_source/dependentTimeout'
@@ -993,6 +1003,7 @@
       mShell,
       mTrino,
       mHive,
+      mToCk,
       mWaterdrop,
       mSubProcess,
       mProcedure,

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.hive;
+package org.apache.dolphinscheduler.plugin.task.trino;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;
@@ -42,12 +42,12 @@ import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILU
 /**
  * shell task
  */
-public class HiveTask extends AbstractTaskExecutor {
+public class TrinoTask extends AbstractTaskExecutor {
 
     /**
      * shell parameters
      */
-    private HiveParameters hiveParameters;
+    private TrinoParameters trinoParameters;
 
     /**
      * shell command executor
@@ -64,7 +64,7 @@ public class HiveTask extends AbstractTaskExecutor {
      *
      * @param taskExecutionContext taskExecutionContext
      */
-    public HiveTask(TaskRequest taskExecutionContext) {
+    public TrinoTask(TaskRequest taskExecutionContext) {
         super(taskExecutionContext);
 
         this.taskExecutionContext = taskExecutionContext;
@@ -75,12 +75,12 @@ public class HiveTask extends AbstractTaskExecutor {
 
     @Override
     public void init() {
-        logger.info("hive task params {}", taskExecutionContext.getTaskParams());
+        logger.info("trino task params {}", taskExecutionContext.getTaskParams());
 
-        hiveParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), HiveParameters.class);
+        trinoParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), TrinoParameters.class);
 
-        if (!hiveParameters.checkParameters()) {
-            throw new RuntimeException("hive task params is not valid");
+        if (!trinoParameters.checkParameters()) {
+            throw new RuntimeException("trino task params is not valid");
         }
     }
 
@@ -93,9 +93,9 @@ public class HiveTask extends AbstractTaskExecutor {
             setExitStatusCode(commandExecuteResult.getExitStatusCode());
             setAppIds(commandExecuteResult.getAppIds());
             setProcessId(commandExecuteResult.getProcessId());
-            hiveParameters.dealOutParam(shellCommandExecutor.getVarPool());
+            trinoParameters.dealOutParam(shellCommandExecutor.getVarPool());
         } catch (Exception e) {
-            logger.error("hive task error", e);
+            logger.error("trino task error", e);
             setExitStatusCode(EXIT_CODE_FAILURE);
             throw e;
         }
@@ -114,74 +114,69 @@ public class HiveTask extends AbstractTaskExecutor {
      * @throws Exception exception
      */
     private String buildCommand() throws Exception {
-        // generate the content of this hive script
-        String hiveScriptContent = buildHiveScriptContent();
-        // generate the file path of this hive script
-        String hiveScriptFile = buildHiveCommandFilePath();
+        // generate the content of this trino script
+        String trinoScriptContent = buildTrinoScriptContent();
+        // generate the file path of this trino script
+        String trinoScriptFile = buildTrinoCommandFilePath();
 
-        createHiveCommandFileIfNotExists(hiveScriptContent, hiveScriptFile);
+        createTrinoCommandFileIfNotExists(trinoScriptContent, trinoScriptFile);
 
-        return String.format("sudo ${HIVE_HOME} -hiveconf mapreduce.job.name=%s -hiveconf spark.app.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf spark.yarn.queue=%s -f %s",
-                taskExecutionContext.getTaskName(),
-                taskExecutionContext.getTaskName(),
-                "root.query.dmp",
-                "root.query.dmp",
-                hiveScriptFile);
+        return "${JAVA_HOME}/bin/java -jar ${TRINO_HOME} -f " + trinoScriptFile;
     }
 
     @Override
     public AbstractParameters getParameters() {
-        return hiveParameters;
+        return trinoParameters;
     }
 
     /**
-     * build hive command file path
+     * build trino command file path
      *
-     * @return hive command file path
+     * @return trino command file path
      */
-    protected String buildHiveCommandFilePath() {
+    protected String buildTrinoCommandFilePath() {
         return String.format("%s/%s.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
     }
 
     /**
-     * build hive script content
+     * build trino script content
      *
-     * @return raw hive script
+     * @return raw trino script
      */
-    private String buildHiveScriptContent() {
-        String rawHiveScript = hiveParameters.getRawScript().replaceAll("\\r\\n", "\n");
+    private String buildTrinoScriptContent() {
+        String rawTrinoScript = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
 
         // replace placeholder
-        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, hiveParameters);
+        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, trinoParameters);
         if (MapUtils.isEmpty(paramsMap)) {
             paramsMap = new HashMap<>();
         }
         if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
             paramsMap.putAll(taskExecutionContext.getParamsMap());
         }
-        rawHiveScript = ParameterUtils.convertParameterPlaceholders(rawHiveScript, ParamUtils.convert(paramsMap));
+        rawTrinoScript = ParameterUtils.convertParameterPlaceholders(rawTrinoScript, ParamUtils.convert(paramsMap));
 
-        logger.info("raw hive script : {}", hiveParameters.getRawScript());
+        logger.info("raw trino script : {}", trinoParameters.getRawScript());
 
-        return rawHiveScript;
+        return rawTrinoScript;
     }
 
     /**
-     * create hive command file if not exists
+     * create trino command file if not exists
      *
-     * @param hiveScript exec hive script
-     * @param hiveScriptFile hive script file
+     * @param trinoScript exec trino script
+     * @param trinoScriptFile trino script file
      * @throws IOException io exception
      */
-    protected void createHiveCommandFileIfNotExists(String hiveScript, String hiveScriptFile) throws IOException {
+    protected void createTrinoCommandFileIfNotExists(String trinoScript, String trinoScriptFile) throws IOException {
         logger.info("tenantCode: {}, task dir: {}", taskExecutionContext.getTenantCode(), taskExecutionContext.getExecutePath());
 
-        if (!Files.exists(Paths.get(hiveScriptFile))) {
-            logger.info("generate hive script file:{}", hiveScriptFile);
+        if (!Files.exists(Paths.get(trinoScriptFile))) {
+            logger.info("generate trino script file:{}", trinoScriptFile);
 
             // write data to file
-            FileUtils.writeStringToFile(new File(hiveScriptFile),
-                    hiveScript,
+            FileUtils.writeStringToFile(new File(trinoScriptFile),
+                    trinoScript,
                     StandardCharsets.UTF_8);
         }
     }

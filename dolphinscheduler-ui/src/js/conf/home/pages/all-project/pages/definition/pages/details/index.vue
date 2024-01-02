@@ -20,7 +20,7 @@
 <script>
   import mDefinitionDetails from '@/conf/home/pages/dag/definitionDetails.vue'
   export default {
-    name: 'definition-details-index',
+    name: 'all-project-definition-details-index',
     components: { mDefinitionDetails }
   }
 </script>

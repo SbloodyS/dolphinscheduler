@@ -159,23 +159,20 @@ public class TaskInstanceServiceImpl extends BaseServiceImpl implements TaskInst
      */
     @Override
     public Map<String, Object> forceTaskSuccess(User loginUser, long projectCode, Integer taskInstanceId) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
+        Map<String, Object> result = new HashMap<>();
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                return result;
+            }
         }
 
         // check whether the task instance can be found
         TaskInstance task = taskInstanceMapper.selectById(taskInstanceId);
         if (task == null) {
             putMsg(result, Status.TASK_INSTANCE_NOT_FOUND);
-            return result;
-        }
-
-        TaskDefinition taskDefinition = taskDefinitionMapper.queryByCode(task.getTaskCode());
-        if (taskDefinition != null && projectCode != taskDefinition.getProjectCode()) {
-            putMsg(result, Status.TASK_INSTANCE_NOT_FOUND, taskInstanceId);
             return result;
         }
 

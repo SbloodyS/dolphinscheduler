@@ -120,6 +120,9 @@
           &.icos-hive {
             background-image: url("../images/task-icos/hive.png");
           }
+          &.icos-tock {
+            background-image: url("../images/task-icos/tock.png");
+          }
         }
 
         span {
@@ -188,6 +191,9 @@
             }
             &.icos-hive {
               background-image: url("../images/task-icos/hive_hover.png");
+            }
+            &.icos-tock {
+              background-image: url("../images/task-icos/tock_hover.png");
             }
           }
         }

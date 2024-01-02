@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.hive;
+package org.apache.dolphinscheduler.plugin.task.tock;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;
@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILURE;
@@ -42,12 +43,12 @@ import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILU
 /**
  * shell task
  */
-public class TrinoTask extends AbstractTaskExecutor {
+public class TockTask extends AbstractTaskExecutor {
 
     /**
-     * shell parameters
+     * tock parameters
      */
-    private TrinoParameters trinoParameters;
+    private TockParameters tockParameters;
 
     /**
      * shell command executor
@@ -64,7 +65,7 @@ public class TrinoTask extends AbstractTaskExecutor {
      *
      * @param taskExecutionContext taskExecutionContext
      */
-    public TrinoTask(TaskRequest taskExecutionContext) {
+    public TockTask(TaskRequest taskExecutionContext) {
         super(taskExecutionContext);
 
         this.taskExecutionContext = taskExecutionContext;
@@ -75,12 +76,12 @@ public class TrinoTask extends AbstractTaskExecutor {
 
     @Override
     public void init() {
-        logger.info("trino task params {}", taskExecutionContext.getTaskParams());
+        logger.info("tock task params {}", taskExecutionContext.getTaskParams());
 
-        trinoParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), TrinoParameters.class);
+        tockParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), TockParameters.class);
 
-        if (!trinoParameters.checkParameters()) {
-            throw new RuntimeException("trino task params is not valid");
+        if (!tockParameters.checkParameters()) {
+            throw new RuntimeException("tock task params is not valid");
         }
     }
 
@@ -93,9 +94,9 @@ public class TrinoTask extends AbstractTaskExecutor {
             setExitStatusCode(commandExecuteResult.getExitStatusCode());
             setAppIds(commandExecuteResult.getAppIds());
             setProcessId(commandExecuteResult.getProcessId());
-            trinoParameters.dealOutParam(shellCommandExecutor.getVarPool());
+            tockParameters.dealOutParam(shellCommandExecutor.getVarPool());
         } catch (Exception e) {
-            logger.error("trino task error", e);
+            logger.error("tock task error", e);
             setExitStatusCode(EXIT_CODE_FAILURE);
             throw e;
         }
@@ -114,70 +115,65 @@ public class TrinoTask extends AbstractTaskExecutor {
      * @throws Exception exception
      */
     private String buildCommand() throws Exception {
-        // generate the content of this trino script
-        String trinoScriptContent = buildTrinoScriptContent();
-        // generate the file path of this trino script
-        String trinoScriptFile = buildTrinoCommandFilePath();
+        List<Property> ckAdvancedParams = tockParameters.getCkAdvancedParams();
+        String toCkScriptParams = buildToCkScriptParams(ckAdvancedParams);
 
-        createTrinoCommandFileIfNotExists(trinoScriptContent, trinoScriptFile);
-
-        return "${JAVA_HOME}/bin/java -jar ${TRINO_HOME} -f " + trinoScriptFile;
+        return String.format("${TOCK_HOME} %s", toCkScriptParams);
     }
 
     @Override
     public AbstractParameters getParameters() {
-        return trinoParameters;
+        return tockParameters;
     }
 
-    /**
-     * build trino command file path
-     *
-     * @return trino command file path
-     */
-    protected String buildTrinoCommandFilePath() {
-        return String.format("%s/%s.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
-    }
+    private String buildToCkScriptParams(List<Property> ckAdvancedParams) {
+        String script;
 
-    /**
-     * build trino script content
-     *
-     * @return raw trino script
-     */
-    private String buildTrinoScriptContent() {
-        String rawTrinoScript = trinoParameters.getRawScript().replaceAll("\\r\\n", "\n");
+        StringBuffer params = new StringBuffer();
 
-        // replace placeholder
-        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, trinoParameters);
-        if (MapUtils.isEmpty(paramsMap)) {
-            paramsMap = new HashMap<>();
+        String hiveTableName = "";
+        String ckTableName = "";
+        String incColumnName = "";
+        String condition = "";  //1day、 2day、 month、 year
+
+        for (Property pro : ckAdvancedParams) {
+            switch (pro.getProp()) {
+                case "hive.table.name":
+                    hiveTableName = pro.getValue();
+                    logger.info("hive.table.name {}", hiveTableName);
+                    break;
+                case "clickhouse.table.name":
+                    ckTableName = pro.getValue();
+                    logger.info("clickhouse.table.name {}", hiveTableName);
+                    break;
+                case "table.inc.column.name":
+                    incColumnName = pro.getValue();
+                    logger.info("table.inc.column.name {}", hiveTableName);
+                    break;
+                case "push.clickhouse.date.condition":
+                    condition = pro.getValue();
+                    logger.info("push.clickhouse.date.condition {}", hiveTableName);
+                    break;
+                default:
+                    logger.info("no configure Params {}:{}", pro.getProp(), pro.getValue());
+                    break;
+            }
         }
-        if (org.apache.dolphinscheduler.plugin.task.util.MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
-            paramsMap.putAll(taskExecutionContext.getParamsMap());
+
+        if(hiveTableName!=null && !hiveTableName.trim().isEmpty()){
+            params.append("--hive.table.name ").append(hiveTableName.trim());
         }
-        rawTrinoScript = ParameterUtils.convertParameterPlaceholders(rawTrinoScript, ParamUtils.convert(paramsMap));
-
-        logger.info("raw trino script : {}", trinoParameters.getRawScript());
-
-        return rawTrinoScript;
-    }
-
-    /**
-     * create trino command file if not exists
-     *
-     * @param trinoScript exec trino script
-     * @param trinoScriptFile trino script file
-     * @throws IOException io exception
-     */
-    protected void createTrinoCommandFileIfNotExists(String trinoScript, String trinoScriptFile) throws IOException {
-        logger.info("tenantCode: {}, task dir: {}", taskExecutionContext.getTenantCode(), taskExecutionContext.getExecutePath());
-
-        if (!Files.exists(Paths.get(trinoScriptFile))) {
-            logger.info("generate trino script file:{}", trinoScriptFile);
-
-            // write data to file
-            FileUtils.writeStringToFile(new File(trinoScriptFile),
-                    trinoScript,
-                    StandardCharsets.UTF_8);
+        if(ckTableName!=null && !ckTableName.trim().isEmpty()){
+            params.append(" --clickhouse.table.name ").append(ckTableName.trim());
         }
+        if(incColumnName!=null && !incColumnName.trim().isEmpty()){
+            params.append(" --table.inc.column.name ").append(incColumnName.trim());
+        }
+        if(condition!=null && !condition.trim().isEmpty()){
+            params.append(" --push.clickhouse.date.condition ").append(condition.trim());
+        }
+
+        return params.toString();
+
     }
 }

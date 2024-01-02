@@ -2006,22 +2006,22 @@ public class ProcessService {
      * find last task instance in the date interval
      *
      * @param taskCode     taskCode
-     * @param dateInterval dateInterval
+     * @param processInstanceId processInstanceId
      * @return task instance
      */
-    public TaskInstance findLastTaskInstanceInterval(long taskCode, DateInterval dateInterval) {
-        return taskInstanceMapper.queryLastTaskInstance(taskCode, dateInterval.getStartTime(), dateInterval.getEndTime());
+    public TaskInstance findLastTaskInstanceInterval(long taskCode, long processInstanceId) {
+        return taskInstanceMapper.queryLastTaskInstance(taskCode, processInstanceId);
     }
 
     /**
      * find last task instance list in the date interval
      *
      * @param taskCodes    taskCode list
-     * @param dateInterval dateInterval
+     * @param processInstanceId processInstanceId
      * @return task instance
      */
-    public List<TaskInstance> findLastTaskInstanceListInterval(Set<Long> taskCodes, DateInterval dateInterval) {
-        return taskInstanceMapper.queryLastTaskInstanceList(taskCodes, dateInterval.getStartTime(), dateInterval.getEndTime());
+    public List<TaskInstance> findLastTaskInstanceListInterval(Set<Long> taskCodes, long processInstanceId) {
+        return taskInstanceMapper.queryLastTaskInstanceList(taskCodes, processInstanceId);
     }
 
     /**
@@ -2086,7 +2086,7 @@ public class ProcessService {
     }
 
     /**
-     * query project name and user name by processInstanceId.
+     * query project name and username by processInstanceId.
      *
      * @param processInstanceId processInstanceId
      * @return projectName and userName

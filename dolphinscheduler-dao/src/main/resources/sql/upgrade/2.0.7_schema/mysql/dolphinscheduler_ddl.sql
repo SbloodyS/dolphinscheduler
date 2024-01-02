@@ -14,3 +14,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
+
+ALTER TABLE `t_ds_relation_process_instance` ADD INDEX `idx_relation_process_instance_pproc_inst_id_ptask_inst_id` (`parent_process_instance_id`, `parent_task_instance_id`);

@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.common.task.trino;
+package org.apache.dolphinscheduler.plugin.task.trino;
 
 import lombok.Data;
-import org.apache.dolphinscheduler.common.process.ResourceInfo;
-import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import lombok.EqualsAndHashCode;
+import org.apache.dolphinscheduler.spi.task.AbstractParameters;
+import org.apache.dolphinscheduler.spi.task.ResourceInfo;
 
 import java.util.List;
 
-/**
- * shell parameters
- */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class TrinoParameters extends AbstractParameters {
+
     /**
      * shell script
      */
@@ -38,6 +38,10 @@ public class TrinoParameters extends AbstractParameters {
      */
     private List<ResourceInfo> resourceList;
 
+    public void setResourceList(List<ResourceInfo> resourceList) {
+        this.resourceList = resourceList;
+    }
+
     @Override
     public boolean checkParameters() {
         return rawScript != null && !rawScript.isEmpty();
@@ -47,5 +51,4 @@ public class TrinoParameters extends AbstractParameters {
     public List<ResourceInfo> getResourceFilesList() {
         return resourceList;
     }
-
 }

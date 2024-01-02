@@ -454,7 +454,8 @@ public class TaskDefinition {
             && timeoutFlag == that.timeoutFlag
             && timeoutNotifyStrategy == that.timeoutNotifyStrategy
             && Objects.equals(resourceIds, that.resourceIds)
-            && environmentCode == that.environmentCode;
+            && environmentCode == that.environmentCode
+            ;
     }
 
     @Override

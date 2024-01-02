@@ -676,7 +676,8 @@ CREATE TABLE `t_ds_relation_process_instance` (
   `parent_process_instance_id` int(11) DEFAULT NULL COMMENT 'parent process instance id',
   `parent_task_instance_id` int(11) DEFAULT NULL COMMENT 'parent process instance id',
   `process_instance_id` int(11) DEFAULT NULL COMMENT 'child process instance id',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_relation_process_instance_pproc_inst_id_ptask_inst_id` (`parent_process_instance_id`,`parent_task_instance_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------

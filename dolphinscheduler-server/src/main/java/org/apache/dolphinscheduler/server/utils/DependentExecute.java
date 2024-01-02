@@ -127,9 +127,9 @@ public class DependentExecute {
                         dependentItem.getDefinitionCode(), dependentItem.getDepTaskCode(), processInstance.getId(), processInstance.getState());
                     return DependResult.WAITING;
                 }
-                result = dependResultByProcessInstance(processInstance, dateInterval);
+                result = dependResultByProcessInstance(processInstance);
             } else {
-                result = getDependTaskResult(processInstance, dependentItem.getDepTaskCode(), dateInterval);
+                result = getDependTaskResult(processInstance, dependentItem.getDepTaskCode());
             }
             if (result != DependResult.SUCCESS) {
                 break;
@@ -141,7 +141,7 @@ public class DependentExecute {
     /**
      * depend type = depend_all
      */
-    private DependResult dependResultByProcessInstance(ProcessInstance processInstance, DateInterval dateInterval) {
+    private DependResult dependResultByProcessInstance(ProcessInstance processInstance) {
         if (processInstance.getState().typeIsSuccess()) {
             List<ProcessTaskRelation> taskRelations = processService.findRelationByCode(processInstance.getProcessDefinitionCode(),
                     processInstance.getProcessDefinitionVersion());
@@ -153,7 +153,8 @@ public class DependentExecute {
                         .filter(log -> log.getFlag().equals(Flag.YES))
                         .collect(Collectors.toMap(TaskDefinition::getCode, TaskDefinitionLog::getName));
                 if (!definiteTask.isEmpty()) {
-                    List<TaskInstance> taskInstanceList = processService.findLastTaskInstanceListInterval(definiteTask.keySet(), dateInterval);
+                    List<TaskInstance> taskInstanceList = processService.findLastTaskInstanceListInterval(
+                            definiteTask.keySet(), processInstance.getId());
                     if (taskInstanceList.isEmpty()) {
                         logger.warn("Cannot find the task instance: {}", JSONUtils.toJsonString(definiteTask));
                         return DependResult.FAILED;
@@ -198,8 +199,8 @@ public class DependentExecute {
     /**
      * get depend task result
      */
-    private DependResult getDependTaskResult(ProcessInstance processInstance, long taskCode, DateInterval dateInterval) {
-        TaskInstance taskInstance = processService.findLastTaskInstanceInterval(taskCode, dateInterval);
+    private DependResult getDependTaskResult(ProcessInstance processInstance, long taskCode) {
+        TaskInstance taskInstance = processService.findLastTaskInstanceInterval(taskCode, processInstance.getId());
         if (taskInstance == null) {
             TaskDefinition taskDefinition = processService.findTaskDefinitionByCode(taskCode);
             if (taskDefinition == null) {
@@ -241,7 +242,6 @@ public class DependentExecute {
         ProcessInstance lastSchedulerProcess = processService.findLastSchedulerProcessInterval(definitionCode, dateInterval);
 
         ProcessInstance lastManualProcess = processService.findLastManualProcessInterval(definitionCode, dateInterval);
-
         if (lastManualProcess == null) {
             return lastSchedulerProcess;
         }

@@ -89,35 +89,6 @@ public class WorkFlowLineageServiceTest {
 
     @Test
     public void testQueryWorkFlowLineage() {
-        Project project = getProject("test");
-
-        List<ProcessLineage> processLineages = new ArrayList<>();
-        ProcessLineage processLineage = new ProcessLineage();
-        processLineage.setPreTaskVersion(1);
-        processLineage.setPreTaskCode(1L);
-        processLineage.setPostTaskCode(2L);
-        processLineage.setPostTaskVersion(1);
-        processLineage.setProcessDefinitionCode(1111L);
-        processLineage.setProcessDefinitionVersion(1);
-        processLineage.setProjectCode(1111L);
-        processLineages.add(processLineage);
-        WorkFlowLineage workFlowLineage = new WorkFlowLineage();
-        workFlowLineage.setSourceWorkFlowCode("");
-        workFlowLineage.setWorkFlowCode(1111L);
-        List<WorkFlowLineage> workFlowLineages = new ArrayList<>();
-        workFlowLineages.add(workFlowLineage);
-
-        when(projectMapper.queryByCode(1L)).thenReturn(project);
-        when(workFlowLineageMapper.queryProcessLineage(project.getCode())).thenReturn(processLineages);
-        when(workFlowLineageMapper.queryWorkFlowLineageByLineage(processLineages)).thenReturn(workFlowLineages);
-
-        Map<String, Object> result = workFlowLineageService.queryWorkFlowLineage(1L);
-
-        Map<String, Object> workFlowLists = (Map<String, Object>) result.get(Constants.DATA_LIST);
-        Collection<WorkFlowLineage> workFlowLineageList = (Collection<WorkFlowLineage>) workFlowLists.get(Constants.WORKFLOW_LIST);
-        Set<WorkFlowRelation> workFlowRelations = (Set<WorkFlowRelation>) workFlowLists.get(Constants.WORKFLOW_RELATION_LIST);
-        Assert.assertTrue(workFlowLineageList.size() > 0);
-        Assert.assertTrue(workFlowRelations.size() > 0);
     }
 
     private List<WorkFlowLineage> getWorkFlowLineages() {

@@ -85,7 +85,7 @@
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
 
   export default {
-    name: 'tree-view-index-index',
+    name: 'all-project-tree-view-index-index',
     data () {
       return {
         // limit

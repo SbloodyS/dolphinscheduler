@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.hive;
+package org.apache.dolphinscheduler.plugin.task.trino;
 
 import org.apache.dolphinscheduler.spi.task.TaskChannel;
 import org.apache.dolphinscheduler.spi.task.request.TaskRequest;

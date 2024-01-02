@@ -777,5 +777,7 @@ export default {
   DataSyncSourceTable: 'source table name',
   DataSyncTargetTable: 'target table name',
   'Please Enter DataSync Source Table': 'Please Enter DataSync Source Table(required)',
-  'Please Enter DataSync Target Table': 'Please Enter DataSync Target Table(required)'
+  'Please Enter DataSync Target Table': 'Please Enter DataSync Target Table(required)',
+  'Push ClickHouse Spark Param': 'Push ClickHouse Spark Param',
+  'Push ClickHouse Table Param': 'Push ClickHouse Table Param'
 }

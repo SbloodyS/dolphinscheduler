@@ -561,8 +561,12 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         Map<String, String> globalParamMap = globalParamList.stream().collect(Collectors.toMap(Property::getProp, Property::getValue));
         globalParams = ParameterUtils.curingGlobalParams(globalParamMap, globalParamList, processInstance.getCmdTypeIfComplement(), schedule);
         processInstance.setTimeout(timeout);
-        processInstance.setTenantCode(tenantCode);
         processInstance.setGlobalParams(globalParams);
+
+        Tenant tenant = tenantMapper.queryByTenantCode(tenantCode);
+        if (tenant.getId() != 0) {
+            processInstance.setTenantId(tenant.getId());
+        }
     }
 
     /**
@@ -615,12 +619,16 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> deleteProcessInstanceById(User loginUser, long projectCode, Integer processInstanceId) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
+        Map<String, Object> result = new HashMap<>();
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                return result;
+            }
         }
+
         ProcessInstance processInstance = processService.findProcessInstanceDetailById(processInstanceId);
         if (null == processInstance) {
             putMsg(result, Status.PROCESS_INSTANCE_NOT_EXIST, String.valueOf(processInstanceId));
@@ -630,12 +638,6 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         if (!processInstance.getState().typeIsFinished()) {
             putMsg(result, Status.PROCESS_INSTANCE_STATE_OPERATION_ERROR,
                     processInstance.getName(), processInstance.getState().toString(), "delete");
-            return result;
-        }
-
-        ProcessDefinition processDefinition = processDefineMapper.queryByCode(processInstance.getProcessDefinitionCode());
-        if (processDefinition != null && projectCode != processDefinition.getProjectCode()) {
-            putMsg(result, Status.PROCESS_INSTANCE_NOT_EXIST, String.valueOf(processInstanceId));
             return result;
         }
 

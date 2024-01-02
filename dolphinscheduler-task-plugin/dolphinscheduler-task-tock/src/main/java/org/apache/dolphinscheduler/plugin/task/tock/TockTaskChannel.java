@@ -15,40 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.hive;
+package org.apache.dolphinscheduler.plugin.task.tock;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.dolphinscheduler.spi.task.AbstractParameters;
-import org.apache.dolphinscheduler.spi.task.ResourceInfo;
+import org.apache.dolphinscheduler.spi.task.TaskChannel;
+import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 
-import java.util.List;
+public class TockTaskChannel implements TaskChannel {
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class TrinoParameters extends AbstractParameters {
+    @Override
+    public void cancelApplication(boolean status) {
 
-    /**
-     * shell script
-     */
-    private String rawScript;
-
-    /**
-     * resource list
-     */
-    private List<ResourceInfo> resourceList;
-
-    public void setResourceList(List<ResourceInfo> resourceList) {
-        this.resourceList = resourceList;
     }
 
     @Override
-    public boolean checkParameters() {
-        return rawScript != null && !rawScript.isEmpty();
+    public TockTask createTask(TaskRequest taskRequest) {
+        return new TockTask(taskRequest);
     }
 
-    @Override
-    public List<ResourceInfo> getResourceFilesList() {
-        return resourceList;
-    }
 }

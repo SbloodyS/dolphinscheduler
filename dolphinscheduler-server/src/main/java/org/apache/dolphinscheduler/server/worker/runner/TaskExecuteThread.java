@@ -129,24 +129,17 @@ public class TaskExecuteThread implements Runnable, Delayed {
             logger.info("task instance local execute path : {}", execLocalPath);
             taskExecutionContext.setExecutePath(execLocalPath);
 
-            // check if the OS user exists
-            if (!OSUtils.getUserList().contains(taskExecutionContext.getTenantCode())) {
-                String errorLog = String.format("tenantCode: %s does not exist", taskExecutionContext.getTenantCode());
-                logger.error(errorLog);
-                responseCommand.setStatus(ExecutionStatus.FAILURE.getCode());
-                responseCommand.setEndTime(new Date());
-                return;
-            }
-
-            if (taskExecutionContext.getStartTime() == null) {
-                taskExecutionContext.setStartTime(new Date());
-            }
             if (taskExecutionContext.getCurrentExecutionStatus() != ExecutionStatus.RUNNING_EXECUTION) {
                 //changeTaskExecutionStatusToRunning();
                 logger.info("the task begins to execute. task instance id: {}", taskExecutionContext.getTaskInstanceId());
                 taskExecutionContext.setCurrentExecutionStatus(ExecutionStatus.RUNNING_EXECUTION);
                 sendTaskExecuteRunningCommand(taskExecutionContext);
             }
+
+            if (taskExecutionContext.getStartTime() == null) {
+                taskExecutionContext.setStartTime(new Date());
+            }
+
             int dryRun = taskExecutionContext.getDryRun();
             // copy hdfs/minio file to local
             if (dryRun == Constants.DRY_RUN_FLAG_NO) {

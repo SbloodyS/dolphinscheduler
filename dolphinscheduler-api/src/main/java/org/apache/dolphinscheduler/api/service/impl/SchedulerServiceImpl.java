@@ -135,13 +135,16 @@ public class SchedulerServiceImpl extends BaseServiceImpl implements SchedulerSe
                                               Long environmentCode) {
 
         Map<String, Object> result = new HashMap<>();
+        Project project;
 
-        Project project = projectMapper.queryByCode(projectCode);
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            project = projectMapper.queryByCode(projectCode);
 
-        // check project auth
-        boolean hasProjectAndPerm = projectService.hasProjectAndPerm(loginUser, project, result);
-        if (!hasProjectAndPerm) {
-            return result;
+            // check project auth
+            boolean hasProjectAndPerm = projectService.hasProjectAndPerm(loginUser, project, result);
+            if (!hasProjectAndPerm) {
+                return result;
+            }
         }
 
         // check work flow define release state
@@ -150,6 +153,7 @@ public class SchedulerServiceImpl extends BaseServiceImpl implements SchedulerSe
         if (result.get(Constants.STATUS) != Status.SUCCESS) {
             return result;
         }
+        project = projectMapper.queryByCode(processDefinition.getProjectCode());
 
         Schedule scheduleObj = new Schedule();
         Date now = new Date();

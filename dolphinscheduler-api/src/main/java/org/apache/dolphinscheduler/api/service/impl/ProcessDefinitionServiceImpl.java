@@ -774,11 +774,14 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> releaseProcessDefinition(User loginUser, long projectCode, long code, ReleaseState releaseState) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
+        Map<String, Object> result = new HashMap<>();
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                return result;
+            }
         }
 
         // check state
@@ -788,7 +791,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         }
 
         ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(code);
-        if (processDefinition == null || projectCode != processDefinition.getProjectCode()) {
+        if (processDefinition == null) {
             putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
             return result;
         }
@@ -815,6 +818,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
                         putMsg(result, Status.OFFLINE_SCHEDULE_ERROR);
                         throw new ServiceException(Status.OFFLINE_SCHEDULE_ERROR);
                     }
+                    Project project = projectMapper.queryByCode(processDefinition.getProjectCode());
                     schedulerService.deleteSchedule(project.getId(), schedule.getId());
                 }
                 break;

@@ -15,37 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.common.task.trino;
+package org.apache.dolphinscheduler.plugin.task.tock;
 
 import lombok.Data;
-import org.apache.dolphinscheduler.common.process.ResourceInfo;
-import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import lombok.EqualsAndHashCode;
+import org.apache.dolphinscheduler.spi.task.AbstractParameters;
+import org.apache.dolphinscheduler.spi.task.Property;
+import org.apache.dolphinscheduler.spi.task.ResourceInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * shell parameters
- */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class TrinoParameters extends AbstractParameters {
-    /**
-     * shell script
-     */
-    private String rawScript;
+public class TockParameters extends AbstractParameters {
 
     /**
-     * resource list
+     * spark advanced param
      */
-    private List<ResourceInfo> resourceList;
+    private List<Property> sparkAdvancedParams;
+
+    /**
+     * clickhouse advanced param
+     */
+    private List<Property> ckAdvancedParams;
 
     @Override
     public boolean checkParameters() {
-        return rawScript != null && !rawScript.isEmpty();
+        return ckAdvancedParams != null && !ckAdvancedParams.isEmpty();
     }
 
     @Override
     public List<ResourceInfo> getResourceFilesList() {
-        return resourceList;
+        return new ArrayList<>();
     }
-
 }
