@@ -46,3 +46,4 @@ public class StandaloneServer {
         ).profiles("master", "worker", "api", "alert", "h2", "standalone").run(args);
     }
 }
+
