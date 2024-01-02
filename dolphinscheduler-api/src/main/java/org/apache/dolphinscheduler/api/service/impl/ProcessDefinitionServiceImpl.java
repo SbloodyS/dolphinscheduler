@@ -670,14 +670,21 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> deleteProcessDefinitionByCode(User loginUser, long projectCode, long code) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
+        Map<String, Object> result = new HashMap<>();
+        Project project = new Project();
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            project = projectMapper.queryByCode(projectCode);
+            //check user access for project
+            Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+            Status resultStatus = (Status) checkResult.get(Constants.STATUS);
+            if (resultStatus != Status.SUCCESS) {
+                putMsg(result, resultStatus);
+                return result;
+            }
         }
+
         ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(code);
-        if (processDefinition == null || projectCode != processDefinition.getProjectCode()) {
+        if (processDefinition == null) {
             putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
             return result;
         }

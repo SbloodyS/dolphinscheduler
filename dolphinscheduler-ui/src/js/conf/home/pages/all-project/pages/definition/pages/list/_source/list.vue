@@ -79,9 +79,9 @@
             <el-tooltip :content="$t('offline')" placement="top" :enterable="false">
               <span><el-button type="danger" size="mini" icon="el-icon-download" v-if="scope.row.releaseState === 'ONLINE'" @click="_downline(scope.row)" circle></el-button></span>
             </el-tooltip>
-            <el-tooltip :content="$t('Copy Workflow')" placement="top" :enterable="false">
-              <span><el-button type="primary" size="mini" :disabled="scope.row.releaseState === 'ONLINE'"  icon="el-icon-document-copy" @click="_copyProcess(scope.row)" circle></el-button></span>
-            </el-tooltip>
+<!--            <el-tooltip :content="$t('Copy Workflow')" placement="top" :enterable="false">-->
+<!--              <span><el-button type="primary" size="mini" :disabled="scope.row.releaseState === 'ONLINE'"  icon="el-icon-document-copy" @click="_copyProcess(scope.row)" circle></el-button></span>-->
+<!--            </el-tooltip>-->
             <el-tooltip :content="$t('Cron Manage')" placement="top" :enterable="false">
               <span><el-button type="primary" size="mini" icon="el-icon-date" :disabled="scope.row.releaseState !== 'ONLINE'" @click="_timingManage(scope.row)" circle></el-button></span>
             </el-tooltip>
@@ -121,7 +121,7 @@
       </el-popconfirm>
     </el-tooltip>
     <el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 80px;" @click="_batchExport(item)" >{{$t('Export')}}</el-button>
-    <span><el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 140px;" @click="_batchCopy(item)" >{{$t('Batch copy')}}</el-button></span>
+<!--    <span><el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 140px;" @click="_batchCopy(item)" >{{$t('Batch copy')}}</el-button></span>-->
 <!--    <el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 225px;" @click="_batchMove(item)" >{{$t('Batch move')}}</el-button>-->
     <el-drawer
       :visible.sync="drawer"
