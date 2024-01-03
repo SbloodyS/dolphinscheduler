@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.api.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.service.WorkFlowLineageService;
 import org.apache.dolphinscheduler.common.Constants;
@@ -57,6 +58,7 @@ import org.springframework.stereotype.Service;
  * work flow lineage service impl
  */
 @Service
+@Slf4j
 public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkFlowLineageService {
 
     @Autowired
@@ -69,13 +71,16 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
     private TaskDefinitionLogMapper taskDefinitionLogMapper;
 
     @Override
-    public Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName) {
+    public Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName, User loginUser) {
         Map<String, Object> result = new HashMap<>();
-        Project project = projectMapper.queryByCode(projectCode);
-        if (project == null) {
-            putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
-            return result;
+        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+            Project project = projectMapper.queryByCode(projectCode);
+            if (project == null) {
+                putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
+                return result;
+            }
         }
+
         List<WorkFlowLineage> workFlowLineageList = workFlowLineageMapper.queryWorkFlowLineageByName(projectCode, workFlowName);
         result.put(Constants.DATA_LIST, workFlowLineageList);
         putMsg(result, Status.SUCCESS);
@@ -134,7 +139,7 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
     @Override
     public Map<String, Object> queryWorkFlowLineage(long projectCode, User loginUser) {
         Map<String, Object> result = new HashMap<>();
-        List<Project> projectList;
+        List<Project> projectList = new ArrayList<>();
         if (projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER)) {
             projectList = projectMapper.queryAllProject();
             Map<String, Object> workFlowListMap = getAllWorkFlowList(projectList);
@@ -148,6 +153,10 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
             putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
             return result;
         }
+        projectList.add(project);
+        Map<String, Object> workFlowListMap = getAllWorkFlowList(projectList);
+        result.put(Constants.DATA_LIST, workFlowListMap);
+        putMsg(result, Status.SUCCESS);
         return result;
     }
 
@@ -189,6 +198,7 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
         }
         workFlowListMap.put(Constants.WORKFLOW_LIST, workFlowLineagesMap.values());
         workFlowListMap.put(Constants.WORKFLOW_RELATION_LIST, workFlowRelations);
+        log.info("workFlowListMap:{}", workFlowListMap);
         return workFlowListMap;
     }
 

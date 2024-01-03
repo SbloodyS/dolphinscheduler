@@ -57,16 +57,14 @@
         const myChart = Chart.bar('#process-definition-bar', this.defineUserList, {})
         myChart.echart.setOption(bar)
         // Jump not allowed on home page
-        if (this.projectCode) {
-          myChart.echart.on('click', e => {
-            this.$router.push({
-              name: 'projects-definition-list',
-              query: {
-                userId: e.name.split(',')[1]
-              }
-            })
+        myChart.echart.on('click', e => {
+          this.$router.push({
+            name: 'all-project-definition-list',
+            query: {
+              userId: e.name.split(',')[1]
+            }
           })
-        }
+        })
       }
     },
     created () {

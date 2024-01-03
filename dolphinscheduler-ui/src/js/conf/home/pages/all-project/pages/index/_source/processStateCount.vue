@@ -33,7 +33,7 @@
                 <td><span>{{$index+1}}</span></td>
                 <td>
                   <a v-if="currentName === 'home'" style="cursor: default">{{item.value}}</a>
-                  <span v-else><a href="javascript:" @click="searchParams.projectCode && _goProcess(item.key)">{{item.value}}</a></span>
+                  <span v-else><a href="javascript:" @click="_goProcess(item.key)">{{item.value}}</a></span>
                 </td>
                 <td><span class="ellipsis" style="width: 98%;" :title="item.key">{{item.key}}</span></td>
               </tr>
@@ -72,7 +72,7 @@
       ...mapActions('projects', ['getProcessStateCount']),
       _goProcess (name) {
         this.$router.push({
-          name: 'projects-instance-list',
+          name: 'all-project-instance-list',
           query: {
             stateType: _.find(stateType, ['label', name]).code,
             startDate: this.searchParams.startDate,

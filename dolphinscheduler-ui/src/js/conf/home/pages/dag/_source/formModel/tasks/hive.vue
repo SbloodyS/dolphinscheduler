@@ -58,7 +58,7 @@
       return {
         valueConsistsOf: 'LEAF_PRIORITY',
         // script
-        rawScript: '',
+        sql: '',
         // Custom parameter
         localParams: [],
         // resource(list)
@@ -136,7 +136,7 @@
        * verification
        */
       _verification () {
-        // rawScript verification
+        // sql verification
         if (!editor.getValue()) {
           this.$message.warning(`${i18n.$t('Please enter script(required)')}`)
           return false
@@ -144,7 +144,7 @@
 
         // storage
         this.$emit('on-params', {
-          rawScript: editor.getValue()
+          sql: editor.getValue()
         })
         return true
       },
@@ -168,7 +168,7 @@
 
         // Monitor keyboard
         editor.on('keypress', this.keypress)
-        editor.setValue(this.rawScript)
+        editor.setValue(this.sql)
 
         return editor
       },
@@ -271,7 +271,7 @@
 
       // Non-null objects represent backfill
       if (!_.isEmpty(o)) {
-        this.rawScript = o.params.rawScript || ''
+        this.sql = o.params.sql || ''
 
         // backfill resourceList
         let backResource = o.params.resourceList || []

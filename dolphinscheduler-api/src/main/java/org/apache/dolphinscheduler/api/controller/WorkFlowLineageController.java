@@ -68,7 +68,7 @@ public class WorkFlowLineageController extends BaseController {
                                                                     @RequestParam(value = "workFlowName", required = false) String workFlowName) {
         try {
             workFlowName = ParameterUtils.handleEscapes(workFlowName);
-            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineageByName(projectCode, workFlowName);
+            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineageByName(projectCode, workFlowName, loginUser);
             return returnDataList(result);
         } catch (Exception e) {
             logger.error(QUERY_WORKFLOW_LINEAGE_ERROR.getMsg(), e);

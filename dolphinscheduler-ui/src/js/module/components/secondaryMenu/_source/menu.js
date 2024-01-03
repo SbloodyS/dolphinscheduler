@@ -91,15 +91,15 @@ const menu = {
       icon: 'ri-home-4-line',
       children: []
     },
-    {
-      name: `${i18n.$t('Kinship')}`,
-      id: 1,
-      path: 'all-project-kinship-index',
-      isOpen: true,
-      enabled: true,
-      icon: 'ri-node-tree',
-      children: []
-    },
+    // {
+    //   name: `${i18n.$t('Kinship')}`,
+    //   id: 1,
+    //   path: 'all-project-kinship-index',
+    //   isOpen: true,
+    //   enabled: true,
+    //   icon: 'ri-node-tree',
+    //   children: []
+    // },
     {
       name: `${i18n.$t('Process')}`,
       id: 2,

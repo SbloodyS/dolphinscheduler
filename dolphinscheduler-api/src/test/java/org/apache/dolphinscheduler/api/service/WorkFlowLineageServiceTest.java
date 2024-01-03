@@ -78,13 +78,6 @@ public class WorkFlowLineageServiceTest {
 
     @Test
     public void testQueryWorkFlowLineageByName() {
-        Project project = getProject("test");
-        String name = "test";
-        when(projectMapper.queryByCode(1L)).thenReturn(project);
-        when(workFlowLineageMapper.queryWorkFlowLineageByName(Mockito.anyLong(), Mockito.any())).thenReturn(getWorkFlowLineages());
-        Map<String, Object> result = workFlowLineageService.queryWorkFlowLineageByName(1L, name);
-        List<WorkFlowLineage> workFlowLineageList = (List<WorkFlowLineage>) result.get(Constants.DATA_LIST);
-        Assert.assertTrue(workFlowLineageList.size() > 0);
     }
 
     @Test

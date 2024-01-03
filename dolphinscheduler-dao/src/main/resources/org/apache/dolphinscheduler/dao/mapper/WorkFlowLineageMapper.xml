@@ -23,7 +23,10 @@
         select tepd.code as work_flow_code,tepd.name as work_flow_name
         from t_ds_process_definition tepd
         left join t_ds_schedules tes on tepd.code = tes.process_definition_code
-        where tepd.project_code = #{projectCode}
+        where 1=1
+        <if test="projectCode != 0 and projectCode != ''">
+        AND tepd.project_code = #{projectCode}
+        </if>
         <if test="workFlowName != null and workFlowName != ''">
             and tepd.name like concat('%', #{workFlowName}, '%')
         </if>
@@ -46,10 +49,10 @@
         select tepd.code as work_flow_code,tepd.name as work_flow_name,
                '' as source_work_flow_code,
                 tepd.release_state as work_flow_publish_status,
-                tes.start_time as schedule_start_time,
-                tes.end_time as schedule_end_time,
-                tes.crontab as crontab,
-                tes.release_state as schedule_publish_status
+                MAX(tes.start_time) as schedule_start_time,
+                MAX(tes.end_time) as schedule_end_time,
+                MAX(tes.crontab) as crontab,
+                MAX(COALESCE(tes.release_state,0)) as schedule_publish_status
         from t_ds_process_definition tepd
         left join t_ds_schedules tes on tepd.code = tes.process_definition_code
         where 1=1
@@ -60,6 +63,9 @@
                 and tepd.code = #{item.processDefinitionCode})
             </foreach>
         </if>
+        GROUP BY tepd.code
+                 ,tepd.name
+                 ,tepd.release_state
     </select>
 
     <select id="queryProcessLineage" resultType="org.apache.dolphinscheduler.dao.entity.ProcessLineage">

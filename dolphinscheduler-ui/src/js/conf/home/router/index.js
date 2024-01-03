@@ -266,15 +266,15 @@ const router = new Router({
             refreshInSwitchedTab: config.refreshInSwitchedTab
           }
         },
-        {
-          path: '/all-project/0/kinship',
-          name: 'all-project-kinship-index',
-          component: resolve => require(['../pages/all-project/pages/kinship/index'], resolve),
-          meta: {
-            title: `${i18n.$t('Kinship')}`,
-            refreshInSwitchedTab: config.refreshInSwitchedTab
-          }
-        },
+        // {
+        //   path: '/all-project/0/kinship',
+        //   name: 'all-project-kinship-index',
+        //   component: resolve => require(['../pages/all-project/pages/kinship/index'], resolve),
+        //   meta: {
+        //     title: `${i18n.$t('Kinship')}`,
+        //     refreshInSwitchedTab: config.refreshInSwitchedTab
+        //   }
+        // },
         {
           path: '/all-project/0/definition',
           name: 'process-definition-index',
@@ -304,33 +304,33 @@ const router = new Router({
                 title: `${i18n.$t('Process definition details')}`,
                 refreshInSwitchedTab: config.refreshInSwitchedTab
               }
-            },
-            {
-              path: '/all-project/0/definition/create',
-              name: 'definition-create',
-              component: resolve => require(['../pages/all-project/pages/definition/pages/create/index'], resolve),
-              meta: {
-                title: `${i18n.$t('Create process definition')}`
-              }
-            },
-            {
-              path: '/all-project/0/definition/tree/:code',
-              name: 'definition-tree-view-index',
-              component: resolve => require(['../pages/all-project/pages/definition/pages/tree/index'], resolve),
-              meta: {
-                title: `${i18n.$t('TreeView')}`,
-                refreshInSwitchedTab: config.refreshInSwitchedTab
-              }
-            },
-            {
-              path: '/all-project/0/definition/list/timing/:code',
-              name: 'definition-timing-details',
-              component: resolve => require(['../pages/all-project/pages/definition/timing/index'], resolve),
-              meta: {
-                title: `${i18n.$t('Scheduled task list')}`,
-                refreshInSwitchedTab: config.refreshInSwitchedTab
-              }
             }
+            // {
+            //   path: '/all-project/0/definition/create',
+            //   name: 'definition-create',
+            //   component: resolve => require(['../pages/all-project/pages/definition/pages/create/index'], resolve),
+            //   meta: {
+            //     title: `${i18n.$t('Create process definition')}`
+            //   }
+            // },
+            // {
+            //   path: '/all-project/0/definition/tree/:code',
+            //   name: 'definition-tree-view-index',
+            //   component: resolve => require(['../pages/all-project/pages/definition/pages/tree/index'], resolve),
+            //   meta: {
+            //     title: `${i18n.$t('TreeView')}`,
+            //     refreshInSwitchedTab: config.refreshInSwitchedTab
+            //   }
+            // },
+            // {
+            //   path: '/all-project/0/definition/list/timing/:code',
+            //   name: 'definition-timing-details',
+            //   component: resolve => require(['../pages/all-project/pages/definition/timing/index'], resolve),
+            //   meta: {
+            //     title: `${i18n.$t('Scheduled task list')}`,
+            //     refreshInSwitchedTab: config.refreshInSwitchedTab
+            //   }
+            // }
           ]
         },
         {

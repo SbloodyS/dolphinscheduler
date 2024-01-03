@@ -41,7 +41,7 @@
             @size-change="_pageSize"
             :page-size="searchParams.pageSize"
             :current-page.sync="searchParams.pageNo"
-            :page-sizes="[10, 30, 50]"
+            :page-sizes="[15, 30, 50]"
             layout="sizes, prev, pager, next, jumper"
             :total="total">
           </el-pagination>
@@ -73,7 +73,7 @@
         projectsList: [],
         isLoading: true,
         searchParams: {
-          pageSize: 10,
+          pageSize: 15,
           pageNo: 1,
           searchVal: ''
         },

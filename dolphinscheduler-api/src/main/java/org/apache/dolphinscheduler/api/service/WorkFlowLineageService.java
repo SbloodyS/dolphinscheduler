@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public interface WorkFlowLineageService {
 
-    Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName);
+    Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName, User loginUser);
 
     Map<String, Object> queryWorkFlowLineageByCode(long projectCode, long workFlowCode);
 

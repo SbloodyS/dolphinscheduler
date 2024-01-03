@@ -33,7 +33,7 @@
                 <td><span>{{$index+1}}</span></td>
                 <td>
                   <span>
-                    <a href="javascript:" @click="searchParams.projectCode && _goTask(item.key)" :class="searchParams.projectCode ?'links':''">{{item.value}}</a>
+                    <a href="javascript:" @click="_goTask(item.key)" :class="searchParams.projectCode ?'links':''">{{item.value}}</a>
                   </span>
                 </td>
                 <td><span class="ellipsis" style="width: 98%;" :title="item.key">{{item.key}}</span></td>
@@ -72,7 +72,7 @@
       ...mapActions('projects', ['getTaskStatusCount']),
       _goTask (name) {
         this.$router.push({
-          name: 'task-instance',
+          name: 'all-project-task-instance-index',
           query: {
             stateType: _.find(stateType, ['label', name]).code,
             startDate: this.searchParams.startDate,

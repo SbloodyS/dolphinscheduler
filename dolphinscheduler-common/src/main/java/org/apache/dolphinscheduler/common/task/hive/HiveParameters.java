@@ -33,7 +33,7 @@ public class HiveParameters extends AbstractParameters {
     /**
      * shell script
      */
-    private String rawScript;
+    private String sql;
 
     /**
      * resource list
@@ -42,7 +42,7 @@ public class HiveParameters extends AbstractParameters {
 
     @Override
     public boolean checkParameters() {
-        return rawScript != null && !rawScript.isEmpty();
+        return sql != null && !sql.isEmpty();
     }
 
     @Override

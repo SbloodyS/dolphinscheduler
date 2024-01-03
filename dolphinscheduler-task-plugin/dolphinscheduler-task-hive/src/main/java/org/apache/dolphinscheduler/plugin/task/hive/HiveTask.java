@@ -149,7 +149,7 @@ public class HiveTask extends AbstractTaskExecutor {
      * @return raw hive script
      */
     private String buildHiveScriptContent() {
-        String rawHiveScript = hiveParameters.getRawScript().replaceAll("\\r\\n", "\n");
+        String rawHiveScript = hiveParameters.getSql().replaceAll("\\r\\n", "\n");
 
         // replace placeholder
         Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, hiveParameters);
@@ -161,7 +161,7 @@ public class HiveTask extends AbstractTaskExecutor {
         }
         rawHiveScript = ParameterUtils.convertParameterPlaceholders(rawHiveScript, ParamUtils.convert(paramsMap));
 
-        logger.info("raw hive script : {}", hiveParameters.getRawScript());
+        logger.info("raw hive script : {}", hiveParameters.getSql());
 
         return rawHiveScript;
     }
