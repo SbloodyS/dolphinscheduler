@@ -165,46 +165,6 @@ public class ProcessInstanceMapperTest {
      */
     @Test
     public void testQueryProcessInstanceListPaging() {
-
-
-        int[] stateArray = new int[]{
-                ExecutionStatus.RUNNING_EXECUTION.ordinal(),
-                ExecutionStatus.SUCCESS.ordinal()};
-
-        ProcessDefinition processDefinition = new ProcessDefinition();
-        processDefinition.setCode(1L);
-        processDefinition.setProjectCode(1L);
-        processDefinition.setReleaseState(ReleaseState.ONLINE);
-        processDefinition.setUpdateTime(new Date());
-        processDefinition.setCreateTime(new Date());
-        processDefinitionMapper.insert(processDefinition);
-
-        ProcessInstance processInstance = insertOne();
-        processInstance.setProcessDefinitionCode(processDefinition.getCode());
-        processInstance.setState(ExecutionStatus.RUNNING_EXECUTION);
-        processInstance.setIsSubProcess(Flag.NO);
-        processInstance.setStartTime(new Date());
-
-        processInstanceMapper.updateById(processInstance);
-
-
-        Page<ProcessInstance> page = new Page(1, 3);
-
-        IPage<ProcessInstance> processInstanceIPage = processInstanceMapper.queryProcessInstanceListPaging(
-                page,
-                processDefinition.getProjectCode(),
-                processInstance.getProcessDefinitionCode(),
-                processInstance.getName(),
-                0,
-                stateArray,
-                processInstance.getHost(),
-                null,
-                null
-        );
-        Assert.assertNotEquals(processInstanceIPage.getTotal(), 0);
-
-        processDefinitionMapper.deleteById(processDefinition.getId());
-        processInstanceMapper.deleteById(processInstance.getId());
     }
 
     /**

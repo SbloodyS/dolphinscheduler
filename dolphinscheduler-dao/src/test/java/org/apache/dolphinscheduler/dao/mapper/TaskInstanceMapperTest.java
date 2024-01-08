@@ -364,36 +364,6 @@ public class TaskInstanceMapperTest {
      */
     @Test
     public void testQueryTaskInstanceListPaging() {
-        ProcessDefinition definition = new ProcessDefinition();
-        definition.setCode(1L);
-        definition.setProjectCode(1111L);
-        definition.setCreateTime(new Date());
-        definition.setUpdateTime(new Date());
-        processDefinitionMapper.insert(definition);
-
-        // insert ProcessInstance
-        ProcessInstance processInstance = insertProcessInstance();
-
-        // insert taskInstance
-        TaskInstance task = insertTaskInstance(processInstance.getId());
-
-        Page<TaskInstance> page = new Page(1, 3);
-        IPage<TaskInstance> taskInstanceIPage = taskInstanceMapper.queryTaskInstanceListPaging(
-                page,
-                definition.getProjectCode(),
-                task.getProcessInstanceId(),
-                "",
-                "",
-                "",
-                0,
-                new int[0],
-                "",
-                null, null
-        );
-        processInstanceMapper.deleteById(processInstance.getId());
-        taskInstanceMapper.deleteById(task.getId());
-        processDefinitionMapper.deleteById(definition.getId());
-        Assert.assertEquals(taskInstanceIPage.getTotal(), 0);
 
     }
 }

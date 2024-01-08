@@ -104,6 +104,7 @@
           this.searchParams.taskName = ''
         }
         this.searchParams.pageNo = 1
+        this._debounceGET()
       },
       _page (val) {
         this.searchParams.pageNo = val
