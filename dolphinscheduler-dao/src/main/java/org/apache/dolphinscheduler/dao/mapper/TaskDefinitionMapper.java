@@ -17,18 +17,17 @@
 
 package org.apache.dolphinscheduler.dao.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.dolphinscheduler.dao.entity.DefinitionGroupByUser;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinitionLog;
-
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * task definition mapper interface
@@ -39,11 +38,13 @@ public interface TaskDefinitionMapper extends BaseMapper<TaskDefinition> {
      * query task definition by name
      *
      * @param projectCode projectCode
-     * @param name name
+     * @param name        name
      * @return task definition
      */
     TaskDefinition queryByName(@Param("projectCode") long projectCode,
                                @Param("name") String name);
+
+    List<TaskDefinition> queryByCodeAndVersion(@Param("taskDefinitions") Collection<TaskDefinition> taskDefinitions);
 
     /**
      * query task definition by code
@@ -104,12 +105,12 @@ public interface TaskDefinitionMapper extends BaseMapper<TaskDefinition> {
     /**
      * task definition page
      *
-     * @param page page
-     * @param taskType taskType
-     * @param searchVal searchVal
-     * @param userId userId
+     * @param page        page
+     * @param taskType    taskType
+     * @param searchVal   searchVal
+     * @param userId      userId
      * @param projectCode projectCode
-     * @param isAdmin isAdmin
+     * @param isAdmin     isAdmin
      * @return task definition IPage
      */
     IPage<TaskDefinition> queryDefineListPaging(IPage<TaskDefinition> page,

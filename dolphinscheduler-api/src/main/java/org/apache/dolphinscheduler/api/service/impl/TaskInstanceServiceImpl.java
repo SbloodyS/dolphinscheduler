@@ -88,6 +88,8 @@ public class TaskInstanceServiceImpl extends BaseServiceImpl implements TaskInst
                                       Integer processInstanceId,
                                       String processInstanceName,
                                       String taskName,
+                                      Long taskCode,
+                                      String taskType,
                                       String executorName,
                                       String startDate,
                                       String endDate,
@@ -128,7 +130,8 @@ public class TaskInstanceServiceImpl extends BaseServiceImpl implements TaskInst
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(pageNo, pageSize);
         int executorId = usersService.getUserIdByName(executorName);
         IPage<TaskInstance> taskInstanceIPage = taskInstanceMapper.queryTaskInstanceListPaging(
-                page, queryProjectCode, processInstanceId, processInstanceName, searchVal, taskName, executorId, statusArray, host, start, end
+                page, queryProjectCode, processInstanceId, processInstanceName, searchVal, taskName, taskCode, taskType,
+                executorId, statusArray, host, start, end
         );
         Set<String> exclusionSet = new HashSet<>();
         exclusionSet.add(Constants.CLASS);

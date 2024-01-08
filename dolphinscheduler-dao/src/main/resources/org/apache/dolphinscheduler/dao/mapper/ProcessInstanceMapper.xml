@@ -115,6 +115,12 @@
         <if test="searchVal != null and searchVal != ''">
             and instance.name like concat('%', #{searchVal}, '%')
         </if>
+        <if test="processInstanceId != null and processInstanceId != 0">
+            and instance.id = #{processInstanceId}
+        </if>
+        <if test="runningType != null and runningType != ''">
+            and instance.command_type = #{runningType}
+        </if>
         <if test="startTime != null ">
             and instance.start_time > #{startTime} and instance.start_time <![CDATA[ <=]]> #{endTime}
         </if>

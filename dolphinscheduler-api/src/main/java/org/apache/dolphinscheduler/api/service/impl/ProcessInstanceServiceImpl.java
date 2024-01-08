@@ -40,6 +40,7 @@ import org.apache.dolphinscheduler.api.utils.CheckUtils;
 import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.enums.CommandType;
 import org.apache.dolphinscheduler.common.enums.DependResult;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.Flag;
@@ -244,8 +245,9 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
      * @return process instance list
      */
     @Override
-    public Result queryProcessInstanceList(User loginUser, long projectCode, long processDefineCode, String startDate, String endDate, String searchVal, String executorName,
-                                           ExecutionStatus stateType, String host, Integer pageNo, Integer pageSize) {
+    public Result queryProcessInstanceList(User loginUser, long projectCode, long processDefineCode, String startDate,
+                                           String endDate, String searchVal, Long processInstanceId, CommandType runningType,
+                                           String executorName, ExecutionStatus stateType, String host, Integer pageNo, Integer pageSize) {
 
         Result result = new Result();
         Status resultEnum;
@@ -283,7 +285,8 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         int executorId = usersService.getUserIdByName(executorName);
 
         IPage<ProcessInstance> processInstanceList = processInstanceMapper.queryProcessInstanceListPaging(page,
-                queryProjectCode, processDefineCode, searchVal, executorId, statusArray, host, start, end);
+                queryProjectCode, processDefineCode, searchVal, processInstanceId, runningType, executorId,
+                statusArray, host, start, end);
 
         List<ProcessInstance> processInstances = processInstanceList.getRecords();
         List<Integer> userIds = Collections.emptyList();

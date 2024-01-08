@@ -146,12 +146,13 @@ public class DependentExecute {
             List<ProcessTaskRelation> taskRelations = processService.findRelationByCode(processInstance.getProcessDefinitionCode(),
                     processInstance.getProcessDefinitionVersion());
             if (!taskRelations.isEmpty()) {
-                List<TaskDefinitionLog> taskDefinitionLogs = processService.genTaskDefineList(taskRelations);
-                Map<Long, String> definiteTask = taskDefinitionLogs.stream().filter(log -> !log.getTaskType().equals(TaskType.SUB_PROCESS.getDesc())
+                List<TaskDefinition> taskDefinitions = processService.genLatestTaskDefineList(taskRelations);
+                Map<Long, String> definiteTask = taskDefinitions.stream().filter(log -> !log.getTaskType().equals(TaskType.SUB_PROCESS.getDesc())
                         || !log.getTaskType().equals(TaskType.DEPENDENT.getDesc())
                         || !log.getTaskType().equals(TaskType.CONDITIONS.getDesc()))
-                        .filter(log -> log.getFlag().equals(Flag.YES))
-                        .collect(Collectors.toMap(TaskDefinition::getCode, TaskDefinitionLog::getName));
+                        .filter(log -> log.getFlag() == Flag.YES)
+                        .collect(Collectors.toMap(TaskDefinition::getCode, TaskDefinition::getName));
+//                logger.info("The definite task: {}", JSONUtils.toJsonString(definiteTask));
                 if (!definiteTask.isEmpty()) {
                     List<TaskInstance> taskInstanceList = processService.findLastTaskInstanceListInterval(
                             definiteTask.keySet(), processInstance.getId());

@@ -19,6 +19,7 @@
 package org.apache.dolphinscheduler.api.service;
 
 import org.apache.dolphinscheduler.api.utils.Result;
+import org.apache.dolphinscheduler.common.enums.CommandType;
 import org.apache.dolphinscheduler.common.enums.DependResult;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
@@ -76,6 +77,8 @@ public interface ProcessInstanceService {
                                     String startDate,
                                     String endDate,
                                     String searchVal,
+                                    Long processInstanceId,
+                                    CommandType runningType,
                                     String executorName,
                                     ExecutionStatus stateType,
                                     String host,

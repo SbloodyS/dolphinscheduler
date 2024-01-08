@@ -132,12 +132,11 @@ public class TaskExecuteThread implements Runnable, Delayed {
             if (taskExecutionContext.getCurrentExecutionStatus() != ExecutionStatus.RUNNING_EXECUTION) {
                 //changeTaskExecutionStatusToRunning();
                 logger.info("the task begins to execute. task instance id: {}", taskExecutionContext.getTaskInstanceId());
+                if (taskExecutionContext.getStartTime() == null) {
+                    taskExecutionContext.setStartTime(new Date());
+                }
                 taskExecutionContext.setCurrentExecutionStatus(ExecutionStatus.RUNNING_EXECUTION);
                 sendTaskExecuteRunningCommand(taskExecutionContext);
-            }
-
-            if (taskExecutionContext.getStartTime() == null) {
-                taskExecutionContext.setStartTime(new Date());
             }
 
             int dryRun = taskExecutionContext.getDryRun();

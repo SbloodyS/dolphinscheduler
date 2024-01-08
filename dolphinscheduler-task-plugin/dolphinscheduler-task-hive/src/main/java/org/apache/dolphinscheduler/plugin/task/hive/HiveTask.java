@@ -121,7 +121,7 @@ public class HiveTask extends AbstractTaskExecutor {
 
         createHiveCommandFileIfNotExists(hiveScriptContent, hiveScriptFile);
 
-        return String.format("sudo ${HIVE_HOME} -hiveconf mapreduce.job.name=%s -hiveconf spark.app.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf spark.yarn.queue=%s -f %s",
+        return String.format("sudo ${HIVE_CLI_HOME} -hiveconf mapreduce.job.name=%s -hiveconf spark.app.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf spark.yarn.queue=%s -f %s",
                 taskExecutionContext.getTaskName(),
                 taskExecutionContext.getTaskName(),
                 "root.query.dmp",

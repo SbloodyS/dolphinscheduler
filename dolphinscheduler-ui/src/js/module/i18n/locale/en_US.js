@@ -452,6 +452,8 @@ export default {
   AllStatus: 'All',
   None: 'None',
   Name: 'Name',
+  ProcessInstanceId: 'ProcessInstanceId',
+  taskCode: 'taskCode',
   'Process priority': 'Process priority',
   'Task priority': 'Task priority',
   'Task timeout alarm': 'Task timeout alarm',

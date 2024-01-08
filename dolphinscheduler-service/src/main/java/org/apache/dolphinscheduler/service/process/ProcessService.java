@@ -2507,6 +2507,22 @@ public class ProcessService {
         return taskDefinitionLogMapper.queryByTaskDefinitions(taskDefinitionSet);
     }
 
+    public List<TaskDefinition> genLatestTaskDefineList(List<ProcessTaskRelation> processTaskRelations) {
+        Set<TaskDefinition> taskDefinitionSet = new HashSet<>();
+        for (ProcessTaskRelation processTaskRelation : processTaskRelations) {
+            if (processTaskRelation.getPreTaskCode() > 0) {
+                taskDefinitionSet.add(new TaskDefinition(processTaskRelation.getPreTaskCode(), processTaskRelation.getPreTaskVersion()));
+            }
+            if (processTaskRelation.getPostTaskCode() > 0) {
+                taskDefinitionSet.add(new TaskDefinition(processTaskRelation.getPostTaskCode(), processTaskRelation.getPostTaskVersion()));
+            }
+        }
+        if (taskDefinitionSet.isEmpty()) {
+            return Lists.newArrayList();
+        }
+        return taskDefinitionMapper.queryByCodeAndVersion(taskDefinitionSet);
+    }
+
     public List<TaskDefinitionLog> getTaskDefineLogListByRelation(List<ProcessTaskRelation> processTaskRelations) {
         List<TaskDefinitionLog> taskDefinitionLogs = new ArrayList<>();
         Map<Long, Integer> taskCodeVersionMap = new HashMap<>();

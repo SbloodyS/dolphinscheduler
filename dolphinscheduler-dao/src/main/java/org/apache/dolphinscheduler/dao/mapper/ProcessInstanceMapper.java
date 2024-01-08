@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.dao.mapper;
 
+import org.apache.dolphinscheduler.common.enums.CommandType;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.dao.entity.ExecuteStatusCount;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
@@ -111,6 +112,8 @@ public interface ProcessInstanceMapper extends BaseMapper<ProcessInstance> {
                                                           @Param("projectCode") Long projectCode,
                                                           @Param("processDefinitionCode") Long processDefinitionCode,
                                                           @Param("searchVal") String searchVal,
+                                                          @Param("processInstanceId") Long processInstanceId,
+                                                          @Param("runningType") CommandType runningType,
                                                           @Param("executorId") Integer executorId,
                                                           @Param("states") int[] statusArray,
                                                           @Param("host") String host,

@@ -140,6 +140,9 @@
         <if test="projectCode != 0">
         AND define.project_code = #{projectCode}
         </if>
+        <if test="taskCode != 0 and taskCode != null">
+            AND instance.task_code = #{taskCode}
+        </if>
         <if test="startTime != null">
             and instance.start_time > #{startTime} and instance.start_time <![CDATA[ <=]]> #{endTime}
         </if>
@@ -150,7 +153,10 @@
             and instance.name like concat('%', #{searchVal}, '%')
         </if>
         <if test="taskName != null and taskName != ''">
-            and instance.name=#{taskName}
+            and instance.name = #{taskName}
+        </if>
+        <if test="taskType != null and taskType != ''">
+            and instance.task_type = #{taskType}
         </if>
         <if test="states != null and states.length != 0">
             and instance.state in

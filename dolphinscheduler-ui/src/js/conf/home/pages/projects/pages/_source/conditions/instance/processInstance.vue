@@ -50,7 +50,20 @@
         <el-input v-model="searchParams.executorName" @keyup.enter.native="_ckQuery" style="width: 140px;" size="mini" :placeholder="$t('Executor')"></el-input>
       </div>
       <div class="list">
+        <el-select style="width: 140px;" @change="_onChangeRunningType" :value="searchParams.runningType" :placeholder="$t('Run Type')" size="mini" clearable>
+          <el-option
+            v-for="runningType in runningTYpeList"
+            :key="runningType.desc"
+            :value="runningType.code"
+            :label="runningType.desc">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="list">
         <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('Name')"></el-input>
+      </div>
+      <div class="list">
+        <el-input v-model="searchParams.processInstanceId" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('ProcessInstanceId')"></el-input>
       </div>
     </template>
   </m-conditions>
@@ -59,24 +72,28 @@
   import _ from 'lodash'
   import { stateType } from './common'
   import mConditions from '@/module/components/conditions/conditions'
-  import {formatDate} from "../../../../../../../../module/filter/filter";
+  import { formatDate } from '../../../../../../../../module/filter/filter'
+  import { runningType } from '../../../../../dag/_source/config'
   export default {
     name: 'process-instance-conditions',
     data () {
-      let today = new Date();
+      let today = new Date()
 
       return {
         // state(list)
         stateTypeList: stateType,
+        runningTYpeList: runningType,
         searchParams: {
           // state
           stateType: '',
           // start date
           startDate: formatDate(today.toString(), 'YYYY-MM-DD 00:00:00'),
           // end date
-          endDate: formatDate(new Date(today.setDate(today.getDate()+1)).toString(), 'YYYY-MM-DD 23:59:59'),
+          endDate: formatDate(new Date(today.setDate(today.getDate() + 1)).toString(), 'YYYY-MM-DD 23:59:59'),
           // search value
           searchVal: '',
+          processInstanceId: '',
+          runningType: '',
           // host
           host: '',
           // executor name
@@ -104,6 +121,9 @@
        */
       _onChangeState (val) {
         this.searchParams.stateType = val
+      },
+      _onChangeRunningType (val) {
+        this.searchParams.runningType = val
       }
     },
     watch: {

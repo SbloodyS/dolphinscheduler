@@ -451,6 +451,8 @@ export default {
   AllStatus: '全部状态',
   None: '无',
   Name: '名称',
+  ProcessInstanceId: '工作流实例ID',
+  taskCode: '任务定义code',
   'Process priority': '流程优先级',
   'Task priority': '任务优先级',
   'Task timeout alarm': '任务超时告警',

@@ -99,7 +99,9 @@ public class TaskInstanceController extends BaseController {
                                       @RequestParam(value = "processInstanceId", required = false, defaultValue = "0") Integer processInstanceId,
                                       @RequestParam(value = "processInstanceName", required = false) String processInstanceName,
                                       @RequestParam(value = "searchVal", required = false) String searchVal,
+                                      @RequestParam(value = "taskCode", required = false) Long taskCode,
                                       @RequestParam(value = "taskName", required = false) String taskName,
+                                      @RequestParam(value = "taskType", required = false) String taskType,
                                       @RequestParam(value = "executorName", required = false) String executorName,
                                       @RequestParam(value = "stateType", required = false) ExecutionStatus stateType,
                                       @RequestParam(value = "host", required = false) String host,
@@ -113,7 +115,7 @@ public class TaskInstanceController extends BaseController {
         }
         searchVal = ParameterUtils.handleEscapes(searchVal);
         result = taskInstanceService.queryTaskListPaging(loginUser, projectCode, processInstanceId, processInstanceName,
-                taskName, executorName, startTime, endTime, searchVal, stateType, host, pageNo, pageSize);
+                taskName, taskCode, taskType, executorName, startTime, endTime, searchVal, stateType, host, pageNo, pageSize);
         return result;
     }
 

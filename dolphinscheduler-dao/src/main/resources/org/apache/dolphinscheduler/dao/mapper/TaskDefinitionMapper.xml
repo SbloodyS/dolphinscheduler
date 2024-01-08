@@ -105,4 +105,18 @@
         </if>
         order by td.update_time desc
     </select>
+
+    <select id="queryByCodeAndVersion" resultType="org.apache.dolphinscheduler.dao.entity.TaskDefinition">
+        select
+        <include refid="baseSql"/>
+        from t_ds_task_definition
+        WHERE  1 = 1
+        <if test="taskDefinitions != null and taskDefinitions.size != 0">
+            and
+            <foreach collection="taskDefinitions" index="index" item="item" open="(" separator=" or " close=")">
+                (code = #{item.code}
+                and version = #{item.version})
+            </foreach>
+        </if>
+    </select>
 </mapper>
