@@ -1216,26 +1216,21 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      */
     @Override
     public Map<String, Object> getTaskNodeListByDefinitionCode(User loginUser, long projectCode, long code) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
-        }
+        Map<String, Object> result = new HashMap<>();
         ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(code);
         if (processDefinition == null) {
             logger.info("process define not exists");
             putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
             return result;
         }
-        HashMap<Long, Project> userProjects = new HashMap<>(Constants.DEFAULT_HASH_MAP_SIZE);
-        projectMapper.queryProjectCreatedAndAuthorizedByUserId(loginUser.getId())
-                .forEach(userProject -> userProjects.put(userProject.getCode(), userProject));
-        if (!userProjects.containsKey(projectCode)) {
-            logger.info("process define not exists, project dismatch");
-            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
-            return result;
-        }
+//        HashMap<Long, Project> userProjects = new HashMap<>(Constants.DEFAULT_HASH_MAP_SIZE);
+//        projectMapper.queryProjectCreatedAndAuthorizedByUserId(loginUser.getId())
+//                .forEach(userProject -> userProjects.put(userProject.getCode(), userProject));
+//        if (!userProjects.containsKey(projectCode)) {
+//            logger.info("process define not exists, project dismatch");
+//            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
+//            return result;
+//        }
         DagData dagData = processService.genDagData(processDefinition);
         result.put(Constants.DATA_LIST, dagData.getTaskDefinitionList());
         putMsg(result, Status.SUCCESS);
@@ -1274,13 +1269,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      */
     @Override
     public Map<String, Object> getNodeListMapByDefinitionCodes(User loginUser, long projectCode, String codes) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
-        }
-
+        Map<String, Object> result = new HashMap<>();
         Set<Long> defineCodeSet = Lists.newArrayList(codes.split(Constants.COMMA)).stream().map(Long::parseLong).collect(Collectors.toSet());
         List<ProcessDefinition> processDefinitionList = processDefinitionMapper.queryByCodes(defineCodeSet);
         if (CollectionUtils.isEmpty(processDefinitionList)) {
@@ -1288,19 +1277,19 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, codes);
             return result;
         }
-        HashMap<Long, Project> userProjects = new HashMap<>(Constants.DEFAULT_HASH_MAP_SIZE);
-        projectMapper.queryProjectCreatedAndAuthorizedByUserId(loginUser.getId())
-                .forEach(userProject -> userProjects.put(userProject.getCode(), userProject));
-
-        // check processDefinition exist in project
-        List<ProcessDefinition> processDefinitionListInProject = processDefinitionList.stream()
-                .filter(o -> userProjects.containsKey(o.getProjectCode())).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(processDefinitionListInProject)) {
-            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, codes);
-            return result;
-        }
+//        HashMap<Long, Project> userProjects = new HashMap<>(Constants.DEFAULT_HASH_MAP_SIZE);
+//        projectMapper.queryProjectCreatedAndAuthorizedByUserId(loginUser.getId())
+//                .forEach(userProject -> userProjects.put(userProject.getCode(), userProject));
+//
+//        // check processDefinition exist in project
+//        List<ProcessDefinition> processDefinitionListInProject = processDefinitionList.stream()
+//                .filter(o -> userProjects.containsKey(o.getProjectCode())).collect(Collectors.toList());
+//        if (CollectionUtils.isEmpty(processDefinitionListInProject)) {
+//            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, codes);
+//            return result;
+//        }
         Map<Long, List<TaskDefinition>> taskNodeMap = new HashMap<>();
-        for (ProcessDefinition processDefinition : processDefinitionListInProject) {
+        for (ProcessDefinition processDefinition : processDefinitionList) {
             DagData dagData = processService.genDagData(processDefinition);
             taskNodeMap.put(processDefinition.getCode(), dagData.getTaskDefinitionList());
         }
