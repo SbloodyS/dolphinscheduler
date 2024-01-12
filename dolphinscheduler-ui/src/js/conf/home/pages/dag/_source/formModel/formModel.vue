@@ -291,6 +291,15 @@
             :backfill-item="backfillItem"
           >
           </m-to-ck>
+          <!-- clickhouse node -->
+          <m-clickhouse
+            v-if="nodeData.taskType === 'CLICKHOUSE'"
+            @on-params="_onParams"
+            @on-cache-params="_onCacheParams"
+            ref="CLICKHOUSE"
+            :backfill-item="backfillItem"
+          >
+          </m-clickhouse>
           <!-- sub_process node -->
           <m-sub-process
             v-if="nodeData.taskType === 'SUB_PROCESS'"
@@ -473,6 +482,7 @@
   import mDataSync from './tasks/datasync'
   import mHive from './tasks/hive'
   import mToCk from './tasks/tock'
+  import mClickhouse from './tasks/clickhouse'
   // import mSelectInput from './_source/selectInput'
   import mTimeoutAlarm from './_source/timeoutAlarm'
   import mDependentTimeout from './_source/dependentTimeout'
@@ -651,7 +661,7 @@
        * Click external to close the current component
        */
       _handleClose () {
-      // this.close()
+        // this.close()
       },
       /**
        * Jump to task instance
@@ -1026,7 +1036,8 @@
       mWorkerGroups,
       mRelatedEnvironment,
       mPreTasks,
-      mDataSync
+      mDataSync,
+      mClickhouse
       // ReferenceFromTask
     }
   }

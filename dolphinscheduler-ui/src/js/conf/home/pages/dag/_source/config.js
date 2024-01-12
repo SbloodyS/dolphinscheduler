@@ -300,6 +300,10 @@ const tasksType = {
   TOCK: {
     desc: 'TOCK',
     color: '#E46F13'
+  },
+  CLICKHOUSE: {
+    desc: 'CLICKHOUSE',
+    color: '#E46F13'
   }
 }
 

@@ -103,6 +103,7 @@ export default {
   'Please enter the procedure method': 'Please enter the procedure script \n\ncall procedure:{call <procedure-name>[(<arg1>,<arg2>, ...)]}\n\ncall function:{?= call <procedure-name>[(<arg1>,<arg2>, ...)]} ',
   'The procedure method script example': 'example:{call <procedure-name>[(?,?, ...)]} or {?= call <procedure-name>[(?,?, ...)]}',
   Script: 'Script',
+  ip: 'ip',
   'Please enter script(required)': 'Please enter script(required)',
   'Deploy Mode': 'Deploy Mode',
   'Driver Cores': 'Driver Cores',

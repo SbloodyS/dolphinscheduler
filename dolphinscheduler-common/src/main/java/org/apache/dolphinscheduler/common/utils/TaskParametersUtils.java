@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.common.utils;
 
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import org.apache.dolphinscheduler.common.task.clickhouse.trino.ClickhouseParameters;
 import org.apache.dolphinscheduler.common.task.conditions.ConditionsParameters;
 import org.apache.dolphinscheduler.common.task.datasync.DataSyncParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
@@ -100,6 +101,8 @@ public class TaskParametersUtils {
                 return JSONUtils.parseObject(parameter, HiveParameters.class);
             case "TOCK":
                 return JSONUtils.parseObject(parameter, ToCkParameters.class);
+            case "CLICKHOUSE":
+                return JSONUtils.parseObject(parameter, ClickhouseParameters.class);
             default:
                 logger.error("not support task type: {}", taskType);
                 return null;

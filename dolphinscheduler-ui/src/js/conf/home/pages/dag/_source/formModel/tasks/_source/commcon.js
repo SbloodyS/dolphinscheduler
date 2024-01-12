@@ -256,6 +256,15 @@ const nodeStatusList = [
   }
 ]
 
+const clickhouseIPList = [
+  {
+    ip: '172.16.92.170'
+  },
+  {
+    ip: '172.16.204.33'
+  }
+]
+
 export {
   cycleList,
   dateValueList,
@@ -263,5 +272,6 @@ export {
   directList,
   sqlTypeList,
   positionList,
-  nodeStatusList
+  nodeStatusList,
+  clickhouseIPList
 }

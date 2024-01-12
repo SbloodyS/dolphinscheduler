@@ -716,6 +716,9 @@
       backfillItem: Object
     },
     methods: {
+      closeAble () {
+        // this.scriptBoxDialog = false
+      },
       setEditorVal () {
         this.item = editor.getValue()
         this.scriptBoxDialog = true

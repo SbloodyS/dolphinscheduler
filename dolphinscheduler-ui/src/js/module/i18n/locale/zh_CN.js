@@ -103,6 +103,7 @@ export default {
   'Please enter the procedure method': '请输入存储脚本 \n\n调用存储过程：{call <procedure-name>[(<arg1>,<arg2>, ...)]}\n\n调用存储函数：{?= call <procedure-name>[(<arg1>,<arg2>, ...)]} ',
   'The procedure method script example': '示例：{call <procedure-name>[(?,?, ...)]} 或 {?= call <procedure-name>[(?,?, ...)]}',
   Script: '脚本',
+  ip: 'ip',
   'Please enter script(required)': '请输入脚本(必填)',
   'Deploy Mode': '部署方式',
   'Driver Cores': 'Driver核心数',

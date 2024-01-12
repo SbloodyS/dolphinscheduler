@@ -123,6 +123,9 @@
           &.icos-tock {
             background-image: url("../images/task-icos/tock.png");
           }
+          &.icos-clickhouse {
+            background-image: url("../images/task-icos/clickhouse.png");
+          }
         }
 
         span {
@@ -194,6 +197,9 @@
             }
             &.icos-tock {
               background-image: url("../images/task-icos/tock_hover.png");
+            }
+            &.icos-clickhouse {
+              background-image: url("../images/task-icos/clickhouse_hover.png");
             }
           }
         }
