@@ -62,7 +62,7 @@
             <span v-if="!scope.row.scheduleReleaseState">-</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Operation')" width="335" fixed="right">
+        <el-table-column :label="$t('Operation')" width="335" fixed="right" v-if="isAuth">
           <template slot-scope="scope">
             <el-tooltip :content="$t('Edit')" placement="top" :enterable="false">
               <span><el-button type="primary" size="mini" icon="el-icon-edit-outline" :disabled="scope.row.releaseState === 'ONLINE'" @click="_edit(scope.row)" circle></el-button></span>
@@ -158,11 +158,13 @@
   import { mapActions, mapState } from 'vuex'
   import { publishStatus } from '@/conf/home/pages/dag/_source/config'
   import mVersions from './versions'
+  import Permissions from '../../../../../../../../../module/permissions'
 
   export default {
     name: 'definition-list',
     data () {
       return {
+        isAuth: Permissions.getAuth(),
         list: [],
         strSelectCodes: '',
         checkAll: false,

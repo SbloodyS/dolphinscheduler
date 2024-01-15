@@ -412,7 +412,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         Result result = new Result();
         long queryProjectCode = projectCode;
 
-        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+        if (projectCode != 0) {
             Project project = projectMapper.queryByCode(projectCode);
             //check user access for project
             Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);

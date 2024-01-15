@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="clearfix list">
-        <div class="nav-links" v-ps="">
+        <div class="nav-links">
           <router-link :to="{ path: '/all-project'}" tag="a" active-class="active">
             <span><em class="ansiconfont el-icon-tickets"></em>{{$t('All Project')}}</span><strong></strong>
           </router-link>
