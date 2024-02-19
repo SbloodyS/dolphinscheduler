@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Vue from 'vue'
-import Vuex from 'vuex'
-import dag from './dag'
-import kinship from './kinship'
-import projects from './projects'
-import resource from './resource'
-import security from './security'
-import datasource from './datasource'
-import user from './user'
-import monitor from './monitor'
-import datasourceNew from './datasource-new'
-Vue.use(Vuex)
-export default new Vuex.Store({
-  modules: {
-    dag,
-    projects,
-    kinship,
-    resource,
-    security,
-    datasource,
-    datasourceNew,
-    user,
-    monitor
-  }
-})
+
+package org.apache.dolphinscheduler.api.service;
+
+import org.apache.dolphinscheduler.api.utils.Result;
+import org.apache.dolphinscheduler.dao.entity.DataSourceNew;
+import org.apache.dolphinscheduler.dao.entity.User;
+
+public interface DataSourceNewService {
+
+    Result<Object> createDataSourceNew(User loginUser, DataSourceNew dataSourceNew);
+
+    Result<Object> updateDataSource(User loginUser, DataSourceNew dataSourceNew);
+
+    Result<Object> queryDataSourceListPaging(User loginUser, String searchVal, Integer pageNo, Integer pageSize);
+
+    Result<Object> deleteDataSourceNew(User loginUser, int datasourceId);
+
+    Result<Object> queryDataSourceNewById(User loginUser, int datasourceId);
+}

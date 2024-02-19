@@ -542,6 +542,27 @@ const router = new Router({
       ]
     },
     {
+      path: '/datasource-new',
+      name: 'datasource-new',
+      component: resolve => require(['../pages/datasource-new/index'], resolve),
+      meta: {
+        title: `${i18n.$t('DataSourceNew')}`
+      },
+      redirect: {
+        name: 'datasource-new-list'
+      },
+      children: [
+        {
+          path: '/datasource-new/list',
+          name: 'datasource-new-list',
+          component: resolve => require(['../pages/datasource-new/pages/list/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Datasource')}`
+          }
+        }
+      ]
+    },
+    {
       path: '/security',
       name: 'security',
       component: resolve => require(['../pages/security/index'], resolve),

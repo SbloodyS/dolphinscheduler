@@ -56,6 +56,13 @@
         </div>
       </div>
       <div class="clearfix list">
+        <div class="nav-links" v-ps="">
+          <router-link :to="{ path: '/datasource-new'}" tag="a" active-class="active">
+            <span><em class="ansfont ri-database-2-line"></em>{{$t('Datasource Manage New')}}</span><strong></strong>
+          </router-link>
+        </div>
+      </div>
+      <div class="clearfix list">
         <div class="nav-links">
           <router-link :to="{ path: '/monitor'}" tag="a" active-class="active">
             <span><em class="ansiconfont el-icon-monitor"></em>{{$t('Monitor')}}</span><strong></strong>
@@ -133,6 +140,10 @@
             <router-link :to="{ path: '/datasource'}" tag="li" active-class="active" v-ps="">
               <em class="ansfont ri-database-2-line"></em>
               <span>{{$t('Datasource manage')}}</span>
+            </router-link>
+            <router-link :to="{ path: '/datasource-new'}" tag="li" active-class="active" v-ps="">
+              <em class="ansfont ri-database-2-line"></em>
+              <span>{{$t('Datasource Manage New')}}</span>
             </router-link>
             <router-link :to="{ path: '/security'}" tag="li" active-class="active" v-ps="">
               <em class="ansfont ri-shield-check-line"></em>

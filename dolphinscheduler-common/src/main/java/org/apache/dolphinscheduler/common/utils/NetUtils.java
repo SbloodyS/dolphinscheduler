@@ -17,9 +17,9 @@
 
 package org.apache.dolphinscheduler.common.utils;
 
-import static java.util.Collections.emptyList;
-
 import org.apache.dolphinscheduler.common.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Inet6Address;
@@ -34,8 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Collections.emptyList;
 
 /**
  * NetUtils

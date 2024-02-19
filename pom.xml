@@ -15,7 +15,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.dolphinscheduler</groupId>
     <artifactId>dolphinscheduler</artifactId>
@@ -276,11 +277,11 @@
                 <artifactId>dolphinscheduler-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.apache.dolphinscheduler</groupId>-->
-<!--                <artifactId>dolphinscheduler-python</artifactId>-->
-<!--                <version>${project.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.dolphinscheduler</groupId>-->
+            <!--                <artifactId>dolphinscheduler-python</artifactId>-->
+            <!--                <version>${project.version}</version>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
                 <artifactId>dolphinscheduler-alert-api</artifactId>
@@ -623,7 +624,7 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.connector.version}</version>
-<!--                <scope>test</scope>-->
+                <!--                <scope>test</scope>-->
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -861,14 +862,14 @@
                 <artifactId>activation</artifactId>
                 <version>1.1</version>
             </dependency>
-     <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
-        </dependency>
+            <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
+            </dependency>
 
-        <dependency>
+            <dependency>
                 <groupId>com.sun.mail</groupId>
                 <artifactId>javax.mail</artifactId>
                 <version>1.6.2</version>
@@ -1201,6 +1202,6 @@
         <module>dolphinscheduler-service</module>
         <module>dolphinscheduler-standalone-server</module>
         <module>dolphinscheduler-datasource-plugin</module>
-<!--        <module>dolphinscheduler-python</module>-->
+        <!--        <module>dolphinscheduler-python</module>-->
     </modules>
 </project>
