@@ -10,6 +10,7 @@ import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.enums.UserType;
 import org.apache.dolphinscheduler.dao.entity.DataSourceNew;
+import org.apache.dolphinscheduler.dao.entity.DataSourceNewId;
 import org.apache.dolphinscheduler.dao.entity.User;
 import org.apache.dolphinscheduler.dao.mapper.DataSourceNewMapper;
 import org.slf4j.Logger;
@@ -155,4 +156,12 @@ public class DataSourceNewServiceImpl extends BaseServiceImpl implements DataSou
         return result;
     }
 
+    @Override
+    public Result<Object> queryDataSourceNewIdList() {
+        Result<Object> result = new Result<>();
+        List<DataSourceNewId> dataSourceNewIdList = dataSourceNewMapper.queryDataSourceNewIdList();
+        result.setData(dataSourceNewIdList);
+        putMsg(result, Status.SUCCESS);
+        return result;
+    }
 }

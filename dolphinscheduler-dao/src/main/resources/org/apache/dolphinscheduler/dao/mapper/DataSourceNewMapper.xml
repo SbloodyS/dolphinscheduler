@@ -43,4 +43,13 @@
             and datasource_name like concat('%',#{searchVal},'%')
         </if>
     </select>
+
+    <select id="queryDataSourceNewIdList" resultType="org.apache.dolphinscheduler.dao.entity.DataSourceNewId">
+        select
+            id
+            ,datasource_name
+        from data_center.datasource_info
+        where 1=1
+        AND is_able = 1
+    </select>
 </mapper>

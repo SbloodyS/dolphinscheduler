@@ -60,7 +60,7 @@ export default {
    */
   updateDatasourceNew ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.put('datasourceNew/update', payload, res => {
+      io.post('datasourceNew/update', payload, res => {
         resolve(res)
       }, () => {
         // do nothing

@@ -32,4 +32,6 @@ public interface DataSourceNewService {
     Result<Object> deleteDataSourceNew(User loginUser, int datasourceId);
 
     Result<Object> queryDataSourceNewById(User loginUser, int datasourceId);
+
+    Result<Object> queryDataSourceNewIdList();
 }

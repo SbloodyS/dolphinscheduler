@@ -19,11 +19,16 @@ package org.apache.dolphinscheduler.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.dolphinscheduler.dao.entity.DataSourceNew;
+import org.apache.dolphinscheduler.dao.entity.DataSourceNewId;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface DataSourceNewMapper extends BaseMapper<DataSourceNew> {
 
     IPage<DataSourceNew> queryDataSourceListPaging(IPage<DataSourceNew> page,
                                                    @Param("searchVal") String searchVal);
+
+    List<DataSourceNewId> queryDataSourceNewIdList();
 
 }

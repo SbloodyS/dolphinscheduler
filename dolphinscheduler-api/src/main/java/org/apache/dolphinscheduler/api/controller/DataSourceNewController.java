@@ -130,4 +130,13 @@ public class DataSourceNewController extends BaseController {
         return dataSourceNewService.deleteDataSourceNew(loginUser, id);
     }
 
+    @ApiOperation(value = "queryDataSourceListPaging", notes = "QUERY_DATA_SOURCE_LIST_PAGING_NOTES")
+    @GetMapping(value = "/idList")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(QUERY_DATASOURCE_ERROR)
+    @AccessLogAnnotation(ignoreRequestArgs = "loginUser")
+    public Result queryDataSourceNewIdList() {
+        return dataSourceNewService.queryDataSourceNewIdList();
+    }
+
 }
