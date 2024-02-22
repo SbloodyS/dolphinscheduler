@@ -41,21 +41,22 @@
       <div slot="text">{{ $t('Script') }}</div>
       <div slot="content">
         <div class="form-mirror">
+          <a class="ans-modal-box-max">
+            <em class="el-icon-full-screen" @click="setEditorVal"></em>
+          </a>
           <textarea
             id="code-shell-mirror"
             name="code-shell-mirror"
             style="opacity: 0">
           </textarea>
-          <a class="ans-modal-box-max">
-            <em class="el-icon-full-screen" @click="setEditorVal"></em>
-          </a>
         </div>
       </div>
     </m-list-box>
     <el-dialog
       :visible.sync="scriptBoxDialog"
-      append-to-body="true"
-      width="80%">
+      :append-to-body="true"
+      width="100%"
+      :fullscreen="true">
       <m-script-box :item="item" @getSriptBoxValue="getSriptBoxValue" @closeAble="closeAble"></m-script-box>
     </el-dialog>
   </div>
@@ -188,6 +189,8 @@
           mode: 'sql',
           readOnly: this.isDetails
         })
+
+        editor.setSize('auto', '350px')
 
         this.keypress = () => {
           if (!editor.getOption('readOnly')) {

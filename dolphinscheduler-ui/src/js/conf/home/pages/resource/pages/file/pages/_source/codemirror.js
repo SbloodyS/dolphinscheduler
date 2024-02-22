@@ -32,6 +32,7 @@ export default (id, o) => {
   return CodeMirror.fromTextArea(document.getElementById(id), Object.assign({
     lineNumbers: true,
     theme: 'mdn-like',
-    readOnly: true
+    readOnly: true,
+    lineWrapping: true
   }, {}, o))
 }

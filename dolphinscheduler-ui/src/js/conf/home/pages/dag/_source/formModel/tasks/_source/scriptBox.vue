@@ -106,13 +106,21 @@
     components: { mListBox }
   }
 </script>
-<style lang="scss" rel="stylesheet/scss" scope>
+<style lang="scss" rel="stylesheet/scss">
   .script-model {
-    width:100%;
+    width: 100%;
   }
   .form-mirror1 {
     .CodeMirror {
-      height: calc(70vh - 90px);
+      //height: calc(70vh - 90px);
+      height: auto;
+      width: auto;
+    }
+    .CodeMirror-scroll {
+      width: auto;
+      height: auto;
+      overflow-y: hidden;
+      overflow-x: auto;
     }
   }
 </style>

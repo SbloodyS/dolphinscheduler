@@ -149,9 +149,9 @@
     padding-right: 4px;
   }
   .ans-modal-box-max {
-    position: absolute;
-    right: -12px;
-    top: -16px;
+    position: relative;
+    font-size: 17px;
+    font-weight: bold;
   }
   .vue-treeselect--disabled {
     .vue-treeselect__control {

@@ -106,9 +106,9 @@
     components: { mListBox }
   }
 </script>
-<style lang="scss" rel="stylesheet/scss" scope>
+<style lang="scss" rel="stylesheet/scss">
   .script-model {
-    width:100%;
+    width: 100%;
   }
   .form-mirror1 {
     .CodeMirror {
