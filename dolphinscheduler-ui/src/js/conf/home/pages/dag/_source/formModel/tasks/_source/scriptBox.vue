@@ -61,7 +61,7 @@
           readOnly: this.isDetails
         })
         editor.on('change', function () {
-          self.$emit('getSriptBoxValue', editor.getValue())
+          self.$emit('getScriptBoxValue', editor.getValue())
         })
 
         this.keypress = () => {
@@ -81,6 +81,14 @@
         editor.setValue(this.rawScript)
 
         return editor
+      },
+      setScriptBoxValue (val) {
+        if (editor) {
+          editor.setValue(val)
+          setTimeout(() => {
+            editor.refresh()
+          }, 2)
+        }
       }
     },
     watch: {},

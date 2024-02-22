@@ -36,7 +36,7 @@
       :append-to-body="true"
       width="100%"
       :fullscreen="true">
-      <m-script-box :item="item" @getSriptBoxValue="getSriptBoxValue" @closeAble="closeAble"></m-script-box>
+      <m-script-box :item="item" @getScriptBoxValue="getScriptBoxValue" @closeAble="closeAble"></m-script-box>
     </el-dialog>
   </div>
 </template>
@@ -112,8 +112,10 @@
       setEditorVal () {
         this.item = editor.getValue()
         this.scriptBoxDialog = true
+
+        mScriptBox.methods.setScriptBoxValue(editor.getValue())
       },
-      getSriptBoxValue (val) {
+      getScriptBoxValue (val) {
         editor.setValue(val)
         // this.scriptBoxDialog = false
       },
