@@ -18,6 +18,9 @@
 package org.apache.dolphinscheduler.plugin.alert.dingtalk;
 
 import org.apache.dolphinscheduler.alert.api.AlertResult;
+import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.utils.DateUtils;
+import org.apache.dolphinscheduler.dao.entity.ProcessAlertContent;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
 
 import org.apache.commons.codec.binary.Base64;
@@ -39,8 +42,8 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -255,31 +258,48 @@ public final class DingTalkSender {
      * @param text text
      */
     private void generateMarkdownMsg(String title, String content, Map<String, Object> text) {
-        StringBuilder builder = new StringBuilder(content);
-        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(keyword)) {
-            builder.append(" ");
-            builder.append(keyword);
-        }
-        builder.append("\n\n");
-        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atMobiles)) {
-            Arrays.stream(atMobiles.split(",")).forEach(value -> {
-                builder.append("@");
-                builder.append(value);
-                builder.append(" ");
-            });
-        }
-        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atUserIds)) {
-            Arrays.stream(atUserIds.split(",")).forEach(value -> {
-                builder.append("@");
-                builder.append(value);
-                builder.append(" ");
-            });
-        }
+//        StringBuilder builder = new StringBuilder(content);
+//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(keyword)) {
+//            builder.append(" ");
+//            builder.append(keyword);
+//        }
+//        builder.append("\n\n");
+//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atMobiles)) {
+//            Arrays.stream(atMobiles.split(",")).forEach(value -> {
+//                builder.append("@");
+//                builder.append(value);
+//                builder.append(" ");
+//            });
+//        }
+//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atUserIds)) {
+//            Arrays.stream(atUserIds.split(",")).forEach(value -> {
+//                builder.append("@");
+//                builder.append(value);
+//                builder.append(" ");
+//            });
+//        }
 
-        byte[] byt = StringUtils.getBytesUtf8(builder.toString());
-        String txt = StringUtils.newStringUtf8(byt);
+//        byte[] byt = StringUtils.getBytesUtf8(builder.toString());
+//        String txt = StringUtils.newStringUtf8(byt);
+        List<ProcessAlertContent> processAlertContentList = JSONUtils.toList(content, ProcessAlertContent.class);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("> DS任务告警: %s", title));
+        for (ProcessAlertContent processAlertContent : processAlertContentList) {
+            stringBuilder.append(String.format("\n- projectCode: %s", processAlertContent.getProjectCode()));
+            stringBuilder.append(String.format("\n- projectName: %s", processAlertContent.getProjectName()));
+            stringBuilder.append(String.format("\n- processInstanceId: %s", processAlertContent.getProcessInstanceId()));
+            stringBuilder.append(String.format("\n- processDefinitionCode: %s", processAlertContent.getProcessDefinitionCode()));
+            stringBuilder.append(String.format("\n- processInstanceName: %s", processAlertContent.getProcessInstanceName()));
+            stringBuilder.append(String.format("\n- taskCode: %s", processAlertContent.getTaskCode()));
+            stringBuilder.append(String.format("\n- taskName: %s", processAlertContent.getTaskName()));
+            stringBuilder.append(String.format("\n- taskType: %s", processAlertContent.getTaskType()));
+            stringBuilder.append(String.format("\n- taskState: %s", processAlertContent.getTaskState()));
+            stringBuilder.append(String.format("\n- taskStartTime: %s", DateUtils.format(processAlertContent.getTaskStartTime(), Constants.YYYY_MM_DD_HH_MM_SS)));
+            stringBuilder.append(String.format("\n- taskEndTime: %s", DateUtils.format(processAlertContent.getTaskEndTime(), Constants.YYYY_MM_DD_HH_MM_SS)));
+            stringBuilder.append(String.format("\n- creator: %s", processAlertContent.getOwner()));
+        }
         text.put("title", title);
-        text.put("text", txt);
+        text.put("text", stringBuilder);
     }
 
     /**

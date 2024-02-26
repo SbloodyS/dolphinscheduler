@@ -17,6 +17,9 @@
 
 package org.apache.dolphinscheduler.dao.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.dolphinscheduler.common.enums.AlertEvent;
 import org.apache.dolphinscheduler.common.enums.AlertWarnLevel;
 import org.apache.dolphinscheduler.common.enums.CommandType;
@@ -32,6 +35,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProcessAlertContent implements Serializable {
 
     @JsonProperty("projectId")
@@ -42,12 +48,12 @@ public class ProcessAlertContent implements Serializable {
     private String projectName;
     @JsonProperty("owner")
     private String owner;
-    @JsonProperty("processId")
-    private Integer processId;
+    @JsonProperty("processInstanceId")
+    private Integer processInstanceId;
     @JsonProperty("processDefinitionCode")
     private Long processDefinitionCode;
-    @JsonProperty("processName")
-    private String processName;
+    @JsonProperty("processInstanceName")
+    private String processInstanceName;
     @JsonProperty("processType")
     private CommandType processType;
     @JsonProperty("processState")
@@ -94,9 +100,9 @@ public class ProcessAlertContent implements Serializable {
         this.projectCode = builder.projectCode;
         this.projectName = builder.projectName;
         this.owner = builder.owner;
-        this.processId = builder.processId;
+        this.processInstanceId = builder.processId;
         this.processDefinitionCode = builder.processDefinitionCode;
-        this.processName = builder.processName;
+        this.processInstanceName = builder.processName;
         this.processType = builder.processType;
         this.recovery = builder.recovery;
         this.processState = builder.processState;
