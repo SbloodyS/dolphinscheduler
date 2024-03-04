@@ -561,6 +561,7 @@ export default {
   'failure command number': 'failure command number',
   'tasks number of waiting running': 'tasks number of waiting running',
   'task number of ready to kill': 'task number of ready to kill',
+  'task number of running': 'task number of running',
   'Statistics manage': 'Statistics Manage',
   statistics: 'Statistics',
   'select tenant': 'select tenant',

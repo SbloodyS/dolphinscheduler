@@ -560,6 +560,7 @@ export default {
   'failure command number': '执行失败的命令数',
   'tasks number of waiting running': '待运行任务数',
   'task number of ready to kill': '待杀死任务数',
+  'task number of running': '正在运行任务数',
   'Statistics manage': '统计管理',
   statistics: '统计',
   'select tenant': '选择租户',

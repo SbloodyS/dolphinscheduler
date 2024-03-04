@@ -60,6 +60,18 @@
           </div>
         </div>
       </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="text-num-model text">
+              <div class="title">
+                <span >{{$t('task number of running')}}</span>
+              </div>
+              <div class="value-p">
+                <strong :style="{color:color[1]}">{{commandCountData.runningCount}}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <m-spin :is-spin="isLoading" ></m-spin>
     </template>
@@ -103,19 +115,26 @@
       this.getCommandStateCount().then(res => {
         let normal = 0
         let error = 0
+        let running = 0
         _.forEach(res.data, (v, i) => {
           let key = _.keys(v)
+          let value = _.values(v)
           if (key[0] === 'errorCount') {
             error = error + v.errorCount
           }
           if (key[1] === 'normalCount') {
             normal = normal + v.normalCount
           }
+          console.log('value:', value)
+          if (value[0] === 'RUNNING') {
+            running = running + v.runningCount
+          }
         }
         )
         this.commandCountData = {
           normalCount: normal,
-          errorCount: error
+          errorCount: error,
+          runningCount: running
         }
       }).catch(() => {
       })

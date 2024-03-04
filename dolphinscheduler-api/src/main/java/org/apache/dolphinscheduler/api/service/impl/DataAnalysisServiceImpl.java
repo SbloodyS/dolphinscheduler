@@ -234,12 +234,18 @@ public class DataAnalysisServiceImpl extends BaseServiceImpl implements DataAnal
                 .stream()
                 .collect(Collectors.toMap(CommandCount::getCommandType, CommandCount::getCount));
 
-        List<CommandStateCount> list = Arrays.stream(CommandType.values())
+        List<Object> list = Arrays.stream(CommandType.values())
                 .map(commandType -> new CommandStateCount(
                         errorCommandCounts.getOrDefault(commandType, 0),
                         normalCountCommandCounts.getOrDefault(commandType, 0),
                         commandType)
                 ).collect(Collectors.toList());
+
+        int runningCount = processInstanceMapper.countRunningProcessInstances();
+        Map<String, Object> runningCountMap = new HashMap<>();
+        runningCountMap.put("commandState", "RUNNING");
+        runningCountMap.put("runningCount", runningCount);
+        list.add(runningCountMap);
 
         result.put(Constants.DATA_LIST, list);
         putMsg(result, Status.SUCCESS);

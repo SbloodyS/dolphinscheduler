@@ -243,4 +243,10 @@
         set global_params = #{globalParams}
         where id = #{id}
     </update>
+
+    <select id="countRunningProcessInstances" resultType="int">
+        select count(0)
+        from t_ds_process_instance
+        where state = 1
+    </select>
 </mapper>
