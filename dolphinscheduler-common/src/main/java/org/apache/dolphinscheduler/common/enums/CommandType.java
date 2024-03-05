@@ -17,6 +17,7 @@
 package org.apache.dolphinscheduler.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * command types
  */
+@Getter
 public enum CommandType {
 
     /**
@@ -60,14 +62,6 @@ public enum CommandType {
     @EnumValue
     private final int code;
     private final String descp;
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescp() {
-        return descp;
-    }
 
     private static final Map<Integer, CommandType> COMMAND_TYPE_MAP = new HashMap<>();
 

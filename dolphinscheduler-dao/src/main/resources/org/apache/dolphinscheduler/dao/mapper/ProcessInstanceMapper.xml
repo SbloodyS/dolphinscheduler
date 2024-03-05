@@ -118,7 +118,7 @@
         <if test="processInstanceId != null and processInstanceId != 0">
             and instance.id = #{processInstanceId}
         </if>
-        <if test="runningType != null and runningType != ''">
+        <if test="runningType != null">
             and instance.command_type = #{runningType}
         </if>
         <if test="startTime != null ">
