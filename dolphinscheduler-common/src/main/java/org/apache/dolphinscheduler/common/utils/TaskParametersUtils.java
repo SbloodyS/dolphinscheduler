@@ -20,7 +20,6 @@ package org.apache.dolphinscheduler.common.utils;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.clickhouse.trino.ClickhouseParameters;
 import org.apache.dolphinscheduler.common.task.conditions.ConditionsParameters;
-import org.apache.dolphinscheduler.common.task.datasync.DataSyncParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
 import org.apache.dolphinscheduler.common.task.flink.FlinkParameters;
@@ -29,6 +28,7 @@ import org.apache.dolphinscheduler.common.task.http.HttpParameters;
 import org.apache.dolphinscheduler.common.task.mr.MapReduceParameters;
 import org.apache.dolphinscheduler.common.task.procedure.ProcedureParameters;
 import org.apache.dolphinscheduler.common.task.python.PythonParameters;
+import org.apache.dolphinscheduler.common.task.seatunnel.SeaTunnelParameters;
 import org.apache.dolphinscheduler.common.task.shell.ShellParameters;
 import org.apache.dolphinscheduler.common.task.spark.SparkParameters;
 import org.apache.dolphinscheduler.common.task.sql.SqlParameters;
@@ -95,14 +95,14 @@ public class TaskParametersUtils {
                 return JSONUtils.parseObject(parameter, PigeonCommonParameters.class);
             case "TRINO":
                 return JSONUtils.parseObject(parameter, TrinoParameters.class);
-            case "DATASYNC":
-                return JSONUtils.parseObject(parameter, DataSyncParameters.class);
             case "HIVE":
                 return JSONUtils.parseObject(parameter, HiveParameters.class);
             case "TOCK":
                 return JSONUtils.parseObject(parameter, ToCkParameters.class);
             case "CLICKHOUSE":
                 return JSONUtils.parseObject(parameter, ClickhouseParameters.class);
+            case "SEATUNNEL":
+                return JSONUtils.parseObject(parameter, SeaTunnelParameters.class);
             default:
                 logger.error("not support task type: {}", taskType);
                 return null;

@@ -126,6 +126,9 @@
           &.icos-clickhouse {
             background-image: url("../images/task-icos/clickhouse.png");
           }
+          &.icos-seatunnel {
+            background-image: url("../images/task-icos/seatunnel.png");
+          }
         }
 
         span {
@@ -200,6 +203,9 @@
             }
             &.icos-clickhouse {
               background-image: url("../images/task-icos/clickhouse_hover.png");
+            }
+            &.icos-seatunnel {
+              background-image: url("../images/task-icos/seatunnel_hover.png");
             }
           }
         }

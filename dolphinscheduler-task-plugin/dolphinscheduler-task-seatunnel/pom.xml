@@ -23,7 +23,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dolphinscheduler-task-datasync</artifactId>
+    <artifactId>dolphinscheduler-task-seatunnel</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

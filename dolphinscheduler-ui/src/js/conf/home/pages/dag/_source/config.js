@@ -289,10 +289,10 @@ const tasksType = {
     desc: 'TRINO',
     color: '#E46F13'
   },
-  // DATASYNC: {
-  //   desc: 'DATASYNC',
-  //   color: '#E46F13'
-  // },
+  SEATUNNEL: {
+    desc: 'SEATUNNEL',
+    color: '#E46F13'
+  },
   HIVE: {
     desc: 'HIVE',
     color: '#E46F13'

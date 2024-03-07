@@ -174,6 +174,11 @@
           return false
         }
 
+        if (!this.ip) {
+          this.$message.warning('请选择IP地址')
+          return false
+        }
+
         // storage
         this.$emit('on-params', {
           sql: editor.getValue(),

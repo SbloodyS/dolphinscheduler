@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.spi.task.request;
 
+import lombok.Data;
 import org.apache.dolphinscheduler.spi.enums.TaskTimeoutStrategy;
 import org.apache.dolphinscheduler.spi.task.ExecutionStatus;
 import org.apache.dolphinscheduler.spi.task.Property;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * to master/worker task transport
  */
+@Data
 public class TaskRequest {
 
     /**
@@ -193,6 +195,8 @@ public class TaskRequest {
      *  Task Logger name should be like: Task-{processDefinitionId}-{processInstanceId}-{taskInstanceId}
      */
     private String taskLogName;
+
+    private SeaTunnelTaskExecutionContext seaTunnelTaskExecutionContext;
 
     public String getTaskLogName() {
         return taskLogName;

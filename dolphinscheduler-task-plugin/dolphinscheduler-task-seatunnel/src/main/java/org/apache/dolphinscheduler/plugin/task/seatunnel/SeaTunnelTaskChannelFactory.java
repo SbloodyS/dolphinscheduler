@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.datasync;
+package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
 import org.apache.dolphinscheduler.spi.params.base.ParamsOptions;
 import org.apache.dolphinscheduler.spi.params.base.PluginParams;
@@ -31,15 +31,15 @@ import java.util.List;
 import com.google.auto.service.AutoService;
 
 @AutoService(TaskChannelFactory.class)
-public class DataSyncTaskChannelFactory implements TaskChannelFactory {
+public class SeaTunnelTaskChannelFactory implements TaskChannelFactory {
     @Override
     public TaskChannel create() {
-        return new DataSyncTaskChannel();
+        return new SeaTunnelTaskChannel();
     }
 
     @Override
     public String getName() {
-        return "DATASYNC";
+        return "SEATUNNEL";
     }
 
     @Override

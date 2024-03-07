@@ -222,6 +222,12 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
             processInstance.setWarningGroupId(processDefinition.getWarningGroupId());
             processInstance.setLocations(processDefinition.getLocations());
             processInstance.setDagData(processService.genDagData(processDefinition));
+
+            Tenant tenant = tenantMapper.queryById(processInstance.getTenantId());
+            if (tenant != null) {
+                processInstance.setTenantCode(tenant.getTenantCode());
+            }
+
             result.put(DATA_LIST, processInstance);
             putMsg(result, Status.SUCCESS);
         }

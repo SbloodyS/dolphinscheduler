@@ -274,14 +274,14 @@
           >
           </m-hive>
           <!-- datasync node -->
-          <m-data-sync
-            v-if="nodeData.taskType === 'DATASYNC'"
+          <m-seaTunnel
+            v-if="nodeData.taskType === 'SEATUNNEL'"
             @on-params="_onParams"
             @on-cache-params="_onCacheParams"
-            ref="DATASYNC"
+            ref="SEATUNNEL"
             :backfill-item="backfillItem"
           >
-          </m-data-sync>
+          </m-seaTunnel>
           <!-- tock node -->
           <m-to-ck
             v-if="nodeData.taskType === 'TOCK'"
@@ -479,10 +479,10 @@
   import mSwitch from './tasks/switch.vue'
   import mSqoop from './tasks/sqoop'
   import mSubProcess from './tasks/sub_process'
-  import mDataSync from './tasks/datasync'
   import mHive from './tasks/hive'
   import mToCk from './tasks/tock'
   import mClickhouse from './tasks/clickhouse'
+  import mSeaTunnel from './tasks/seatunnel'
   // import mSelectInput from './_source/selectInput'
   import mTimeoutAlarm from './_source/timeoutAlarm'
   import mDependentTimeout from './_source/dependentTimeout'
@@ -1012,6 +1012,7 @@
       mMr,
       mShell,
       mTrino,
+      mSeaTunnel,
       mHive,
       mToCk,
       mWaterdrop,
@@ -1036,7 +1037,6 @@
       mWorkerGroups,
       mRelatedEnvironment,
       mPreTasks,
-      mDataSync,
       mClickhouse
       // ReferenceFromTask
     }

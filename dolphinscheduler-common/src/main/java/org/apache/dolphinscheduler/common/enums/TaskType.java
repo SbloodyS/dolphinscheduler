@@ -39,7 +39,7 @@ public enum TaskType {
      * 13 WATERDROP
      * 15 PIGEON
      * 16 Trino
-     * 17 DataSync
+     * 17 SEATUNNEL
      * 18 Hive
      * 19 ToCk
      */
@@ -60,7 +60,7 @@ public enum TaskType {
     SWITCH(14, "SWITCH"),
     PIGEON(15, "PIGEON"),
     TRINO(16, "TRINO"),
-    DATASYNC(17, "DATASYNC"),
+    SEATUNNEL(17, "SEATUNNEL"),
     HIVE(18, "HIVE"),
     TOCK(19, "TOCK");
 

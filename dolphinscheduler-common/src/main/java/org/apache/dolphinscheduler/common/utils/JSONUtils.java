@@ -342,4 +342,12 @@ public class JSONUtils {
         }
 
     }
+
+    public static <T> T convertValue(Object value, Class<T> targetType) {
+        return objectMapper.convertValue(value, targetType);
+    }
+
+    public static <T> T convertValue(Object value, TypeReference<T> typeReference) {
+        return objectMapper.convertValue(value, typeReference);
+    }
 }

@@ -25,6 +25,7 @@ import org.apache.dolphinscheduler.common.process.ResourceInfo;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
 import org.apache.dolphinscheduler.common.task.procedure.ProcedureParameters;
+import org.apache.dolphinscheduler.common.task.seatunnel.SeaTunnelParameters;
 import org.apache.dolphinscheduler.common.task.sql.SqlParameters;
 import org.apache.dolphinscheduler.common.task.sqoop.SqoopParameters;
 import org.apache.dolphinscheduler.common.task.sqoop.sources.SourceMysqlParameter;
@@ -34,6 +35,7 @@ import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.LoggerUtils;
 import org.apache.dolphinscheduler.common.utils.TaskParametersUtils;
 import org.apache.dolphinscheduler.dao.entity.DataSource;
+import org.apache.dolphinscheduler.dao.entity.DataSourceNew;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
 import org.apache.dolphinscheduler.dao.entity.Resource;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
@@ -49,6 +51,7 @@ import org.apache.dolphinscheduler.spi.task.TaskConstants;
 import org.apache.dolphinscheduler.spi.task.request.DataxTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.ProcedureTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.SQLTaskExecutionContext;
+import org.apache.dolphinscheduler.spi.task.request.SeaTunnelTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.SqoopTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.UdfFuncRequest;
 
@@ -267,6 +270,7 @@ public abstract class BaseTaskProcessor implements ITaskProcessor {
         DataxTaskExecutionContext dataxTaskExecutionContext = new DataxTaskExecutionContext();
         ProcedureTaskExecutionContext procedureTaskExecutionContext = new ProcedureTaskExecutionContext();
         SqoopTaskExecutionContext sqoopTaskExecutionContext = new SqoopTaskExecutionContext();
+        SeaTunnelTaskExecutionContext seaTunnelTaskExecutionContext = new SeaTunnelTaskExecutionContext();
 
         // SQL task
         if (TaskType.SQL.getDesc().equalsIgnoreCase(taskInstance.getTaskType())) {
@@ -287,6 +291,10 @@ public abstract class BaseTaskProcessor implements ITaskProcessor {
             setSqoopTaskRelation(sqoopTaskExecutionContext, taskInstance);
         }
 
+        if (TaskType.SEATUNNEL.getDesc().equalsIgnoreCase(taskInstance.getTaskType())) {
+            setSeaTunnelTaskRelatedInfo(seaTunnelTaskExecutionContext, taskInstance);
+        }
+
         return TaskExecutionContextBuilder.get()
                 .buildTaskInstanceRelatedInfo(taskInstance)
                 .buildTaskDefinitionRelatedInfo(taskInstance.getTaskDefine())
@@ -296,7 +304,17 @@ public abstract class BaseTaskProcessor implements ITaskProcessor {
                 .buildDataxTaskRelatedInfo(dataxTaskExecutionContext)
                 .buildProcedureTaskRelatedInfo(procedureTaskExecutionContext)
                 .buildSqoopTaskRelatedInfo(sqoopTaskExecutionContext)
+                .buildSeaTunnelTaskRelatedInfo(seaTunnelTaskExecutionContext)
                 .create();
+    }
+
+    private void setSeaTunnelTaskRelatedInfo(SeaTunnelTaskExecutionContext seaTunnelTaskExecutionContext, TaskInstance taskInstance) {
+        SeaTunnelParameters seaTunnelParameters = JSONUtils.parseObject(taskInstance.getTaskParams(), SeaTunnelParameters.class);
+        seaTunnelTaskExecutionContext.setEnv(seaTunnelParameters.getEnv());
+        seaTunnelTaskExecutionContext.setSource(seaTunnelParameters.getSource());
+        seaTunnelTaskExecutionContext.setSink(seaTunnelParameters.getSink());
+        seaTunnelTaskExecutionContext.setSourceDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getSourceDataSourceId()));
+        seaTunnelTaskExecutionContext.setTargetDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getTargetDataSourceId()));
     }
 
     /**

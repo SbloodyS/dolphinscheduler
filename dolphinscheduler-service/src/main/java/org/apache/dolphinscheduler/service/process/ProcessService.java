@@ -65,6 +65,7 @@ import org.apache.dolphinscheduler.common.utils.TaskParametersUtils;
 import org.apache.dolphinscheduler.dao.entity.Command;
 import org.apache.dolphinscheduler.dao.entity.DagData;
 import org.apache.dolphinscheduler.dao.entity.DataSource;
+import org.apache.dolphinscheduler.dao.entity.DataSourceNew;
 import org.apache.dolphinscheduler.dao.entity.Environment;
 import org.apache.dolphinscheduler.dao.entity.ErrorCommand;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
@@ -85,6 +86,7 @@ import org.apache.dolphinscheduler.dao.entity.UdfFunc;
 import org.apache.dolphinscheduler.dao.entity.User;
 import org.apache.dolphinscheduler.dao.mapper.CommandMapper;
 import org.apache.dolphinscheduler.dao.mapper.DataSourceMapper;
+import org.apache.dolphinscheduler.dao.mapper.DataSourceNewMapper;
 import org.apache.dolphinscheduler.dao.mapper.EnvironmentMapper;
 import org.apache.dolphinscheduler.dao.mapper.ErrorCommandMapper;
 import org.apache.dolphinscheduler.dao.mapper.ProcessDefinitionLogMapper;
@@ -209,6 +211,9 @@ public class ProcessService {
 
     @Autowired
     private EnvironmentMapper environmentMapper;
+
+    @Autowired
+    private DataSourceNewMapper dataSourceNewMapper;
 
     /**
      * handle Command (construct ProcessInstance from Command) , wrapped in transaction
@@ -2676,5 +2681,9 @@ public class ProcessService {
         if (delete != 1) {
             throw new ServiceException("delete command fail, id:" + commandId);
         }
+    }
+
+    public DataSourceNew findDataSourceNewById(int id) {
+        return dataSourceNewMapper.selectById(id);
     }
 }

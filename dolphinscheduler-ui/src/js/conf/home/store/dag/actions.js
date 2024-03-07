@@ -441,6 +441,18 @@ export default {
     })
   },
   /**
+   * get datasource new info
+   */
+  getDatasourceNewInfo ({ state }) {
+    return new Promise((resolve, reject) => {
+      io.get('datasourceNew/idList', res => {
+        resolve(res)
+      }).catch(res => {
+        reject(res)
+      })
+    })
+  },
+  /**
    * get resources
    */
   getResourcesList ({ state }) {

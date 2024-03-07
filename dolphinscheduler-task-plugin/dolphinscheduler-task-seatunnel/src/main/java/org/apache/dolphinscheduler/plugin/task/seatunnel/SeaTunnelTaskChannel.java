@@ -15,33 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.common.task.datasync;
+package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.dolphinscheduler.common.process.ResourceInfo;
-import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import org.apache.dolphinscheduler.spi.task.TaskChannel;
+import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 
-import java.util.List;
-
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class DataSyncParameters extends AbstractParameters {
-    private String sourceTable;
-
-    private String targetTable;
-
-    private List<ResourceInfo> resourceList;
+public class SeaTunnelTaskChannel implements TaskChannel {
 
     @Override
-    public boolean checkParameters() {
-        return sourceTable != null && !sourceTable.isEmpty()
-                && targetTable != null && !targetTable.isEmpty();
+    public void cancelApplication(boolean status) {
+
     }
 
     @Override
-    public List<ResourceInfo> getResourceFilesList() {
-        return null;
+    public SeaTunnelTask createTask(TaskRequest taskRequest) {
+        return new SeaTunnelTask(taskRequest);
     }
 
 }

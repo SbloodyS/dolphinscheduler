@@ -29,6 +29,7 @@ import org.apache.dolphinscheduler.service.queue.entity.TaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.DataxTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.ProcedureTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.SQLTaskExecutionContext;
+import org.apache.dolphinscheduler.spi.task.request.SeaTunnelTaskExecutionContext;
 import org.apache.dolphinscheduler.spi.task.request.SqoopTaskExecutionContext;
 
 /**
@@ -149,6 +150,11 @@ public class TaskExecutionContextBuilder {
      */
     public TaskExecutionContextBuilder buildSqoopTaskRelatedInfo(SqoopTaskExecutionContext sqoopTaskExecutionContext) {
         taskExecutionContext.setSqoopTaskExecutionContext(sqoopTaskExecutionContext);
+        return this;
+    }
+
+    public TaskExecutionContextBuilder buildSeaTunnelTaskRelatedInfo(SeaTunnelTaskExecutionContext seaTunnelTaskExecutionContext) {
+        taskExecutionContext.setSeaTunnelTaskExecutionContext(seaTunnelTaskExecutionContext);
         return this;
     }
 

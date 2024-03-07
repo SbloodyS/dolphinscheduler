@@ -471,7 +471,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
-                <artifactId>dolphinscheduler-task-datasync</artifactId>
+                <artifactId>dolphinscheduler-task-seatunnel</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

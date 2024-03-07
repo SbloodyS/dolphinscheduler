@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.plugin.task.datasync;
+package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
@@ -24,24 +25,30 @@ import org.apache.dolphinscheduler.spi.task.ResourceInfo;
 
 import java.util.List;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DataSyncParameters extends AbstractParameters {
+public class SeaTunnelParameters extends AbstractParameters {
 
-    private String sourceTable;
+    private Object sourceDataSourceInfo;
 
-    private String targetTable;
+    private Object targetDataSourceInfo;
+
+    private Object env;
+
+    private Object source;
+
+    private Object sink;
+
+    @JsonIgnore
+    private List<ResourceInfo> resourceList;
 
     @Override
     public boolean checkParameters() {
-        return sourceTable != null && !sourceTable.isEmpty()
-                && targetTable != null && !targetTable.isEmpty();
+        return sourceDataSourceInfo != null && targetDataSourceInfo != null;
     }
 
     @Override
     public List<ResourceInfo> getResourceFilesList() {
-        return null;
+        return resourceList;
     }
-
 }

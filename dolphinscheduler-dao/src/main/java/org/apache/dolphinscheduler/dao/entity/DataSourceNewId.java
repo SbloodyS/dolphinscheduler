@@ -16,4 +16,5 @@ public class DataSourceNewId {
   private int id;
 
   private String datasourceName;
+  private String datasourceType;
 }
