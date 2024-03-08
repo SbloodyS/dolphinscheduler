@@ -315,6 +315,7 @@ public abstract class BaseTaskProcessor implements ITaskProcessor {
         seaTunnelTaskExecutionContext.setSink(seaTunnelParameters.getSink());
         seaTunnelTaskExecutionContext.setSourceDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getSourceDataSourceId()));
         seaTunnelTaskExecutionContext.setTargetDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getTargetDataSourceId()));
+        seaTunnelTaskExecutionContext.setSinkBeforeSql(seaTunnelParameters.getSinkBeforeSql());
     }
 
     /**

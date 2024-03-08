@@ -11,4 +11,5 @@ public class SeaTunnelTaskExecutionContext implements Serializable {
     private Object env;
     private Object source;
     private Object sink;
+    private String sinkBeforeSql;
 }

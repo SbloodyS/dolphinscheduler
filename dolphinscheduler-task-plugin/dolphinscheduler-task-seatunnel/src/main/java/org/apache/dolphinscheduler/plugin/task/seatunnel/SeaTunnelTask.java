@@ -37,6 +37,7 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConfig;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,9 +69,12 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
     private String jobMode = "BATCH";
 
-    private String hiveCommand;
     private String beforeHiveCommand;
     private String afterHiveCommand;
+
+    private String sinkBeforeSql;
+
+    private JDBCUtils jdbcUtils;
 
     /**
      * constructor
@@ -98,6 +102,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
             }
 
             generateSeaTunnelConfig();
+
+            this.sinkBeforeSql = seaTunnelParameters.getSinkBeforeSql();
         } catch (Exception e) {
             logger.error("seatunnel init error", e);
             setExitStatusCode(EXIT_CODE_FAILURE);
@@ -109,6 +115,14 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     @Override
     public void handle() throws Exception {
         try {
+            // execute before sql
+            if (StringUtils.isNotEmpty(sinkBeforeSql)) {
+                logger.info("execute sink before sql: {}", sinkBeforeSql);
+                if (jdbcUtils.executeMultiQuery(sinkBeforeSql)) {
+                    logger.info("execute sink before sql success");
+                }
+            }
+
             // construct process
             String command = buildCommand();
             TaskResponse commandExecuteResult = shellCommandExecutor.run(command);
@@ -224,6 +238,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 mysqlSinkParams.setUser(targetDataSourceInfo.getUserName());
                 mysqlSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(mysqlSinkParams));
+
+                initJDBCUtils(logger, targetDataSourceInfo.getDriverName(), mysqlJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
             case "sqlserver":
                 SQLServerSinkParams sqlServerSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), SQLServerSinkParams.class);
@@ -242,6 +258,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 sqlServerSinkParams.setUser(targetDataSourceInfo.getUserName());
                 sqlServerSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(sqlServerSinkParams));
+
+                initJDBCUtils(logger, targetDataSourceInfo.getDriverName(), sqlServerJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
             case "hive":
                 HiveSinkParams hiveSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), HiveSinkParams.class);
@@ -269,6 +287,11 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 clickHouseSinkParams.setUser(targetDataSourceInfo.getUserName());
                 clickHouseSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(clickHouseSinkParams));
+
+                String clickhouseJdbcUrl = String.format("jdbc:clickhouse://%s:%s",
+                        targetDataSourceInfo.getHostname(),
+                        targetDataSourceInfo.getPort());
+                initJDBCUtils(logger, targetDataSourceInfo.getDriverName(), clickhouseJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
             default:
                 throw new RuntimeException("Unsupported target datasource type: " + targetDataSourceInfo.getDatasourceType());
@@ -321,7 +344,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         return String.format("%s/%s.json", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
     }
 
-    protected void createSeaTunnelCommandFileIfNotExists(String seaTunnelConfigJson, String seaTunnelConfigFile) throws IOException {
+    private void createSeaTunnelCommandFileIfNotExists(String seaTunnelConfigJson, String seaTunnelConfigFile) throws IOException {
         logger.info("tenantCode: {}, task dir: {}", taskExecutionContext.getTenantCode(), taskExecutionContext.getExecutePath());
 
         if (!Files.exists(Paths.get(seaTunnelConfigFile))) {
@@ -332,5 +355,9 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                     seaTunnelConfigJson,
                     StandardCharsets.UTF_8);
         }
+    }
+
+    private void initJDBCUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password) {
+        jdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password);
     }
 }

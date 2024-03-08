@@ -162,9 +162,6 @@
         <div slot="text">{{ '写入SQL' }}</div>
         <div slot="content">
           <div class="form-mirror">
-  <!--          <a class="ans-modal-box-max">-->
-  <!--            <em class="el-icon-full-screen" @click="setEditorVal"></em>-->
-  <!--          </a>-->
             <textarea
               id="code-sql-mirror-target"
               name="code-sql-mirror-target"
@@ -173,13 +170,18 @@
           </div>
         </div>
       </m-list-box>
-<!--    <el-dialog-->
-<!--      :visible.sync="scriptBoxDialogTarget"-->
-<!--      :append-to-body="true"-->
-<!--      width="100%"-->
-<!--      :fullscreen="true">-->
-<!--      <m-script-box :item="item" @getScriptBoxValue="getScriptBoxValue" @closeAble="closeAble"></m-script-box>-->
-<!--    </el-dialog>-->
+      <m-list-box>
+        <div slot="text">{{ '前置SQL' }}</div>
+        <div slot="content">
+          <div class="form-mirror">
+            <textarea
+              id="code-sql-mirror-sinkbefore"
+              name="code-sql-mirror-sinkbefore"
+              style="opacity: 0">
+            </textarea>
+          </div>
+        </div>
+      </m-list-box>
     </template>
     <template v-if="['hive'].includes(targetDataSourceFormType)">
       <m-list-box>
@@ -208,6 +210,18 @@
           </el-input>
         </div>
       </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ '前置SQL' }}</div>
+        <div slot="content">
+          <div class="form-mirror">
+            <textarea
+              id="code-sql-mirror-sinkbefore"
+              name="code-sql-mirror-sinkbefore"
+              style="opacity: 0">
+            </textarea>
+          </div>
+        </div>
+      </m-list-box>
     </template>
   </div>
 </template>
@@ -224,6 +238,7 @@
 
   let editorSource
   let editorTarget
+  let editorSinkBefore
 
   export default {
     name: 'seatunnel',
@@ -249,6 +264,8 @@
         allNoResources: [],
         noRes: [],
         item: '',
+
+        sinkBeforeSql: '',
         sourceDataSourceFormType: '',
         targetDataSourceFormType: '',
         scriptBoxDialogSource: false,
@@ -362,7 +379,6 @@
               return false
             }
           }
-
           requestParams.source = this.sourceSQLServerParams
         } else if (['hive'].includes(this.sourceDataSourceFormType)) {
           requestParams.source = this.sourceHiveParams
@@ -384,6 +400,7 @@
             return false
           }
           this.targetSQLServerParams.query = editorTarget.getValue()
+          requestParams.sinkBeforeSql = editorSinkBefore.getValue()
           requestParams.sink = this.targetSQLServerParams
         } else if (['hive'].includes(this.targetDataSourceFormType)) {
           requestParams.sink = this.targetHiveParams
@@ -392,6 +409,7 @@
             this.$message.warning('请输入目的表名')
             return false
           }
+          requestParams.sinkBeforeSql = editorSinkBefore.getValue()
           requestParams.sink = this.targetClickhouseParams
         } else {
           this.$message.warning(`暂不支持的数据源类型${this.targetDataSourceFormType}`)
@@ -467,6 +485,35 @@
         editorTarget.setValue(this.targetSql)
 
         return editorTarget
+      },
+      _handlerEditorSinkBefore () {
+        if (editorSinkBefore) {
+          editorSinkBefore.toTextArea() // Uninstall
+          editorSinkBefore.off($('.code-sql-mirror-sinkbefore'), 'keypress', this.keypress)
+          editorSinkBefore.off($('.code-sql-mirror-sinkbefore'), 'changes', this.changes)
+          editorSinkBefore = null
+        }
+        // editor
+        editorSinkBefore = codemirror('code-sql-mirror-sinkbefore', {
+          mode: 'sql',
+          readOnly: this.isDetails
+        })
+
+        editorSinkBefore.setSize('auto', '150px')
+
+        this.keypress = () => {
+          if (!editorSinkBefore.getOption('readOnly')) {
+            editorSinkBefore.showHint({
+              completeSingle: false
+            })
+          }
+        }
+
+        // Monitor keyboard
+        editorSinkBefore.on('keypress', this.keypress)
+        editorSinkBefore.setValue(this.sinkBeforeSql)
+
+        return editorSinkBefore
       },
       dataProcess (backResource) {
         let isResourceId = []
@@ -552,11 +599,15 @@
           this.targetDataSourceFormType = this.targetDataSourceType
           setTimeout(() => {
             this._handlerEditorTarget()
+            this._handlerEditorSinkBefore()
           }, 200)
         } else if (['hive'].includes(this.targetDataSourceType)) {
           this.targetDataSourceFormType = this.targetDataSourceType
         } else if (['clickhouse'].includes(this.targetDataSourceType)) {
           this.targetDataSourceFormType = this.targetDataSourceType
+          setTimeout(() => {
+            this._handlerEditorSinkBefore()
+          }, 200)
         } else {
           this.targetDataSourceFormType = ''
           this.targetDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
@@ -652,13 +703,19 @@
           this._handleTargetDataSourceTypeChange(targetDataSourceId)
           if (['mysql', 'sqlserver'].includes(this.targetDataSourceType)) {
             this.targetSql = o.params.sink.query || ''
+            this.sinkBeforeSql = o.params.sinkBeforeSql || ''
             setTimeout(() => {
               this._handlerEditorTarget()
+              this._handlerEditorSinkBefore()
             }, 200)
           } else if (['hive'].includes(this.targetDataSourceType)) {
             this.targetHiveParams.table_name = o.params.sink.table_name || ''
           } else if (['clickhouse'].includes(this.targetDataSourceType)) {
             this.targetClickhouseParams.table = o.params.sink.table || ''
+            this.sinkBeforeSql = o.params.sink.sinkBeforeSql || ''
+            setTimeout(() => {
+              this._handlerEditorSinkBefore()
+            }, 200)
           }
         }
         )

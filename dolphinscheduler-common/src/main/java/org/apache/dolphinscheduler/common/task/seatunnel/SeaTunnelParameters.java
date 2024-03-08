@@ -40,6 +40,8 @@ public class SeaTunnelParameters extends AbstractParameters {
 
     private Object sink;
 
+    private String sinkBeforeSql;
+
     private List<ResourceInfo> resourceList;
 
     @Override

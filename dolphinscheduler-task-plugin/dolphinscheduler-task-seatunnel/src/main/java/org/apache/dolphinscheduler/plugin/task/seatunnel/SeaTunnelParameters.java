@@ -30,14 +30,12 @@ import java.util.List;
 public class SeaTunnelParameters extends AbstractParameters {
 
     private Object sourceDataSourceInfo;
-
     private Object targetDataSourceInfo;
-
     private Object env;
-
     private Object source;
-
     private Object sink;
+    private String sinkBeforeSql;
+
 
     @JsonIgnore
     private List<ResourceInfo> resourceList;
