@@ -82,6 +82,7 @@ public class HiveTask extends AbstractTaskExecutor {
         if (!hiveParameters.checkParameters()) {
             throw new RuntimeException("hive task params is not valid");
         }
+        taskExecutionContext.setTaskName(taskExecutionContext.getTaskName().trim());
     }
 
     @Override

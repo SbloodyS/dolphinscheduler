@@ -56,7 +56,7 @@
           <div slot="content">
             <el-input
               type="text"
-              v-model="name"
+              v-model.trim="name"
               size="small"
               :disabled="isDetails"
               :placeholder="$t('Please enter name (required)')"
@@ -801,11 +801,10 @@
         if (this.cacheDependence.dependTaskList == null) {
           this.cacheDependence = Object.assign(this.cacheDependence, { dependTaskList: [], relation: 'AND' })
         }
-
         this.$emit('addTaskInfo', {
           item: {
             code: this.nodeData.id,
-            name: this.name,
+            name: this.name.trim(),
             description: this.desc,
             taskType: this.nodeData.taskType,
             taskParams: {
