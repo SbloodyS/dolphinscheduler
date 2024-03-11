@@ -42,6 +42,8 @@ public class SeaTunnelParameters extends AbstractParameters {
 
     private String sinkBeforeSql;
 
+    private Boolean autoCreateHiveTable;
+
     private List<ResourceInfo> resourceList;
 
     @Override

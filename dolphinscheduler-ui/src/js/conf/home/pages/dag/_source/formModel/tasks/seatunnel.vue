@@ -196,6 +196,17 @@
           </el-input>
         </div>
       </m-list-box>
+      <template v-if="['mysql', 'sqlserver', 'clickhouse'].includes(sourceDataSourceFormType)">
+        <m-list-box>
+        <div slot="text">{{ '自动创建Hive表' }}</div>
+        <div slot="content">
+          <el-radio-group v-model="autoCreateHiveTableRadio" size="small" @change="_handleAutoCreateHiveTable">
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
+          </el-radio-group>
+        </div>
+        </m-list-box>
+      </template>
     </template>
     <template v-if="['clickhouse'].includes(targetDataSourceFormType)">
       <m-list-box>
@@ -265,6 +276,8 @@
         noRes: [],
         item: '',
 
+        autoCreateHiveTableRadio: 0,
+        autoCreateHiveTable: false,
         sinkBeforeSql: '',
         sourceDataSourceFormType: '',
         targetDataSourceFormType: '',
@@ -419,6 +432,7 @@
         requestParams.env = { parallelism: this.parallelism }
         requestParams.sourceDataSourceId = this.sourceDataSourceId
         requestParams.targetDataSourceId = this.targetDataSourceId
+        requestParams.autoCreateHiveTable = this.autoCreateHiveTable
 
         // storage
         this.$emit('on-params', requestParams)
@@ -514,6 +528,10 @@
         editorSinkBefore.setValue(this.sinkBeforeSql)
 
         return editorSinkBefore
+      },
+      _handleAutoCreateHiveTable (val) {
+        this.autoCreateHiveTable = val === 1
+        console.log(val)
       },
       dataProcess (backResource) {
         let isResourceId = []
@@ -710,9 +728,15 @@
             }, 200)
           } else if (['hive'].includes(this.targetDataSourceType)) {
             this.targetHiveParams.table_name = o.params.sink.table_name || ''
+            this.autoCreateHiveTable = o.params.autoCreateHiveTable || false
+            if (this.autoCreateHiveTable) {
+              this.autoCreateHiveTableRadio = 1
+            } else {
+              this.autoCreateHiveTableRadio = 0
+            }
           } else if (['clickhouse'].includes(this.targetDataSourceType)) {
             this.targetClickhouseParams.table = o.params.sink.table || ''
-            this.sinkBeforeSql = o.params.sink.sinkBeforeSql || ''
+            this.starsinkBeforeSql = o.params.sink.sinkBeforeSql || ''
             setTimeout(() => {
               this._handlerEditorSinkBefore()
             }, 200)

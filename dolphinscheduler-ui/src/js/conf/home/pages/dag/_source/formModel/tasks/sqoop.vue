@@ -117,8 +117,8 @@
           <div slot="text">{{$t('ModelType')}}</div>
           <div slot="content">
             <el-radio-group v-model="srcQueryType" size="small" @change="_handleQueryType">
-              <el-radio label="0">{{$t('Form')}}</el-radio>
-              <el-radio label="1">SQL</el-radio>
+              <el-radio :label="0">{{$t('Form')}}</el-radio>
+              <el-radio :label="1">SQL</el-radio>
             </el-radio-group>
           </div>
         </m-list-box>

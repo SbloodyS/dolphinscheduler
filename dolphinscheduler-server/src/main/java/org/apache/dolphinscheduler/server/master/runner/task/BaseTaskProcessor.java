@@ -316,6 +316,7 @@ public abstract class BaseTaskProcessor implements ITaskProcessor {
         seaTunnelTaskExecutionContext.setSourceDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getSourceDataSourceId()));
         seaTunnelTaskExecutionContext.setTargetDataSourceInfo(processService.findDataSourceNewById(seaTunnelParameters.getTargetDataSourceId()));
         seaTunnelTaskExecutionContext.setSinkBeforeSql(seaTunnelParameters.getSinkBeforeSql());
+        seaTunnelTaskExecutionContext.setAutoCreateHiveTable(seaTunnelParameters.getAutoCreateHiveTable());
     }
 
     /**
