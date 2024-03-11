@@ -736,7 +736,7 @@
             }
           } else if (['clickhouse'].includes(this.targetDataSourceType)) {
             this.targetClickhouseParams.table = o.params.sink.table || ''
-            this.starsinkBeforeSql = o.params.sink.sinkBeforeSql || ''
+            this.sinkBeforeSql = o.params.sink.sinkBeforeSql || ''
             setTimeout(() => {
               this._handlerEditorSinkBefore()
             }, 200)
