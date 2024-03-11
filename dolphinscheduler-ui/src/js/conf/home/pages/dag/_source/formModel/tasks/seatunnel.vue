@@ -403,7 +403,7 @@
           this.sourceClickhouseParams.sql = editorSource.getValue()
           requestParams.source = this.sourceClickhouseParams
         } else {
-          this.$message.warning(`暂不支持的数据源类型${this.sourceDataSourceFormType}`)
+          this.$message.warning(`暂不支持的数据源类型${this.sourceDataSourceType}`)
           return false
         }
 
@@ -425,7 +425,7 @@
           requestParams.sinkBeforeSql = editorSinkBefore.getValue()
           requestParams.sink = this.targetClickhouseParams
         } else {
-          this.$message.warning(`暂不支持的数据源类型${this.targetDataSourceFormType}`)
+          this.$message.warning(`暂不支持的数据源类型${this.targetDataSourceType}`)
           return false
         }
 
