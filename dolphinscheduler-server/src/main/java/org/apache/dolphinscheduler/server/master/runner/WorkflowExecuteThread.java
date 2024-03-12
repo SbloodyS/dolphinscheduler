@@ -1499,6 +1499,7 @@ public class WorkflowExecuteThread implements Runnable {
                             continue;
                         }
                     }
+                    task.setStartTime(new Date());
                 }
                 //init varPool only this task is the first time running
                 if (task.isFirstRun()) {

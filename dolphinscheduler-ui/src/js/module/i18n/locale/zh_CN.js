@@ -316,6 +316,7 @@ export default {
   'Recovery Suspend': '恢复运行',
   Gantt: '甘特图',
   'Node Type': '节点类型',
+  'First Submit Time': '首次提交时间',
   'Submit Time': '提交时间',
   Duration: '运行时长',
   'Retry Count': '重试次数',
