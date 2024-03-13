@@ -13,4 +13,7 @@ public class HiveSourceParams {
 
     @JsonProperty("metastore_uri")
     private String metastoreUri;
+
+    @JsonProperty("delimiter")
+    private String delimiter = "\\\u0007";
 }

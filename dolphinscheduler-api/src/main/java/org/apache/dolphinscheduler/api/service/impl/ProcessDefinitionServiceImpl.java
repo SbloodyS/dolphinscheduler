@@ -1696,6 +1696,11 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         IPage<ProcessDefinitionLog> processDefinitionVersionsPaging = processDefinitionLogMapper.queryProcessDefinitionVersionsPaging(page, code, projectCode);
         List<ProcessDefinitionLog> processDefinitionLogs = processDefinitionVersionsPaging.getRecords();
 
+        for (ProcessDefinitionLog processDefinitionLog : processDefinitionLogs) {
+            User user = userMapper.selectById(processDefinitionLog.getOperator());
+            processDefinitionLog.setModifyBy(user.getUserName());
+        }
+
         pageInfo.setTotalList(processDefinitionLogs);
         pageInfo.setTotal((int) processDefinitionVersionsPaging.getTotal());
         result.setData(pageInfo);

@@ -317,6 +317,7 @@ export default {
   'Recovery Suspend': 'Recovery Suspend',
   Gantt: 'Gantt',
   'Node Type': 'Node Type',
+  'First Submit Time': 'First Submit Time',
   'Submit Time': 'Submit Time',
   Duration: 'Duration',
   'Retry Count': 'Retry Count',
