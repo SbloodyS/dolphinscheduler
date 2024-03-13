@@ -9,6 +9,8 @@ public class ClickHouseSourceParams {
     private String pluginName = "Clickhouse";
     private String database;
     private String host;
+
+    @JsonProperty("username")
     private String user;
     private String password;
     private String sql;

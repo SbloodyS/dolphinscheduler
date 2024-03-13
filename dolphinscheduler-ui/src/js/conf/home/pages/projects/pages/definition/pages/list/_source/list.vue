@@ -124,7 +124,7 @@
 <!--    <el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 225px;" @click="_batchMove(item)" >{{$t('Batch move')}}</el-button>-->
     <el-drawer
       :visible.sync="drawer"
-      size=""
+      size="30%"
       :with-header="false">
       <m-versions :versionData = versionData @mVersionSwitchProcessDefinitionVersion="mVersionSwitchProcessDefinitionVersion" @mVersionGetProcessDefinitionVersionsPage="mVersionGetProcessDefinitionVersionsPage" @mVersionDeleteProcessDefinitionVersion="mVersionDeleteProcessDefinitionVersion" @closeVersion="closeVersion"></m-versions>
     </el-drawer>
@@ -397,7 +397,7 @@
       _version (item) {
         this.getProcessDefinitionVersionsPage({
           pageNo: 1,
-          pageSize: 10,
+          pageSize: 15,
           code: item.code
         }).then(res => {
           let processDefinitionVersions = res.data.totalList

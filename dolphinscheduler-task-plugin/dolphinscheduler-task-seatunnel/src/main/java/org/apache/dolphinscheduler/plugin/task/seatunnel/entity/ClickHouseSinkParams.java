@@ -9,7 +9,12 @@ public class ClickHouseSinkParams {
     private String pluginName = "Clickhouse";
     private String database;
     private String host;
+
+    @JsonProperty("username")
     private String user;
     private String password;
     private String table;
+
+    @JsonProperty("clickhouse.config")
+    private ClickHouseConfig clickhouseConfig = new ClickHouseConfig();
 }

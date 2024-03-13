@@ -72,8 +72,10 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
     private String jobMode = "BATCH";
 
-    private String beforeHiveCommand;
-    private String afterHiveCommand;
+    private String beforeHiveSinkCommand;
+    private String afterHiveSinkCommand;
+
+    private String beforeHiveSourceCommand;
 
     private String sinkBeforeSql;
 
@@ -210,7 +212,9 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 }
 
                 clickHouseSourceParams.setDatabase(sourceDataSourceInfo.getDatabaseName());
-                clickHouseSourceParams.setHost(sourceDataSourceInfo.getHostname());
+                clickHouseSourceParams.setHost(String.format("%s:%s",
+                        sourceDataSourceInfo.getHostname(),
+                        sourceDataSourceInfo.getPort()));
                 clickHouseSourceParams.setUser(sourceDataSourceInfo.getUserName());
                 clickHouseSourceParams.setPassword(sourceDataSourceInfo.getPassword());
                 seaTunnelConfig.setSource(Collections.singletonList(clickHouseSourceParams));
@@ -229,6 +233,19 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                         sourceDataSourceInfo.getHostname(),
                         sourceDataSourceInfo.getPort()));
                 seaTunnelConfig.setSource(Collections.singletonList(hiveSourceParams));
+
+                String originTable = hiveSourceParams.getSourceTable();
+                String tmpTable;
+                if (originTable.contains(".")) {
+                    tmpTable = String.format("tmp.tmp_%s_seatunnel_%s",
+                            hiveSourceParams.getSourceTable().replace(".", "_"),
+                            taskExecutionContext.getTaskInstanceId());
+                } else {
+                    throw new RuntimeException(String.format("hive table %s is invalid", originTable));
+                }
+                hiveSourceParams.setSourceTable(tmpTable);
+
+                generateHiveSourceCommand(originTable, tmpTable);
                 break;
             default:
                 throw new RuntimeException("Unsupported source datasource type: " + sourceDataSourceInfo.getDatasourceType());
@@ -285,12 +302,21 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 hiveSinkParams.setMetastoreUri(String.format("thrift://%s:%s",
                         targetDataSourceInfo.getHostname(),
                         targetDataSourceInfo.getPort()));
+
                 String originTable = hiveSinkParams.getTargetTable();
-                String tmpTable = hiveSinkParams.getTargetTable() + "_seatunneltmp";
+                String tmpTable;
+                if (originTable.contains(".")) {
+                    tmpTable = String.format("tmp.tmp_%s_seatunnel_%s",
+                            hiveSinkParams.getTargetTable().replace(".", "_"),
+                            taskExecutionContext.getTaskInstanceId());
+                } else {
+                    throw new RuntimeException(String.format("hive table %s is invalid", originTable));
+                }
+
                 hiveSinkParams.setTargetTable(tmpTable);
 
                 seaTunnelConfig.setSink(Collections.singletonList(hiveSinkParams));
-                generateHiveCommand(originTable, tmpTable, seaTunnelParameters.getAutoCreateHiveTable());
+                generateHiveSinkCommand(originTable, tmpTable, seaTunnelParameters.getAutoCreateHiveTable());
                 break;
             case "clickhouse":
                 ClickHouseSinkParams clickHouseSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ClickHouseSinkParams.class);
@@ -298,8 +324,17 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                     throw new RuntimeException("source datasource params is invalid");
                 }
 
-                clickHouseSinkParams.setDatabase(targetDataSourceInfo.getDatabaseName());
-                clickHouseSinkParams.setHost(targetDataSourceInfo.getHostname());
+                String clickhouseTable = clickHouseSinkParams.getTable();
+                if (clickhouseTable.contains(".")) {
+                    clickHouseSinkParams.setTable(clickhouseTable.split("\\.")[1]);
+                    clickHouseSinkParams.setDatabase(clickhouseTable.split("\\.")[0]);
+                } else {
+                    throw new RuntimeException(String.format("clickhouse table %s is invalid", clickhouseTable));
+                }
+
+                clickHouseSinkParams.setHost(String.format("%s:%s",
+                        targetDataSourceInfo.getHostname(),
+                        targetDataSourceInfo.getPort()));
                 clickHouseSinkParams.setUser(targetDataSourceInfo.getUserName());
                 clickHouseSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(clickHouseSinkParams));
@@ -319,14 +354,20 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
         createSeaTunnelCommandFileIfNotExists(JSONUtils.toJsonString(seaTunnelConfig), seaTunnelConfigFilePath);
 
-        if (StringUtils.isEmpty(beforeHiveCommand) && StringUtils.isEmpty(afterHiveCommand)) {
-            return String.format("set -xeuo pipefail\n${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
-                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
-        } else {
+        if (!StringUtils.isEmpty(beforeHiveSinkCommand) && !StringUtils.isEmpty(afterHiveSinkCommand)) {
             String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
                     seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
-            return String.format("set -xeuo pipefail\n%s\n%s\n%s", beforeHiveCommand, seatunnelCommand, afterHiveCommand);
+            return String.format("set -xeuo pipefail\n%s\n%s\n%s", beforeHiveSinkCommand, seatunnelCommand, afterHiveSinkCommand);
         }
+
+        if (!StringUtils.isEmpty(beforeHiveSourceCommand)) {
+            String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
+                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
+            return String.format("set -xeuo pipefail\n%s\n%s", beforeHiveSourceCommand, seatunnelCommand);
+        }
+
+        return String.format("set -xeuo pipefail\n${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
+                seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
     }
 
     @Override
@@ -335,7 +376,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     }
 
     @SneakyThrows
-    private void generateHiveCommand(String targetTable, String tmpTable, Boolean autoCreateHiveTable) {
+    private void generateHiveSinkCommand(String targetTable, String tmpTable, Boolean autoCreateHiveTable) {
         String createHiveTableStatement= "";
         if (autoCreateHiveTable) {
             createHiveTableStatement = generateCreateHiveTableStatement(targetTable);
@@ -349,14 +390,28 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         createSeaTunnelCommandFileIfNotExists(String.format("%s\n%s\n%s", createHiveTableStatement,dropTableStatement, createTmpTableStatement), beforeHiveSqlPath);
         createSeaTunnelCommandFileIfNotExists(String.format("%s\n%s", insertTableStatement, dropTableStatement), afterHiveSqlPath);
 
-        beforeHiveCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
+        beforeHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
                 taskExecutionContext.getTaskName(),
                 "root.query.dmp",
                 beforeHiveSqlPath);
-        afterHiveCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
+        afterHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
                 taskExecutionContext.getTaskName(),
                 "root.query.dmp",
                 afterHiveSqlPath);
+    }
+
+    @SneakyThrows
+    private void generateHiveSourceCommand(String targetTable, String tmpTable) {
+        String createTmpTableStatement = String.format("CREATE TABLE %s ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\u0007' NULL DEFINED AS '' STORED AS TEXTFILE AS SELECT * FROM %s;", tmpTable, targetTable);
+        String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
+
+        String beforeHiveSourceSqlPath = String.format("%s/%s_before_hive_source.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
+        createSeaTunnelCommandFileIfNotExists(String.format("%s\n%s", dropTableStatement, createTmpTableStatement), beforeHiveSourceSqlPath);
+
+        beforeHiveSourceCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
+                taskExecutionContext.getTaskName(),
+                "root.query.dmp",
+                beforeHiveSourceSqlPath);
     }
 
     private String buildSeaTunnelConfigFilePath() {

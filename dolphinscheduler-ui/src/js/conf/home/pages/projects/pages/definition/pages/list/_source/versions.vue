@@ -22,7 +22,7 @@
     </div>
 
     <div class="table-box" v-if="versionData.processDefinitionVersions.length > 0">
-      <el-table :data="versionData.processDefinitionVersions" size="mini" style="width: 100%">
+      <el-table :data="versionData.processDefinitionVersions" size="" style="width: 100%">
         <el-table-column type="index" :label="$t('#')" width="50"></el-table-column>
         <el-table-column prop="userName" :label="$t('Version')">
           <template slot-scope="scope">
@@ -33,6 +33,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
+        <el-table-column prop="modifyBy" :label="$t('Modify User')"></el-table-column>
         <el-table-column prop="description" :label="$t('Description')"></el-table-column>
         <el-table-column :label="$t('Create Time')" min-width="120">
           <template slot-scope="scope">
@@ -81,6 +82,7 @@
             background
             @current-change="_mVersionGetProcessDefinitionVersionsPage"
             layout="prev, pager, next"
+            :default-page-size="versionData.pageSize"
             :total="versionData.total">
           </el-pagination>
         <el-button type="text" size="mini" @click="_close()" style="float:right">{{$t('Cancel')}}</el-button>
@@ -165,7 +167,7 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .container {
-    width: 500px;
+    width: 100%;
     position: relative;
 
     .title-box {
