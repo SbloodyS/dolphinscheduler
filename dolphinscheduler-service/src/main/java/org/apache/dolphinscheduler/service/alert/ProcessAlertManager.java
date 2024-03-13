@@ -22,16 +22,14 @@ import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.WarningType;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.dao.AlertDao;
-import org.apache.dolphinscheduler.dao.entity.Alert;
-import org.apache.dolphinscheduler.dao.entity.ProcessAlertContent;
-import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
-import org.apache.dolphinscheduler.dao.entity.ProjectUser;
-import org.apache.dolphinscheduler.dao.entity.TaskInstance;
+import org.apache.dolphinscheduler.dao.entity.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.dolphinscheduler.dao.mapper.ProcessDefinitionLogMapper;
+import org.apache.dolphinscheduler.dao.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +51,13 @@ public class ProcessAlertManager {
      */
     @Autowired
     private AlertDao alertDao;
+
+    @Autowired
+    private ProcessDefinitionLogMapper processDefinitionLogMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
 
     /**
      * command type convert chinese
@@ -99,6 +104,9 @@ public class ProcessAlertManager {
                                             ProjectUser projectUser) {
 
         String res = "";
+        ProcessDefinitionLog processDefinitionLog = processDefinitionLogMapper.queryByDefinitionCodeAndVersion(processInstance.getProcessDefinitionCode(), processInstance.getProcessDefinitionVersion());
+        User modifyby = userMapper.selectById(processDefinitionLog.getOperator());
+        User creator = userMapper.selectById(processDefinitionLog.getUserId());
         if (processInstance.getState().typeIsSuccess()) {
             List<ProcessAlertContent> successTaskList = new ArrayList<>(1);
             ProcessAlertContent processAlertContent = ProcessAlertContent.newBuilder()
@@ -115,6 +123,8 @@ public class ProcessAlertManager {
                     .processStartTime(processInstance.getStartTime())
                     .processEndTime(processInstance.getEndTime())
                     .processHost(processInstance.getHost())
+                    .creator(creator.getUserName())
+                    .modifyby(modifyby.getUserName())
                     .build();
             successTaskList.add(processAlertContent);
             res = JSONUtils.toJsonString(successTaskList);
@@ -140,6 +150,8 @@ public class ProcessAlertManager {
                         .taskEndTime(task.getEndTime())
                         .taskHost(task.getHost())
                         .logPath(task.getLogPath())
+                        .creator(creator.getUserName())
+                        .modifyby(modifyby.getUserName())
                         .build();
                 failedTaskList.add(processAlertContent);
             }

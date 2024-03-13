@@ -116,8 +116,22 @@ public class DefaultHTMLTemplate implements AlertTemplate {
             ArrayNode list = JSONUtils.parseArray(content);
             StringBuilder contents = new StringBuilder(100);
             for (JsonNode jsonNode : list) {
+                StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append(String.format("- projectCode: %s", jsonNode.get("projectCode")));
+                    stringBuilder.append(String.format("\n- projectName: %s", jsonNode.get("projectName")));
+                    stringBuilder.append(String.format("\n- processInstanceId: %s", jsonNode.get("processInstanceId")));
+                    stringBuilder.append(String.format("\n- processDefinitionCode: %s", jsonNode.get("processDefinitionCode")));
+                    stringBuilder.append(String.format("\n- processInstanceName: %s", jsonNode.get("processInstanceName")));
+                    stringBuilder.append(String.format("\n- taskCode: %s", jsonNode.get("taskCode")));
+                    stringBuilder.append(String.format("\n- taskName: %s", jsonNode.get("taskName")));
+                    stringBuilder.append(String.format("\n- taskType: %s", jsonNode.get("taskType")));
+                    stringBuilder.append(String.format("\n- taskState: %s", jsonNode.get("taskState")));
+                    stringBuilder.append(String.format("\n- taskStartTime: %s", jsonNode.get("taskStartTime")));
+                    stringBuilder.append(String.format("\n- taskEndTime: %s", jsonNode.get("taskEndTime")));
+                    stringBuilder.append(String.format("\n- creator: %s", jsonNode.get("creator")));
+                    stringBuilder.append(String.format("\n- modifyby: %s", jsonNode.get("modifyby")));
                 contents.append(EmailConstants.TR);
-                contents.append(EmailConstants.TD).append(jsonNode.toString()).append(EmailConstants.TD_END);
+                contents.append(EmailConstants.TD).append(stringBuilder).append(EmailConstants.TD_END);
                 contents.append(EmailConstants.TR_END);
             }
 

@@ -94,6 +94,10 @@ public class ProcessAlertContent implements Serializable {
     private String taskHost;
     @JsonProperty("logPath")
     private String logPath;
+    @JsonProperty("creator")
+    private String creator;
+    @JsonProperty("modifyby")
+    private String modifyby;
 
     private ProcessAlertContent(Builder builder) {
         this.projectId = builder.projectId;
@@ -121,6 +125,8 @@ public class ProcessAlertContent implements Serializable {
         this.taskHost = builder.taskHost;
         this.logPath = builder.logPath;
         this.retryTimes = builder.retryTimes;
+        this.creator = builder.creator;
+        this.modifyby = builder.modifyby;
 
     }
 
@@ -154,6 +160,8 @@ public class ProcessAlertContent implements Serializable {
         private Date taskEndTime;
         private String taskHost;
         private String logPath;
+        private String creator;
+        private String modifyby;
 
         public Builder projectId(Integer projectId) {
             this.projectId = projectId;
@@ -275,6 +283,16 @@ public class ProcessAlertContent implements Serializable {
 
         public Builder logPath(String logPath) {
             this.logPath = logPath;
+            return this;
+        }
+
+        public Builder creator(String creator) {
+            this.creator = creator;
+            return this;
+        }
+
+        public Builder modifyby(String modifyby) {
+            this.modifyby = modifyby;
             return this;
         }
 
