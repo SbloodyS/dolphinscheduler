@@ -82,7 +82,7 @@
             background
             @current-change="_mVersionGetProcessDefinitionVersionsPage"
             layout="prev, pager, next"
-            :default-page-size="versionData.pageSize"
+            :page-size="versionData.pageSize"
             :total="versionData.total">
           </el-pagination>
         <el-button type="text" size="mini" @click="_close()" style="float:right">{{$t('Cancel')}}</el-button>
