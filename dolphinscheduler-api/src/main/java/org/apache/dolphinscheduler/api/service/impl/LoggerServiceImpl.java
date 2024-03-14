@@ -106,7 +106,7 @@ public class LoggerServiceImpl extends BaseServiceImpl implements LoggerService 
             return Result.error(Status.TASK_INSTANCE_NOT_FOUND);
         }
         Result<String> result = new Result<>(Status.SUCCESS.getCode(), Status.SUCCESS.getMsg());
-        String log = queryLog(taskInstance,skipLineNum,limit);
+        String log = queryLog(taskInstance, skipLineNum, limit);
         result.setData(log);
         return result;
     }

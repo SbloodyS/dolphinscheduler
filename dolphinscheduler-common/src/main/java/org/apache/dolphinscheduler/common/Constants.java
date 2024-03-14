@@ -311,7 +311,7 @@ public final class Constants {
      * user name regex
      */
     public static final Pattern REGEX_USER_NAME = Pattern.compile("^[a-zA-Z0-9._-]{3,39}$");
-    
+
     /**
      * default display rows
      */
@@ -775,7 +775,7 @@ public final class Constants {
     public static final String QUEUE = "queue";
     public static final String QUEUE_NAME = "queueName";
     public static final int LOG_QUERY_SKIP_LINE_NUMBER = 0;
-    public static final int LOG_QUERY_LIMIT = 4096;
+    public static final int LOG_QUERY_LIMIT = 2048000;
 
     /**
      * master/worker server use for zk
