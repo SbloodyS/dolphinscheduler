@@ -33,7 +33,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="modifyBy" :label="$t('Modify User')"></el-table-column>
+        <el-table-column prop="modifyBy" :label="$t('Modify User')" min-width="100"></el-table-column>
         <el-table-column prop="description" :label="$t('Description')"></el-table-column>
         <el-table-column :label="$t('Create Time')" min-width="120">
           <template slot-scope="scope">
