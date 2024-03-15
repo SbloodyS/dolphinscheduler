@@ -633,6 +633,7 @@ public class WorkflowExecuteThread implements Runnable {
         if (processAlertManager.isNeedToSendWarning(processInstance)) {
             List<TaskInstance> taskInstances = processService.findValidTaskListByProcessId(processInstance.getId());
             ProjectUser projectUser = processService.queryProjectWithUserByProcessInstanceId(processInstance.getId());
+            this.processInstance = processService.findCreateorAndModifybyByProcessInstance(processInstance);
             processAlertManager.sendAlertProcessInstance(processInstance, taskInstances, projectUser);
         }
     }

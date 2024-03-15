@@ -365,8 +365,7 @@ public class ProcessService {
      * @return process instance
      */
     public ProcessInstance findProcessInstanceById(int processId) {
-        ProcessInstance processInstance = processInstanceMapper.selectById(processId);
-        return findProcessInstanceCreateorAndModifyby(processInstance);
+        return processInstanceMapper.selectById(processId);
     }
 
     /**
@@ -2689,7 +2688,7 @@ public class ProcessService {
         return dataSourceNewMapper.selectById(id);
     }
 
-    public ProcessInstance findProcessInstanceCreateorAndModifyby(ProcessInstance processInstance) {
+    public ProcessInstance findCreateorAndModifybyByProcessInstance(ProcessInstance processInstance) {
         ProcessDefinitionLog processDefinitionLog = processDefineLogMapper.queryByDefinitionCodeAndVersion(processInstance.getProcessDefinitionCode(), processInstance.getProcessDefinitionVersion());
         User modifyby = userMapper.selectById(processDefinitionLog.getOperator());
         User creator = userMapper.selectById(processDefinitionLog.getUserId());
