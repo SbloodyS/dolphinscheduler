@@ -52,12 +52,6 @@ public class ProcessAlertManager {
     @Autowired
     private AlertDao alertDao;
 
-    @Autowired
-    private ProcessDefinitionLogMapper processDefinitionLogMapper;
-
-    @Autowired
-    private UserMapper userMapper;
-
 
     /**
      * command type convert chinese
@@ -104,9 +98,6 @@ public class ProcessAlertManager {
                                             ProjectUser projectUser) {
 
         String res = "";
-        ProcessDefinitionLog processDefinitionLog = processDefinitionLogMapper.queryByDefinitionCodeAndVersion(processInstance.getProcessDefinitionCode(), processInstance.getProcessDefinitionVersion());
-        User modifyby = userMapper.selectById(processDefinitionLog.getOperator());
-        User creator = userMapper.selectById(processDefinitionLog.getUserId());
         if (processInstance.getState().typeIsSuccess()) {
             List<ProcessAlertContent> successTaskList = new ArrayList<>(1);
             ProcessAlertContent processAlertContent = ProcessAlertContent.newBuilder()
@@ -123,8 +114,8 @@ public class ProcessAlertManager {
                     .processStartTime(processInstance.getStartTime())
                     .processEndTime(processInstance.getEndTime())
                     .processHost(processInstance.getHost())
-                    .creator(creator.getUserName())
-                    .modifyby(modifyby.getUserName())
+                    .creator(processInstance.getCreator())
+                    .modifyby(processInstance.getModifyby())
                     .build();
             successTaskList.add(processAlertContent);
             res = JSONUtils.toJsonString(successTaskList);
@@ -150,8 +141,8 @@ public class ProcessAlertManager {
                         .taskEndTime(task.getEndTime())
                         .taskHost(task.getHost())
                         .logPath(task.getLogPath())
-                        .creator(creator.getUserName())
-                        .modifyby(modifyby.getUserName())
+                        .creator(processInstance.getCreator())
+                        .modifyby(processInstance.getModifyby())
                         .build();
                 failedTaskList.add(processAlertContent);
             }

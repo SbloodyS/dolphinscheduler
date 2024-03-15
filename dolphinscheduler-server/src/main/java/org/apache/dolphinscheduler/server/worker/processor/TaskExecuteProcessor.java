@@ -132,7 +132,7 @@ public class TaskExecuteProcessor implements NettyRequestProcessor {
         boolean offer = workerManager.offer(new TaskExecuteThread(taskExecutionContext, taskCallbackService, alertClientService, taskPluginManager));
         if (!offer) {
             logger.warn("submit task to wait queue error, queue is full, queue size is {}, taskInstanceId: {}",
-                workerManager.getWaitSubmitQueueSize(), taskExecutionContext.getTaskInstanceId());
+                    workerManager.getWaitSubmitQueueSize(), taskExecutionContext.getTaskInstanceId());
             sendRecallCommand(taskExecutionContext, channel);
             TaskExecutionContextCacheManager.removeByTaskInstanceId(taskExecutionContext.getTaskInstanceId());
         }

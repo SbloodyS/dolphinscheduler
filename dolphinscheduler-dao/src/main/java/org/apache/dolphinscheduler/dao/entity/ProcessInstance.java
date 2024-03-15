@@ -259,6 +259,12 @@ public class ProcessInstance {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date restartTime;
 
+    @TableField(exist = false)
+    private String creator;
+
+    @TableField(exist = false)
+    private String modifyby;
+
     public ProcessInstance() {
 
     }
