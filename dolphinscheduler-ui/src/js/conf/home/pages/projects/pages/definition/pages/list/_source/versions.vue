@@ -33,7 +33,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="modifyBy" :label="$t('Modify User')"></el-table-column>
+        <el-table-column prop="modifyBy" :label="$t('Modify User')" min-width="100"></el-table-column>
         <el-table-column prop="description" :label="$t('Description')"></el-table-column>
         <el-table-column :label="$t('Create Time')" min-width="120">
           <template slot-scope="scope">
@@ -82,7 +82,7 @@
             background
             @current-change="_mVersionGetProcessDefinitionVersionsPage"
             layout="prev, pager, next"
-            :default-page-size="versionData.pageSize"
+            :page-size="versionData.pageSize"
             :total="versionData.total">
           </el-pagination>
         <el-button type="text" size="mini" @click="_close()" style="float:right">{{$t('Cancel')}}</el-button>

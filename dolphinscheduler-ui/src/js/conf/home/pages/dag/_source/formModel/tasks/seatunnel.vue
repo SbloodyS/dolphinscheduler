@@ -741,6 +741,7 @@
               this._handlerEditorSinkBefore()
             }, 200)
           }
+          this.parallelism = o.params.env.parallelism || 1
         }
         )
 
