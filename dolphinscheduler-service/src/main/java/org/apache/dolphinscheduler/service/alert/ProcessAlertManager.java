@@ -22,16 +22,14 @@ import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.WarningType;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.dao.AlertDao;
-import org.apache.dolphinscheduler.dao.entity.Alert;
-import org.apache.dolphinscheduler.dao.entity.ProcessAlertContent;
-import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
-import org.apache.dolphinscheduler.dao.entity.ProjectUser;
-import org.apache.dolphinscheduler.dao.entity.TaskInstance;
+import org.apache.dolphinscheduler.dao.entity.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.dolphinscheduler.dao.mapper.ProcessDefinitionLogMapper;
+import org.apache.dolphinscheduler.dao.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +51,7 @@ public class ProcessAlertManager {
      */
     @Autowired
     private AlertDao alertDao;
+
 
     /**
      * command type convert chinese
@@ -115,6 +114,8 @@ public class ProcessAlertManager {
                     .processStartTime(processInstance.getStartTime())
                     .processEndTime(processInstance.getEndTime())
                     .processHost(processInstance.getHost())
+                    .creator(processInstance.getCreator())
+                    .modifyby(processInstance.getModifyby())
                     .build();
             successTaskList.add(processAlertContent);
             res = JSONUtils.toJsonString(successTaskList);
@@ -140,6 +141,8 @@ public class ProcessAlertManager {
                         .taskEndTime(task.getEndTime())
                         .taskHost(task.getHost())
                         .logPath(task.getLogPath())
+                        .creator(processInstance.getCreator())
+                        .modifyby(processInstance.getModifyby())
                         .build();
                 failedTaskList.add(processAlertContent);
             }

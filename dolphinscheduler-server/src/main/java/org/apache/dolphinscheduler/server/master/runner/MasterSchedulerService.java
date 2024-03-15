@@ -203,6 +203,7 @@ public class MasterSchedulerService extends Thread {
      */
     private void scheduleProcess() throws Exception {
 
+
         // make sure to scan and delete command  table in one transaction
         Command command = findOneCommand();
         if (command != null) {

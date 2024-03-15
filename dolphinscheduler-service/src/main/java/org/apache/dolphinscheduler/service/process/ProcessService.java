@@ -215,6 +215,7 @@ public class ProcessService {
     @Autowired
     private DataSourceNewMapper dataSourceNewMapper;
 
+
     /**
      * handle Command (construct ProcessInstance from Command) , wrapped in transaction
      *
@@ -2685,5 +2686,14 @@ public class ProcessService {
 
     public DataSourceNew findDataSourceNewById(int id) {
         return dataSourceNewMapper.selectById(id);
+    }
+
+    public ProcessInstance findCreateorAndModifybyByProcessInstance(ProcessInstance processInstance) {
+        ProcessDefinitionLog processDefinitionLog = processDefineLogMapper.queryByDefinitionCodeAndVersion(processInstance.getProcessDefinitionCode(), processInstance.getProcessDefinitionVersion());
+        User modifyby = userMapper.selectById(processDefinitionLog.getOperator());
+        User creator = userMapper.selectById(processDefinitionLog.getUserId());
+        processInstance.setCreator(creator.getUserName());
+        processInstance.setModifyby(modifyby.getUserName());
+        return processInstance;
     }
 }
