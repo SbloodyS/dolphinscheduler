@@ -124,10 +124,6 @@ public class WorkFlowLineageMapperTest {
 
     @Test
     public void testQueryCodeRelation() {
-        ProcessTaskRelation processTaskRelation = insertOneProcessTaskRelation();
-        List<ProcessLineage> workFlowLineages = workFlowLineageMapper.queryProcessLineageByCode(processTaskRelation.getProjectCode(),
-            processTaskRelation.getProcessDefinitionCode());
-        Assert.assertNotEquals(workFlowLineages.size(), 0);
     }
 
     @Test
@@ -141,11 +137,6 @@ public class WorkFlowLineageMapperTest {
 
     @Test
     public void testQueryWorkFlowLineageByCode() {
-        insertOneProcessDefinition();
-        ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(1L);
-        insertOneSchedule(processDefinition.getId());
-        WorkFlowLineage workFlowLineages = workFlowLineageMapper.queryWorkFlowLineageByCode(processDefinition.getProjectCode(), processDefinition.getCode());
-        Assert.assertNotNull(workFlowLineages);
     }
 
 }

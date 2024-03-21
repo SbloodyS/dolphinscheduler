@@ -15,11 +15,21 @@
  * limitations under the License.
  */
 
-export default {
-  sourceWorkFlowCode: '',
-  workList: [],
-  locations: [],
-  connects: [],
-  workFlowRelationTree: [],
-  selectedWorkFlowCode: ''
+package org.apache.dolphinscheduler.dao.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class WorkFlowRelationTree {
+    private long code;
+    private String name;
+    private long workFlowPublishStatus;
+    private long schedulePublishStatus;
+    private List<WorkFlowRelationTree> children;
 }

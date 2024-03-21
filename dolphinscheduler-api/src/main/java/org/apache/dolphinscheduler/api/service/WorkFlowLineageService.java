@@ -29,7 +29,7 @@ public interface WorkFlowLineageService {
 
     Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName, User loginUser);
 
-    Map<String, Object> queryWorkFlowLineageByCode(long projectCode, long workFlowCode);
+    Map<String, Object> queryWorkFlowLineageByCode(long projectCode, long workFlowCode, User loginUser);
 
     Map<String, Object> queryWorkFlowLineage(long projectCode, User loginUser);
 }

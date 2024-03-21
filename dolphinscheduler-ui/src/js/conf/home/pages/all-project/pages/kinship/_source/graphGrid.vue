@@ -18,7 +18,7 @@
   <div ref="graph-grid" class="graph-grid"></div>
 </template>
 <script>
-  import echarts from 'echarts'
+  import * as echarts from 'echarts'
   import { mapState } from 'vuex'
   import graphGridOption from './graphGridOption'
 

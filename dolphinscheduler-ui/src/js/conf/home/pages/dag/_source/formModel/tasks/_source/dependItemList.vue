@@ -20,7 +20,7 @@
       <el-select filterable :disabled="isDetails" style="width: 450px" v-model="el.projectCode" @change="v => _onChangeProjectCode(v, $index)" size="small">
         <el-option v-for="item in projectList" :key="item.value" :value="item.value" :label="item.label"></el-option>
       </el-select>
-      <el-select filterable :disabled="isDetails" style="width: 450px" v-model="el.definitionCode" @change="v => _onChangeDefinitionCode(v, $index)" size="small">
+      <el-select id="definitionSelect" filterable :disabled="isDetails" style="width: 450px" v-model="el.definitionCode" @change="v => _onChangeDefinitionCode(v, $index)" size="small">
         <el-option v-for="item in el.definitionList" :key="item.value" :value="item.value" :label="item.label"></el-option>
       </el-select>
       <el-select filterable :disabled="isDetails" style="width: 450px" v-model="el.depTaskCode" size="small">
@@ -322,6 +322,16 @@
       })
     },
     mounted () {
+      document.querySelector('#definitionSelect').addEventListener('contextmenu', (e) => {
+        e.preventDefault()
+        if (e.target.value) {
+          clipboard.copy(e.target.value)
+          this.$message.success('工作流名称复制成功')
+        } else {
+          clipboard.copy(e.target.placeholder)
+          this.$message.success('工作流名称复制成功')
+        }
+      })
     },
     components: {}
   }

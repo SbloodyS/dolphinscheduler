@@ -84,7 +84,7 @@ public class WorkFlowLineageController extends BaseController {
                                                                  @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode,
                                                                  @PathVariable(value = "workFlowCode", required = true) long workFlowCode) {
         try {
-            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineageByCode(projectCode, workFlowCode);
+            Map<String, Object> result = workFlowLineageService.queryWorkFlowLineageByCode(projectCode, workFlowCode, loginUser);
             return returnDataList(result);
         } catch (Exception e) {
             logger.error(QUERY_WORKFLOW_LINEAGE_ERROR.getMsg(), e);

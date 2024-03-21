@@ -32,17 +32,26 @@
         </if>
     </select>
 
-    <select id="queryWorkFlowLineageByCode" resultType="org.apache.dolphinscheduler.dao.entity.WorkFlowLineage">
-        select tepd.code as work_flow_code,tepd.name as work_flow_name,
-               '' as source_work_flow_code,
-                tepd.release_state as work_flow_publish_status,
-                tes.start_time as schedule_start_time,
-                tes.end_time as schedule_end_time,
-                tes.crontab as crontab,
-                tes.release_state as schedule_publish_status
+    <select id="queryWorkFlowLineageByCodes" resultType="org.apache.dolphinscheduler.dao.entity.WorkFlowLineage">
+        select
+            tepd.code as work_flow_code
+            ,tepd.name as work_flow_name,
+            '' as source_work_flow_code,
+            tepd.release_state as work_flow_publish_status,
+            MAX(tes.start_time) as schedule_start_time,
+            MAX(tes.end_time) as schedule_end_time,
+            MAX(tes.crontab) as crontab,
+            MAX(tes.release_state) as schedule_publish_status
         from t_ds_process_definition tepd
         left join t_ds_schedules tes on tepd.code = tes.process_definition_code
-        where tepd.project_code = #{projectCode} and tepd.code = #{workFlowCode}
+        where 1=1
+        and tepd.code in
+        <foreach collection="workFlowCodes" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY tepd.code
+                 ,tepd.name
+                 ,tepd.release_state
     </select>
 
     <select id="queryWorkFlowLineageByLineage" resultType="org.apache.dolphinscheduler.dao.entity.WorkFlowLineage">
@@ -59,8 +68,7 @@
         <if test="processLineages != null and processLineages.size != 0">
             and
             <foreach collection="processLineages" index="index" item="item" open="(" separator=" or " close=")">
-                (tepd.project_code = #{item.projectCode}
-                and tepd.code = #{item.processDefinitionCode})
+                (tepd.code = #{item.processDefinitionCode})
             </foreach>
         </if>
         GROUP BY tepd.code
@@ -80,9 +88,10 @@
         join t_ds_process_task_relation ptr on pd.code = ptr.process_definition_code
         and pd.version = ptr.process_definition_version
         where pd.project_code = #{projectCode}
+        limit 20
     </select>
 
-    <select id="queryProcessLineageByCode" resultType="org.apache.dolphinscheduler.dao.entity.ProcessLineage">
+    <select id="queryProcessLineageByCodes" resultType="org.apache.dolphinscheduler.dao.entity.ProcessLineage">
         select project_code,
                post_task_code,
                post_task_version,
@@ -90,8 +99,11 @@
                pre_task_version,
                process_definition_code,
                process_definition_version
-         from t_ds_process_task_relation
-         where project_code = #{projectCode}
-                and process_definition_code = #{processDefinitionCode}
+        from t_ds_process_task_relation
+        where 1=1
+        and process_definition_code in
+        <foreach collection="processDefinitionCodes" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

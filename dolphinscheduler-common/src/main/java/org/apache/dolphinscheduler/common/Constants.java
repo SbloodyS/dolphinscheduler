@@ -925,6 +925,8 @@ public final class Constants {
     public static final String WORKFLOW_LIST = "workFlowList";
     public static final String WORKFLOW_RELATION_LIST = "workFlowRelationList";
 
+    public static final String WORKFLOW_RELATION_TREE = "workFlowRelationTree";
+
     /**
      * session user
      */

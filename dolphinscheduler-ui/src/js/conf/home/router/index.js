@@ -90,15 +90,15 @@ const router = new Router({
             refreshInSwitchedTab: config.refreshInSwitchedTab
           }
         },
-        {
-          path: '/projects/:projectCode/kinship',
-          name: 'projects-kinship',
-          component: resolve => require(['../pages/projects/pages/kinship/index'], resolve),
-          meta: {
-            title: `${i18n.$t('Kinship')}`,
-            refreshInSwitchedTab: config.refreshInSwitchedTab
-          }
-        },
+        // {
+        //   path: '/projects/:projectCode/kinship',
+        //   name: 'projects-kinship',
+        //   component: resolve => require(['../pages/projects/pages/kinship/index'], resolve),
+        //   meta: {
+        //     title: `${i18n.$t('Kinship')}`,
+        //     refreshInSwitchedTab: config.refreshInSwitchedTab
+        //   }
+        // },
         {
           path: '/projects/:projectCode/definition',
           name: 'definition',
@@ -266,15 +266,15 @@ const router = new Router({
             refreshInSwitchedTab: config.refreshInSwitchedTab
           }
         },
-        // {
-        //   path: '/all-project/0/kinship',
-        //   name: 'all-project-kinship-index',
-        //   component: resolve => require(['../pages/all-project/pages/kinship/index'], resolve),
-        //   meta: {
-        //     title: `${i18n.$t('Kinship')}`,
-        //     refreshInSwitchedTab: config.refreshInSwitchedTab
-        //   }
-        // },
+        {
+          path: '/all-project/0/kinship',
+          name: 'all-project-kinship-index',
+          component: resolve => require(['../pages/all-project/pages/kinship/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Kinship')}`,
+            refreshInSwitchedTab: config.refreshInSwitchedTab
+          }
+        },
         {
           path: '/all-project/0/definition',
           name: 'process-definition-index',

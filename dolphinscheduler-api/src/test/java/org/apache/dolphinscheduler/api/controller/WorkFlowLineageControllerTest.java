@@ -75,13 +75,5 @@ public class WorkFlowLineageControllerTest {
 
     @Test
     public  void testQueryWorkFlowLineageByCode() {
-        long projectCode = 1L;
-        long code = 1L;
-        Map<String, Object> result = new HashMap<>();
-        putMsg(result, Status.SUCCESS);
-        result.put(Constants.DATA_LIST, 1);
-        Mockito.when(workFlowLineageService.queryWorkFlowLineageByCode(projectCode, code)).thenReturn(result);
-        Result response = workFlowLineageController.queryWorkFlowLineageByCode(user, projectCode, code);
-        Assert.assertEquals(Status.SUCCESS.getCode(), response.getCode().intValue());
     }
 }

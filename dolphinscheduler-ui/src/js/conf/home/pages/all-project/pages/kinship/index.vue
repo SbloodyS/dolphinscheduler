@@ -47,8 +47,8 @@
                   @click="changeLabel"
                   ></el-button>
       </div>
-      <graph-grid v-if="!isLoading && !!locations.length" :isShowLabel="isShowLabel"></graph-grid>
-      <template v-if="!isLoading && !locations.length">
+      <tree-grid v-if="!isLoading && !!workFlowRelationTree.length" :isShowLabel="isShowLabel"></tree-grid>
+      <template v-if="!isLoading && !workFlowRelationTree.length">
         <m-no-data style="height: 100%;"></m-no-data>
       </template>
     </div>
@@ -59,11 +59,11 @@
   import { mapActions, mapState } from 'vuex'
   import mSpin from '@/module/components/spin/spin'
   import mNoData from '@/module/components/noData/noData'
-  import graphGrid from './_source/graphGrid.vue'
+  import treeGrid from './_source/treeGrid.vue'
 
   export default {
     name: 'all-project-kinship-index',
-    components: { graphGrid, mSpin, mNoData },
+    components: { mSpin, mNoData, treeGrid },
     data () {
       return {
         isLoading: true,
@@ -109,7 +109,7 @@
             await this.getWorkFlowDAGAll()
           }
         } catch (error) {
-          this.$message.error(error.msg || '')
+          this.$message.error(error.message || '')
         }
         this.isLoading = false
       },
@@ -141,7 +141,7 @@
       this.init()
     },
     computed: {
-      ...mapState('kinship', ['locations', 'workList']),
+      ...mapState('kinship', ['workList', 'workFlowRelationTree']),
       inputFocusStyle () {
         return 'width:280px'
       }

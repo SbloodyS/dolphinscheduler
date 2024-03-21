@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import echarts from 'echarts'
+import * as echarts from 'echarts'
 export default function (value) {
   return {
     series: [
       {
         type: 'gauge',
         center: ['50%', '45%'], // Instrument position
-        radius: '80%', // Instrument size
+        radius: '85%', // Instrument size
         startAngle: 200, // Starting angle
         endAngle: -20, // End angle
         axisLine: {
-          show: false,
+          show: true,
           lineStyle: { // Property linestyle controls line style
             color: [
               [ 0.5, new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ // eslint-disable-line
@@ -85,7 +85,7 @@ export default function (value) {
       {
         type: 'gauge',
         center: ['50%', '45%'], // Default global center
-        radius: '70%',
+        radius: '75%',
         startAngle: 200,
         endAngle: -20,
         axisLine: {
@@ -97,13 +97,16 @@ export default function (value) {
               [0.9, '#FF9618'], // 70%-90%Color in place
               [1, '#DA462C']// 90%-100%Color in place
             ],
-            width: 30// Dial width
+            width: 30 // Dial width
           }
         },
         splitLine: { // Split line style (and 10, 20 equal length line style)
-          length: 30,
+          length: -5,
           lineStyle: { // Property linestyle controls line style
-            width: 2
+            shadowColor: 'rgba(0, 0, 0, 0.3)',
+            shadowBlur: 3,
+            shadowOffsetX: 1,
+            shadowOffsetY: 2
           }
         },
         axisTick: { // Tick mark style (and short line style)
@@ -111,7 +114,8 @@ export default function (value) {
         },
         axisLabel: { // Text style (and text styles such as "10", "20")
           color: 'black',
-          distance: 5 // Distance between text and dial
+          distance: 1,
+          fontSize: 18
         },
         detail: {
           formatter: '{score|{value}%}',

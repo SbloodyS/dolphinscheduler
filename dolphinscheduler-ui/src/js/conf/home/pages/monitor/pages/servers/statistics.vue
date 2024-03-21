@@ -82,7 +82,7 @@
   import _ from 'lodash'
   import { mapActions } from 'vuex'
   import mSpin from '@/module/components/spin/spin'
-  import themeData from '@/module/echarts/themeData.json'
+  import * as themeData from '@/module/echarts/themeData.json'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
 
   export default {

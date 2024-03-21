@@ -17,9 +17,12 @@
 
 package org.apache.dolphinscheduler.dao.entity;
 
+import lombok.Data;
+
 /**
  * Process lineage
  */
+@Data
 public class ProcessLineage {
 
     /**
@@ -56,60 +59,4 @@ public class ProcessLineage {
      * process definition version
      */
     private int processDefinitionVersion;
-
-    public long getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(long projectCode) {
-        this.projectCode = projectCode;
-    }
-
-    public long getPostTaskCode() {
-        return postTaskCode;
-    }
-
-    public void setPostTaskCode(long postTaskCode) {
-        this.postTaskCode = postTaskCode;
-    }
-
-    public int getPostTaskVersion() {
-        return postTaskVersion;
-    }
-
-    public void setPostTaskVersion(int postTaskVersion) {
-        this.postTaskVersion = postTaskVersion;
-    }
-
-    public long getPreTaskCode() {
-        return preTaskCode;
-    }
-
-    public void setPreTaskCode(long preTaskCode) {
-        this.preTaskCode = preTaskCode;
-    }
-
-    public int getPreTaskVersion() {
-        return preTaskVersion;
-    }
-
-    public void setPreTaskVersion(int preTaskVersion) {
-        this.preTaskVersion = preTaskVersion;
-    }
-
-    public long getProcessDefinitionCode() {
-        return processDefinitionCode;
-    }
-
-    public void setProcessDefinitionCode(long processDefinitionCode) {
-        this.processDefinitionCode = processDefinitionCode;
-    }
-
-    public int getProcessDefinitionVersion() {
-        return processDefinitionVersion;
-    }
-
-    public void setProcessDefinitionVersion(int processDefinitionVersion) {
-        this.processDefinitionVersion = processDefinitionVersion;
-    }
 }

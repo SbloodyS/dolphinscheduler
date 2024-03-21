@@ -79,19 +79,12 @@ export default {
     return new Promise((resolve, reject) => {
       const url = `projects/${projectCode}/lineages/${code}`
       io.get(url, res => {
-        let locations = []
-        let connects = []
-        if (res.data.workFlowList) {
-          locations = buildLocations(res.data.workFlowList)
+        let workFlowRelationTree
+        if (res.data.workFlowRelationTree) {
+          workFlowRelationTree = res.data.workFlowRelationTree
         }
-        if (res.data.workFlowRelationList) {
-          connects = buildConnects(res.data.workFlowRelationList)
-        }
-        state.sourceWorkFlowCode = code || ''
-        // locations
-        state.locations = locations /* JSON.parse(locations) */
-        // connects
-        state.connects = connects /* JSON.parse(connects) */
+        state.workFlowRelationTree = [workFlowRelationTree]
+        state.selectedWorkFlowCode = code
         resolve(res.data)
       }).catch(res => {
         reject(res)
@@ -106,17 +99,11 @@ export default {
     return new Promise((resolve, reject) => {
       const url = `projects/${projectCode}/lineages/list`
       io.get(url, res => {
-        let locations = []
-        let connects = []
-        if (res.data.workFlowList) {
-          locations = buildLocations(res.data.workFlowList)
+        let workFlowRelationTree
+        if (res.data.workFlowRelationTree) {
+          workFlowRelationTree = res.data.workFlowRelationTree
         }
-        if (res.data.workFlowRelationList) {
-          connects = buildConnects(res.data.workFlowRelationList)
-        }
-        state.sourceWorkFlowCode = ''
-        state.locations = locations
-        state.connects = connects
+        state.workFlowRelationTree = [workFlowRelationTree]
         resolve(res.data)
       }).catch(res => {
         reject(res)

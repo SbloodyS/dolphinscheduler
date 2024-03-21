@@ -34,7 +34,7 @@ const getCategory = (categoryDic, { workFlowPublishStatus, schedulePublishStatus
 const formatName = (str) => {
   if (typeof str !== 'string') return ''
 
-  return str.slice(0, 6) + (str.length > 6 ? '\n...' : '')
+  return (str.length > 16 ? str.slice(0, 8) + '...' + str.slice(-8, -1) : '')
 }
 
 const publishStatusFormat = (status) => {
@@ -72,7 +72,7 @@ export default function (locations, links, sourceWorkFlowCode, isShowLabel) {
     tooltip: {
       trigger: 'item',
       triggerOn: 'mousemove',
-      backgroundColor: '#2D303A',
+      backgroundColor: '#c9c9c9',
       padding: [8, 12],
       formatter: (params) => {
         if (!params.data.name) return ''
@@ -87,17 +87,9 @@ export default function (locations, links, sourceWorkFlowCode, isShowLabel) {
           ${i18n.$t('schedulePublishStatus')}：${publishStatusFormat(schedulePublishStatus)}<br/>
         `
       },
-      color: '#2D303A',
+      color: '#ff0000',
       textStyle: {
-        rich: {
-          a: {
-            fontSize: 12,
-            color: '#2D303A',
-            lineHeight: 12,
-            align: 'left',
-            padding: [4, 4, 4, 4]
-          }
-        }
+        color: '#ff0000'
       }
     },
     color: [categoryDic.active.color, categoryDic['1'].color, categoryDic['0'].color, categoryDic['10'].color],
@@ -110,13 +102,12 @@ export default function (locations, links, sourceWorkFlowCode, isShowLabel) {
     series: [{
       type: 'graph',
       layout: 'force',
-      nodeScaleRatio: 1.2,
       draggable: true,
       animation: false,
       data: newData,
       roam: true,
-      symbol: 'roundRect',
-      symbolSize: 70,
+      symbol: 'circle',
+      symbolSize: 110,
       categories,
       label: {
         show: isShowLabel,
@@ -125,17 +116,8 @@ export default function (locations, links, sourceWorkFlowCode, isShowLabel) {
           if (!params.data.name) return ''
           return formatName(params.data.name)
         },
-        color: '#222222',
+        color: '#ff0000',
         textStyle: {
-          rich: {
-            a: {
-              fontSize: 12,
-              color: '#222222',
-              lineHeight: 12,
-              align: 'left',
-              padding: [4, 4, 4, 4]
-            }
-          }
         }
       },
       edgeSymbol: ['circle', 'arrow'],
@@ -146,7 +128,9 @@ export default function (locations, links, sourceWorkFlowCode, isShowLabel) {
       },
       links: links,
       lineStyle: {
-        color: '#999999'
+        color: '#999999',
+        type: 'solid',
+        curveness: 0.9
       }
     }]
   }

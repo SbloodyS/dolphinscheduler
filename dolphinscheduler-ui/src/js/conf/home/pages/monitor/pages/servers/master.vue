@@ -85,7 +85,7 @@
   import mGauge from './_source/gauge'
   import mSpin from '@/module/components/spin/spin'
   import mNoData from '@/module/components/noData/noData'
-  import themeData from '@/module/echarts/themeData.json'
+  import * as themeData from '@/module/echarts/themeData.json'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   import zookeeperDirectoriesPopup from './_source/zookeeperDirectories'
 
