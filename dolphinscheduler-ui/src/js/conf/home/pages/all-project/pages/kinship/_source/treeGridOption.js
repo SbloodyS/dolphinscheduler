@@ -19,7 +19,7 @@ import i18n from '@/module/i18n/index.js'
 const formatName = (str) => {
   if (typeof str !== 'string') return ''
 
-  return (str.length > 16 ? str.slice(0, 8) + '...' + str.slice(-9, -1) : str)
+  return (str.length > 16 ? str.slice(0, 8) + '...' + str.slice(-9, str.length) : str)
 }
 
 const publishStatusFormat = (status) => {
