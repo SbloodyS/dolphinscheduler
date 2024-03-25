@@ -62,7 +62,7 @@ public class JDBCUtils {
         properties.put("password", password);
         try {
             Class.forName(driverName);
-            connection = DriverManager.getConnection(jdbcUrl, userName, password);
+            connection = DriverManager.getConnection(jdbcUrl, properties);
         } catch (Exception e) {
             throw new RuntimeException("Executing SQL failed:", e);
         }
