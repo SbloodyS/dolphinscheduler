@@ -298,7 +298,6 @@ public final class DingTalkSender {
             stringBuilder.append(String.format("\n- taskEndTime: %s", DateUtils.format(processAlertContent.getTaskEndTime(), Constants.YYYY_MM_DD_HH_MM_SS)));
             stringBuilder.append(String.format("\n- creator: %s", processAlertContent.getCreator()));
             stringBuilder.append(String.format("\n- modifiedBy: %s", processAlertContent.getModifyby()));
-            stringBuilder.append("\n *** ");
         }
         text.put("title", title);
         text.put("text", stringBuilder);

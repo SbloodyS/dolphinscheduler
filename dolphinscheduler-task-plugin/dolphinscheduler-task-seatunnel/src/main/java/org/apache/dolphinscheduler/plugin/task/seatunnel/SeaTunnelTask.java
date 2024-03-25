@@ -381,7 +381,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         if (autoCreateHiveTable) {
             createHiveTableStatement = generateCreateHiveTableStatement(targetTable);
         }
-        String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS TEXTFILE AS SELECT * FROM %S WHERE 1=2;", tmpTable, targetTable);
+        String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS TEXTFILE AS SELECT * FROM %s WHERE 1=2;", tmpTable, targetTable);
         String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
         String insertTableStatement = String.format("INSERT OVERWRITE TABLE %s SELECT * FROM %s;", targetTable, tmpTable);
 
