@@ -57,12 +57,12 @@ public class JDBCUtils {
 
     public Connection getConnector() {
         Properties properties = new Properties();
-        Connection connection = null;
+        Connection connection;
         properties.put("user", userName);
         properties.put("password", password);
         try {
             Class.forName(driverName);
-            connection = DriverManager.getConnection(jdbcUrl, properties);
+            connection = DriverManager.getConnection(jdbcUrl, userName, password);
         } catch (Exception e) {
             throw new RuntimeException("Executing SQL failed:", e);
         }
@@ -122,6 +122,12 @@ public class JDBCUtils {
             case Types.DATE:
             case Types.TIMESTAMP:
             case Types.BLOB:
+            case Types.CLOB:
+            case Types.ROWID:
+            case Types.NCHAR:
+            case Types.NVARCHAR:
+            case Types.LONGNVARCHAR:
+            case Types.SQLXML:
                 return "STRING";
 
             case Types.NUMERIC:

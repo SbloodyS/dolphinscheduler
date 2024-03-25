@@ -54,14 +54,11 @@
         </div>
       </div>
     </m-list-box>
-    <template v-if="['mysql', 'sqlserver'].includes(sourceDataSourceFormType)">
+    <template v-if="['mysql', 'sqlserver', 'oracle'].includes(sourceDataSourceFormType)">
       <m-list-box>
         <div slot="text">{{ '查询SQL' }}</div>
         <div slot="content">
           <div class="form-mirror">
-<!--            <a class="ans-modal-box-max">-->
-<!--              <em class="el-icon-full-screen" @click="setEditorVal"></em>-->
-<!--            </a>-->
             <textarea
               id="code-sql-mirror-source"
               name="code-sql-mirror-source"
@@ -94,13 +91,6 @@
           </el-input>
         </div>
       </m-list-box>
-<!--      <el-dialog-->
-<!--        :visible.sync="scriptBoxDialogSource"-->
-<!--        :append-to-body="true"-->
-<!--        width="100%"-->
-<!--        :fullscreen="true">-->
-<!--        <m-script-box :item="item" @getScriptBoxValue="getScriptBoxValue" @closeAble="closeAble"></m-script-box>-->
-<!--      </el-dialog>-->
     </template>
     <template v-if="['hive'].includes(sourceDataSourceFormType)">
       <m-list-box>
@@ -196,7 +186,7 @@
           </el-input>
         </div>
       </m-list-box>
-      <template v-if="['mysql', 'sqlserver', 'clickhouse'].includes(sourceDataSourceFormType)">
+      <template v-if="['mysql', 'sqlserver', 'oracle', 'clickhouse'].includes(sourceDataSourceFormType)">
         <m-list-box>
         <div slot="text">{{ '自动创建Hive表' }}</div>
         <div slot="content">
@@ -378,7 +368,7 @@
         }
 
         let requestParams = {}
-        if (['mysql', 'sqlserver'].includes(this.sourceDataSourceFormType)) {
+        if (['mysql', 'sqlserver', 'oracle'].includes(this.sourceDataSourceFormType)) {
           if (!editorSource.getValue()) {
             this.$message.warning('请输入查询SQL')
             return false
@@ -531,7 +521,6 @@
       },
       _handleAutoCreateHiveTable (val) {
         this.autoCreateHiveTable = val === 1
-        console.log(val)
       },
       dataProcess (backResource) {
         let isResourceId = []
@@ -591,7 +580,7 @@
         this.sourceDataSourceName = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceName
         this.sourceDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
 
-        if (['mysql', 'sqlserver'].includes(this.sourceDataSourceType)) {
+        if (['mysql', 'sqlserver', 'oracle'].includes(this.sourceDataSourceType)) {
           this.sourceDataSourceFormType = this.sourceDataSourceType
           setTimeout(() => {
             this._handlerEditorSource()
@@ -704,7 +693,7 @@
         this._getDataSourceInfo().then(() => {
           let sourceDataSourceId = o.params.sourceDataSourceId || ''
           this._handleSourceDataSourceTypeChange(sourceDataSourceId)
-          if (['mysql', 'sqlserver'].includes(this.sourceDataSourceType)) {
+          if (['mysql', 'sqlserver', 'oracle'].includes(this.sourceDataSourceType)) {
             this.sourceSql = o.params.source.query || ''
             this.sourceSQLServerParams.partition_column = o.params.source.partition_column || ''
             this.sourceSQLServerParams.partition_num = o.params.source.partition_num || ''

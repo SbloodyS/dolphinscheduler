@@ -208,7 +208,7 @@
             label: 'CLICKHOUSE'
           },
           {
-            value: 'oracel',
+            value: 'oracle',
             label: 'ORACLE'
           },
           {

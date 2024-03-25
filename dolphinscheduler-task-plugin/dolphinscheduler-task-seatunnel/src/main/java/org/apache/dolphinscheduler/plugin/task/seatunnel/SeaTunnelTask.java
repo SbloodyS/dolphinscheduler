@@ -31,6 +31,7 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.MysqlSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.MysqlSourceParams;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.OracleSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLReturnField;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSourceParams;
@@ -204,6 +205,26 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 seaTunnelConfig.setSource(Collections.singletonList(sqlServerSourceParams));
                 initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), sqlServerJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
                 sourceJdbcUtilsQuerySql = sqlServerSourceParams.getQuery();
+                break;
+            case "oracle":
+                OracleSourceParams oracleSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), OracleSourceParams.class);
+                if (oracleSourceParams == null) {
+                    throw new RuntimeException("source datasource params is invalid");
+                }
+
+                oracleSourceParams.setDriver(sourceDataSourceInfo.getDriverName());
+
+                String oracleJdbcUrl = String.format("jdbc:oracle:thin:@%s:%s:%s",
+                        sourceDataSourceInfo.getHostname(),
+                        sourceDataSourceInfo.getPort(),
+                        sourceDataSourceInfo.getDatabaseName());
+                oracleSourceParams.setUrl(oracleJdbcUrl);
+
+                oracleSourceParams.setUser(sourceDataSourceInfo.getUserName());
+                oracleSourceParams.setPassword(sourceDataSourceInfo.getPassword());
+                seaTunnelConfig.setSource(Collections.singletonList(oracleSourceParams));
+                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), oracleJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
+                sourceJdbcUtilsQuerySql = oracleSourceParams.getQuery();
                 break;
             case "clickhouse":
                 ClickHouseSourceParams clickHouseSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), ClickHouseSourceParams.class);
