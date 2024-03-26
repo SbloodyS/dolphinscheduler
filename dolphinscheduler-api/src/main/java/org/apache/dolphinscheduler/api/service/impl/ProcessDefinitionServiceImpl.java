@@ -454,25 +454,29 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      */
     @Override
     public Map<String, Object> queryProcessDefinitionByCode(User loginUser, long projectCode, long code) {
-        Project project = projectMapper.queryByCode(projectCode);
+        Map<String, Object> result = new HashMap<>();
+
+        ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(code);
+        if (processDefinition == null) {
+            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
+            return result;
+        }
+
         //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+        Project project = projectMapper.queryByCode(processDefinition.getProjectCode());
+        result = projectService.checkProjectAndAuth(loginUser, project, processDefinition.getProjectCode());
         if (result.get(Constants.STATUS) != Status.SUCCESS) {
             return result;
         }
 
-        ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(code);
-        if (processDefinition == null || projectCode != processDefinition.getProjectCode()) {
-            putMsg(result, Status.PROCESS_DEFINE_NOT_EXIST, code);
-        } else {
-            Tenant tenant = tenantMapper.queryById(processDefinition.getTenantId());
-            if (tenant != null) {
-                processDefinition.setTenantCode(tenant.getTenantCode());
-            }
-            DagData dagData = processService.genDagData(processDefinition);
-            result.put(Constants.DATA_LIST, dagData);
-            putMsg(result, Status.SUCCESS);
+        Tenant tenant = tenantMapper.queryById(processDefinition.getTenantId());
+        if (tenant != null) {
+            processDefinition.setTenantCode(tenant.getTenantCode());
         }
+        DagData dagData = processService.genDagData(processDefinition);
+        result.put(Constants.DATA_LIST, dagData);
+        putMsg(result, Status.SUCCESS);
+
         return result;
     }
 

@@ -92,6 +92,44 @@
         </div>
       </m-list-box>
     </template>
+    <template v-if="['elasticsearch'].includes(sourceDataSourceFormType)">
+      <m-list-box>
+        <div slot="text">{{ '查询JSON' }}</div>
+        <div slot="content">
+          <div class="form-mirror">
+            <textarea
+              id="code-json-mirror-source"
+              name="code-json-mirror-source"
+              style="opacity: 0">
+          </textarea>
+          </div>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'Index' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model="sourceElasticSearchParams.index"
+            :placeholder="'请输入index'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'Source' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="textarea"
+            size="small"
+            v-model="sourceElasticSearchParams.source"
+            :placeholder="'请输入source'">
+          </el-input>
+        </div>
+      </m-list-box>
+    </template>
     <template v-if="['hive'].includes(sourceDataSourceFormType)">
       <m-list-box>
         <div slot="text">{{ '来源表名' }}</div>
@@ -246,9 +284,9 @@
     data () {
       return {
         valueConsistsOf: 'LEAF_PRIORITY',
-        // script
         sourceSql: '',
         targetSql: '',
+        sourceJson: '',
         // Custom parameter
         localParams: [],
         // resource(list)
@@ -291,6 +329,11 @@
         },
         sourceClickhouseParams: {
           sql: ''
+        },
+        sourceElasticSearchParams: {
+          query: '',
+          index: '',
+          source: ''
         },
 
         targetHiveParams: {
@@ -392,6 +435,22 @@
           }
           this.sourceClickhouseParams.sql = editorSource.getValue()
           requestParams.source = this.sourceClickhouseParams
+        } else if (['elasticsearch'].includes(this.sourceDataSourceFormType)) {
+          if (!editorSource.getValue()) {
+            this.$message.warning('请输入查询Json')
+            return false
+          }
+          this.sourceElasticSearchParams.query = editorSource.getValue()
+
+          if (!this.sourceElasticSearchParams.index) {
+            this.$message.warning('请输入索引')
+            return false
+          } else if (!this.sourceElasticSearchParams.source) {
+            this.$message.warning('请输入source')
+            return false
+          }
+
+          requestParams.source = this.sourceElasticSearchParams
         } else {
           this.$message.warning(`暂不支持的数据源类型${this.sourceDataSourceType}`)
           return false
@@ -458,6 +517,36 @@
         // Monitor keyboard
         editorSource.on('keypress', this.keypress)
         editorSource.setValue(this.sourceSql)
+
+        return editorSource
+      },
+      _handlerJsonEditorSource () {
+        if (editorSource) {
+          editorSource.toTextArea() // Uninstall
+          editorSource.off($('.code-json-mirror-source'), 'keypress', this.keypress)
+          editorSource.off($('.code-json-mirror-source'), 'changes', this.changes)
+          editorSource = null
+        }
+
+        // editor
+        editorSource = codemirror('code-json-mirror-source', {
+          mode: 'json',
+          readOnly: this.isDetails
+        })
+
+        editorSource.setSize('auto', '350px')
+
+        this.keypress = () => {
+          if (!editorSource.getOption('readOnly')) {
+            editorSource.showHint({
+              completeSingle: false
+            })
+          }
+        }
+
+        // Monitor keyboard
+        editorSource.on('keypress', this.keypress)
+        editorSource.setValue(this.sourceJson)
 
         return editorSource
       },
@@ -592,6 +681,11 @@
           setTimeout(() => {
             this._handlerEditorSource()
           }, 200)
+        } else if (['elasticsearch'].includes(this.sourceDataSourceType)) {
+          this.sourceDataSourceFormType = this.sourceDataSourceType
+          setTimeout(() => {
+            this._handlerJsonEditorSource()
+          }, 200)
         } else {
           this.sourceDataSourceFormType = ''
           this.sourceDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
@@ -704,6 +798,10 @@
             this.sourceHiveParams.table_name = o.params.source.table_name || ''
           } else if (['clickhouse'].includes(this.sourceDataSourceType)) {
             this.sourceSql = o.params.source.sql || ''
+          } else if (['elasticsearch'].includes(this.sourceDataSourceType)) {
+            this.sourceJson = o.params.source.query || ''
+            this.sourceElasticSearchParams.index = o.params.source.index || ''
+            this.sourceElasticSearchParams.source = o.params.source.source || ''
           }
 
           let targetDataSourceId = o.params.targetDataSourceId || ''

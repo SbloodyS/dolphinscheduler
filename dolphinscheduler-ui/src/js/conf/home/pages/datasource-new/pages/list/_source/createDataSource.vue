@@ -222,6 +222,10 @@
           {
             value: 'trino',
             label: 'TRINO'
+          },
+          {
+            value: 'elasticsearch',
+            label: 'ELASTICSEARCH'
           }
         ],
         isAbleList: [

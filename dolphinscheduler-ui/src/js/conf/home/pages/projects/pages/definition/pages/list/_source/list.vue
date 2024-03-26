@@ -269,7 +269,7 @@
        * edit
        */
       _edit (item) {
-        this.$router.push({ path: `/projects/${this.projectCode}/definition/list/${item.code}` })
+        this.$router.push({ path: `/projects/${item.projectCode}/definition/list/${item.code}` })
       },
       /**
        * Offline

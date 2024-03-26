@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,7 @@ import org.apache.dolphinscheduler.plugin.task.api.TaskResponse;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.DataSourceNew;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.Env;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSourceParams;
@@ -38,6 +40,7 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSourceP
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConfig;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
+import org.apache.dolphinscheduler.spi.utils.Constants;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
 import org.slf4j.Logger;
 
@@ -47,8 +50,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.dolphinscheduler.spi.task.TaskConstants.EXIT_CODE_FAILURE;
 
@@ -267,6 +272,20 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 hiveSourceParams.setSourceTable(tmpTable);
 
                 generateHiveSourceCommand(originTable, tmpTable);
+                break;
+            case "elasticsearch":
+                ElasticSearchSourceParams elasticSearchSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), ElasticSearchSourceParams.class);
+                if (elasticSearchSourceParams == null) {
+                    throw new RuntimeException("source datasource params is invalid");
+                }
+                List<String> hosts = new ArrayList<>(Arrays.asList(sourceDataSourceInfo.getHostname().split(Constants.COMMA)));
+                elasticSearchSourceParams.setQuery(JSONUtils.parseObject(elasticSearchSourceParams.getQuery().toString(), new TypeReference<Map<Object, Object>>(){}));
+                elasticSearchSourceParams.setSource(JSONUtils.parseObject(elasticSearchSourceParams.getSource().toString(), new TypeReference<List<String>>(){}));
+
+                elasticSearchSourceParams.setHosts(hosts);
+                elasticSearchSourceParams.setUserName(sourceDataSourceInfo.getUserName());
+                elasticSearchSourceParams.setPassword(sourceDataSourceInfo.getPassword());
+                seaTunnelConfig.setSource(Collections.singletonList(elasticSearchSourceParams));
                 break;
             default:
                 throw new RuntimeException("Unsupported source datasource type: " + sourceDataSourceInfo.getDatasourceType());
