@@ -60,7 +60,7 @@
               size="small"
               :disabled="isDetails"
               :placeholder="$t('Please enter name (required)')"
-              maxlength="100"
+              maxlength="255"
               @blur="_verifName()"
             >
             </el-input>
