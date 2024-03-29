@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.api.service.impl;
 
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.shaded.com.google.common.collect.Lists;
 import org.apache.curator.shaded.com.google.common.collect.Sets;
@@ -104,6 +105,7 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
         Set<WorkFlowRelation> workFlowRelations = new HashSet<>();
         Set<Long> sourceWorkFlowCodes = Sets.newHashSet(workFlowCode);
         recursiveWorkFlow(workFlowLineagesMap, workFlowRelations, sourceWorkFlowCodes);
+        getDownstreamWorkFlowCodes(workFlowLineagesMap, workFlowRelations, Sets.newHashSet(workFlowCode), 1, 2);
 
         List<WorkFlowRelationTree> workFlowRelationTreeList = createTree(new ArrayList<>(workFlowRelations), workFlowLineagesMap, 0);
         Map<String, Object> workFlowListMap = new HashMap<>();
@@ -123,6 +125,7 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
             if (workFlowRelation.getSourceWorkFlowCode() == pid) {
                 WorkFlowRelationTree workFlowRelationTree = new WorkFlowRelationTree();
                 workFlowRelationTree.setCode(workFlowRelation.getTargetWorkFlowCode());
+                log.info("workFlowRelation.getTargetWorkFlowCode(): {}", workFlowRelation.getTargetWorkFlowCode());
                 workFlowRelationTree.setName(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getWorkFlowName());
                 workFlowRelationTree.setWorkFlowPublishStatus(Long.parseLong(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getWorkFlowPublishStatus()));
                 workFlowRelationTree.setSchedulePublishStatus(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getSchedulePublishStatus());
@@ -132,6 +135,28 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
         }
         return workFlowRelationTreeList;
 
+    }
+
+    private void getDownstreamWorkFlowCodes(Map<Long, WorkFlowLineage> workFlowLineagesMap,
+                                            Set<WorkFlowRelation> workFlowRelations,
+                                            Set<Long> sourceWorkFlowCodes,
+                                            Integer startLevel,
+                                            Integer maxLevel) {
+        for (Long sourceWorkFlowCode : sourceWorkFlowCodes) {
+            List<Long> downstreamWorkFlowCodes = workFlowLineageMapper.queryDownstreamWorkFlowsByWorkFlowCode(sourceWorkFlowCode);
+            if (downstreamWorkFlowCodes.isEmpty()) {
+                continue;
+            }
+            List<WorkFlowLineage> workFlowLineageList = workFlowLineageMapper.queryWorkFlowLineageByCodes(downstreamWorkFlowCodes);
+            workFlowLineagesMap.putAll(workFlowLineageList.stream().collect(Collectors.toMap(WorkFlowLineage::getWorkFlowCode, workFlowLineage -> workFlowLineage)));
+            for (Long downstreamWorkFlowCode : downstreamWorkFlowCodes) {
+                workFlowRelations.add(new WorkFlowRelation(sourceWorkFlowCode, downstreamWorkFlowCode));
+            }
+            if (startLevel < maxLevel) {
+                getDownstreamWorkFlowCodes(workFlowLineagesMap, workFlowRelations, new HashSet<>(downstreamWorkFlowCodes),
+                        startLevel + 1, maxLevel);
+            }
+        }
     }
 
     private void recursiveWorkFlow(Map<Long, WorkFlowLineage> workFlowLineagesMap,

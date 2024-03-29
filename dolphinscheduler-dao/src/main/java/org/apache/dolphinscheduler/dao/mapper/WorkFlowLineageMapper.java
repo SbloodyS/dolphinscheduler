@@ -66,4 +66,6 @@ public interface WorkFlowLineageMapper {
      * @return ProcessLineage list
      */
     List<ProcessLineage> queryProcessLineageByCodes(@Param("processDefinitionCodes") List<Long> processDefinitionCodes);
+
+    List<Long> queryDownstreamWorkFlowsByWorkFlowCode(@Param("processDefinitionCode") Long processDefinitionCode);
 }

@@ -106,4 +106,15 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="queryDownstreamWorkFlowsByWorkFlowCode" resultType="java.lang.Long">
+        SELECT
+            DISTINCT a.process_definition_code
+        FROM
+        t_ds_process_task_relation a
+        JOIN t_ds_task_definition b ON b.code = a.pre_task_code OR b.code = a.post_task_code
+        JOIN t_ds_process_definition c ON c.code = a.process_definition_code
+        WHERE 1=1
+        AND b.task_params like CONCAT('%', #{processDefinitionCode}, '%')
+    </select>
 </mapper>
