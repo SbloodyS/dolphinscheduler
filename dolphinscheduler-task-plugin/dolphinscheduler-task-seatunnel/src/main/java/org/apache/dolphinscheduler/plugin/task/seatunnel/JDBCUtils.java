@@ -135,7 +135,7 @@ public class JDBCUtils {
             case Types.REAL:
             case Types.FLOAT:
             case Types.DOUBLE:
-                return "DOUBLE";
+                return "DECIMAL(20,8)";
 
             case Types.BIT:
             case Types.TINYINT:
