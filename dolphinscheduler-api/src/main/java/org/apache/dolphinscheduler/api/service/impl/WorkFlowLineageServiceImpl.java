@@ -17,15 +17,12 @@
 
 package org.apache.dolphinscheduler.api.service.impl;
 
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.shaded.com.google.common.collect.Lists;
 import org.apache.curator.shaded.com.google.common.collect.Sets;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.service.WorkFlowLineageService;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.TaskType;
-import org.apache.dolphinscheduler.common.enums.UserType;
 import org.apache.dolphinscheduler.common.model.DependentItem;
 import org.apache.dolphinscheduler.common.model.DependentTaskModel;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
@@ -46,15 +43,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,13 +71,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
     @Override
     public Map<String, Object> queryWorkFlowLineageByName(long projectCode, String workFlowName, User loginUser) {
         Map<String, Object> result = new HashMap<>();
-//        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
-//            Project project = projectMapper.queryByCode(projectCode);
-//            if (project == null) {
-//                putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
-//                return result;
-//            }
-//        }
 
         List<WorkFlowLineage> workFlowLineageList = workFlowLineageMapper.queryWorkFlowLineageByName(projectCode, workFlowName);
         result.put(Constants.DATA_LIST, workFlowLineageList);
@@ -94,13 +81,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
     @Override
     public Map<String, Object> queryWorkFlowLineageByCode(long projectCode, long workFlowCode, User loginUser) {
         Map<String, Object> result = new HashMap<>();
-//        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
-//            Project project = projectMapper.queryByCode(projectCode);
-//            if (project == null) {
-//                putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
-//                return result;
-//            }
-//        }
         Map<Long, WorkFlowLineage> workFlowLineagesMap = new HashMap<>();
         Set<WorkFlowRelation> workFlowRelations = new HashSet<>();
         Set<Long> sourceWorkFlowCodes = Sets.newHashSet(workFlowCode);
@@ -109,8 +89,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
 
         List<WorkFlowRelationTree> workFlowRelationTreeList = createTree(new ArrayList<>(workFlowRelations), workFlowLineagesMap, 0);
         Map<String, Object> workFlowListMap = new HashMap<>();
-//        workFlowListMap.put(Constants.WORKFLOW_LIST, workFlowLineagesMap.values());
-//        workFlowListMap.put(Constants.WORKFLOW_RELATION_LIST, workFlowRelations);
         workFlowListMap.put(Constants.WORKFLOW_RELATION_TREE, workFlowRelationTreeList.get(0));
         result.put(Constants.DATA_LIST, workFlowListMap);
         putMsg(result, Status.SUCCESS);
@@ -250,8 +228,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
                 }
             }
         }
-//        workFlowListMap.put(Constants.WORKFLOW_LIST, workFlowLineagesMap.values());
-//        workFlowListMap.put(Constants.WORKFLOW_RELATION_LIST, workFlowRelations);
         List<WorkFlowRelationTree> workFlowRelationTreeList = createTree(new ArrayList<>(workFlowRelations), workFlowLineagesMap, 0);
         if (workFlowRelationTreeList.isEmpty()) {
             workFlowListMap.put(Constants.WORKFLOW_RELATION_TREE, new ArrayList<>());
@@ -268,7 +244,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
         }
         List<TaskDefinitionLog> taskDefinitionLogs = taskDefinitionLogMapper.queryByTaskDefinitions(taskDefinitionList);
         for (TaskDefinitionLog taskDefinitionLog : taskDefinitionLogs) {
-//            if (taskDefinitionLog.getProjectCode() == projectCode) {
             if (taskDefinitionLog.getTaskType().equals(TaskType.DEPENDENT.getDesc())) {
                 DependentParameters dependentParameters = JSONUtils.parseObject(taskDefinitionLog.getDependence(), DependentParameters.class);
                 if (dependentParameters != null) {
@@ -284,7 +259,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
                 }
             }
         }
-//        }
         return sourceWorkFlowCodes;
     }
 }
