@@ -20,7 +20,7 @@
       <el-table :data="list" size="mini" style="width: 100%" @selection-change="_arrDelChange">
         <el-table-column type="selection" width="50" :selectable="selectable"></el-table-column>
         <el-table-column prop="code" :label="$t('#')" width="120"></el-table-column>
-        <el-table-column :label="$t('Process Name')" min-width="200">
+        <el-table-column :label="$t('Process Name')" min-width="300">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
               <p>{{ scope.row.name }}</p>
@@ -62,7 +62,7 @@
             <span v-if="!scope.row.scheduleReleaseState">-</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Operation')" width="335" fixed="right" v-if="isAuth">
+        <el-table-column :label="$t('Operation')" width="255" fixed="right" v-if="isAuth">
           <template slot-scope="scope">
             <el-tooltip :content="$t('Edit')" placement="top" :enterable="false">
               <span><el-button type="primary" size="mini" icon="el-icon-edit-outline" :disabled="scope.row.releaseState === 'ONLINE'" @click="_edit(scope.row)" circle></el-button></span>

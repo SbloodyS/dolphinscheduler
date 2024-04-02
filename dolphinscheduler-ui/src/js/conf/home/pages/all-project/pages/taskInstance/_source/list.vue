@@ -19,8 +19,8 @@
     <div class="table-box">
       <el-table :data="list" size="mini" style="width: 100%">
         <el-table-column prop="id" :label="$t('#')" width="50"></el-table-column>
-        <el-table-column prop="name" :label="$t('Name')"></el-table-column>
-        <el-table-column :label="$t('Process Instance')" min-width="200">
+        <el-table-column prop="name" :label="$t('Name')" width="110"></el-table-column>
+        <el-table-column :label="$t('Process Instance')" min-width="280">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
               <p>{{ scope.row.processInstanceName }}</p>
@@ -71,12 +71,12 @@
             <span v-else>NO</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('host')" min-width="210">
+        <el-table-column :label="$t('host')" min-width="130">
           <template slot-scope="scope">
             <span>{{scope.row.host | filterNull}}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Operation')" width="80" fixed="right">
+        <el-table-column :label="$t('Operation')" width="70" fixed="right">
           <template slot-scope="scope">
             <div>
               <el-tooltip :content="$t('Force success')" placement="top" :enterable="false">
