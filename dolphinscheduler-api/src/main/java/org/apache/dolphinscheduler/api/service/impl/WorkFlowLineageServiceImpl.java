@@ -125,7 +125,6 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
             if (workFlowRelation.getSourceWorkFlowCode() == pid) {
                 WorkFlowRelationTree workFlowRelationTree = new WorkFlowRelationTree();
                 workFlowRelationTree.setCode(workFlowRelation.getTargetWorkFlowCode());
-                log.info("workFlowRelation.getTargetWorkFlowCode(): {}", workFlowRelation.getTargetWorkFlowCode());
                 workFlowRelationTree.setName(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getWorkFlowName());
                 workFlowRelationTree.setWorkFlowPublishStatus(Long.parseLong(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getWorkFlowPublishStatus()));
                 workFlowRelationTree.setSchedulePublishStatus(workFlowLineagesMap.get(workFlowRelation.getTargetWorkFlowCode()).getSchedulePublishStatus());
@@ -254,7 +253,11 @@ public class WorkFlowLineageServiceImpl extends BaseServiceImpl implements WorkF
 //        workFlowListMap.put(Constants.WORKFLOW_LIST, workFlowLineagesMap.values());
 //        workFlowListMap.put(Constants.WORKFLOW_RELATION_LIST, workFlowRelations);
         List<WorkFlowRelationTree> workFlowRelationTreeList = createTree(new ArrayList<>(workFlowRelations), workFlowLineagesMap, 0);
-        workFlowListMap.put(Constants.WORKFLOW_RELATION_TREE, workFlowRelationTreeList.get(0));
+        if (workFlowRelationTreeList.isEmpty()) {
+            workFlowListMap.put(Constants.WORKFLOW_RELATION_TREE, new ArrayList<>());
+        } else {
+            workFlowListMap.put(Constants.WORKFLOW_RELATION_TREE, workFlowRelationTreeList.get(0));
+        }
         return workFlowListMap;
     }
 
