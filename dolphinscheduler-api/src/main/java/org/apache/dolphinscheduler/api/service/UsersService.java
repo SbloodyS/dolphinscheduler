@@ -286,4 +286,8 @@ public interface UsersService {
      * @return create result code
      */
     Map<String, Object> batchActivateUser(User loginUser, List<String> userNames);
+
+    Map<String, Object> grantWorkerGroup(User loginUser, int userId, List<Integer> workerGroupIds);
+
+    Map<String, Object> revokeWorkerGroupUser(User loginUser, int userId, List<Integer> workerGroupIds);
 }

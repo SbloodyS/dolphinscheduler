@@ -54,7 +54,7 @@ public interface WorkerGroupService {
      *
      * @return all worker group list
      */
-    Map<String, Object> queryAllGroup();
+    Map<String, Object> queryAllGroup(User user);
 
     /**
      * delete worker group by id

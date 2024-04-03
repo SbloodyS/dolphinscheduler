@@ -23,12 +23,15 @@ import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.NodeType;
+import org.apache.dolphinscheduler.common.enums.UserType;
 import org.apache.dolphinscheduler.common.utils.HeartBeat;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
 import org.apache.dolphinscheduler.dao.entity.User;
 import org.apache.dolphinscheduler.dao.entity.WorkerGroup;
+import org.apache.dolphinscheduler.dao.entity.WorkerGroupUser;
 import org.apache.dolphinscheduler.dao.mapper.ProcessInstanceMapper;
 import org.apache.dolphinscheduler.dao.mapper.WorkerGroupMapper;
+import org.apache.dolphinscheduler.dao.mapper.WorkerGroupUserMapper;
 import org.apache.dolphinscheduler.service.registry.RegistryClient;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -67,6 +70,9 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
 
     @Autowired
     private RegistryClient registryClient;
+
+    @Autowired
+    private WorkerGroupUserMapper workerGroupUserMapper;
 
     /**
      * create or update a worker group
@@ -228,8 +234,15 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
      * @return all worker group list
      */
     @Override
-    public Map<String, Object> queryAllGroup() {
+    public Map<String, Object> queryAllGroup(User user) {
         Map<String, Object> result = new HashMap<>();
+        List<WorkerGroupUser> workerGroupUserList = workerGroupUserMapper.queryWorkerGroupUserByUserId(user.getId());
+
+        if (user.getUserType().equals(UserType.GENERAL_USER) && CollectionUtils.isEmpty(workerGroupUserList)) {
+            putMsg(result, Status.USER_NO_OPERATION_PERM);
+            return result;
+        }
+
         List<WorkerGroup> workerGroups = getWorkerGroups(false);
         List<String> availableWorkerGroupList = workerGroups.stream()
                 .map(WorkerGroup::getName)
@@ -239,7 +252,13 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
             availableWorkerGroupList.remove(index);
             availableWorkerGroupList.add(0, Constants.DEFAULT_WORKER_GROUP);
         }
-        result.put(Constants.DATA_LIST, availableWorkerGroupList);
+
+        List<String> resultWorkerGroupList = workerGroupUserList.stream()
+                .map(WorkerGroupUser::getWorkerGroupName)
+                .filter(availableWorkerGroupList::contains)
+                .collect(Collectors.toList());
+
+        result.put(Constants.DATA_LIST, resultWorkerGroupList);
         putMsg(result, Status.SUCCESS);
         return result;
     }

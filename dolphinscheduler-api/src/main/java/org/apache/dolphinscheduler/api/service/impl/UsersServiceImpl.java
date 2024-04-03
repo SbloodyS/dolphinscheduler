@@ -40,6 +40,7 @@ import org.apache.dolphinscheduler.dao.entity.ResourcesUser;
 import org.apache.dolphinscheduler.dao.entity.Tenant;
 import org.apache.dolphinscheduler.dao.entity.UDFUser;
 import org.apache.dolphinscheduler.dao.entity.User;
+import org.apache.dolphinscheduler.dao.entity.WorkerGroupUser;
 import org.apache.dolphinscheduler.dao.mapper.AccessTokenMapper;
 import org.apache.dolphinscheduler.dao.mapper.AlertGroupMapper;
 import org.apache.dolphinscheduler.dao.mapper.DataSourceUserMapper;
@@ -51,6 +52,7 @@ import org.apache.dolphinscheduler.dao.mapper.ResourceUserMapper;
 import org.apache.dolphinscheduler.dao.mapper.TenantMapper;
 import org.apache.dolphinscheduler.dao.mapper.UDFUserMapper;
 import org.apache.dolphinscheduler.dao.mapper.UserMapper;
+import org.apache.dolphinscheduler.dao.mapper.WorkerGroupUserMapper;
 import org.apache.dolphinscheduler.dao.utils.ResourceProcessDefinitionUtils;
 import org.apache.dolphinscheduler.spi.enums.ResourceType;
 
@@ -117,6 +119,9 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
 
     @Autowired
     private ProjectMapper projectMapper;
+
+    @Autowired
+    private WorkerGroupUserMapper workerGroupUserMapper;
 
     /**
      * create user, only system admin have permission
@@ -1209,6 +1214,60 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
         res.put("failed", failedRes);
         putMsg(result, Status.SUCCESS);
         result.put(Constants.DATA_LIST, res);
+        return result;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Map<String, Object> grantWorkerGroup(User loginUser, int userId, List<Integer> workerGroupIds) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(Constants.STATUS, false);
+
+        //only admin can operate
+        if (check(result, !isAdmin(loginUser), Status.USER_NO_OPERATION_PERM)) {
+            return result;
+        }
+
+        //check exist
+        User tempUser = userMapper.selectById(userId);
+        if (tempUser == null) {
+            putMsg(result, Status.USER_NOT_EXIST, userId);
+            return result;
+        }
+
+        for (Integer workerGroupId : workerGroupIds) {
+            Date now = new Date();
+            WorkerGroupUser workerGroupUser = new WorkerGroupUser();
+            workerGroupUser.setUserId(userId);
+            workerGroupUser.setWorkerGroupId(workerGroupId);
+            workerGroupUser.setCreateTime(now);
+            workerGroupUser.setUpdateTime(now);
+            workerGroupUserMapper.insert(workerGroupUser);
+        }
+
+        putMsg(result, Status.SUCCESS);
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> revokeWorkerGroupUser(User loginUser, int userId, List<Integer> workerGroupIds) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(Constants.STATUS, false);
+
+        if (this.check(result, !this.isAdmin(loginUser), Status.USER_NO_OPERATION_PERM)) {
+            return result;
+        }
+
+        User user = this.userMapper.selectById(userId);
+        if (user == null) {
+            this.putMsg(result, Status.USER_NOT_EXIST, userId);
+            return result;
+        }
+
+        workerGroupUserMapper.deleteByUserIdAndWorkerGroupId(userId, workerGroupIds);
+        this.putMsg(result, Status.SUCCESS);
         return result;
     }
 }
