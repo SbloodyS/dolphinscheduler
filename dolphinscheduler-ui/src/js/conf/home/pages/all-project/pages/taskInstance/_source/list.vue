@@ -140,7 +140,10 @@
         this.logDialog = false
       },
       _forceSuccess (item) {
-        this.forceTaskSuccess({ taskInstanceId: item.id }).then(res => {
+        this.forceTaskSuccess({
+          projectCode: item.projectCode,
+          taskInstanceId: item.id
+        }).then(res => {
           if (res.code === 0) {
             this.$message.success(res.msg)
             setTimeout(this._onUpdate, 1000)

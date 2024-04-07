@@ -232,6 +232,7 @@
         if (this._verification()) {
           let api = ''
           let searchParams = {
+            projectCode: this.timingData.item.projectCode,
             schedule: JSON.stringify({
               startTime: this.scheduleTime[0],
               endTime: this.scheduleTime[1],

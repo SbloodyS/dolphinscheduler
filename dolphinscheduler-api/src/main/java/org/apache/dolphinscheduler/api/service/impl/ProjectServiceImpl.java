@@ -166,7 +166,11 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
     public Map<String, Object> checkProjectAndAuth(User loginUser, Project project, long projectCode) {
         Map<String, Object> result = new HashMap<>();
         if (project == null) {
-            putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
+            if (projectCode != 0) {
+                putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
+            } else {
+                putMsg(result, Status.USER_NO_OPERATION_PROJECT_PERM, "", "");
+            }
         } else if (!checkReadPermission(loginUser, project)) {
             // check read permission
             putMsg(result, Status.USER_NO_OPERATION_PROJECT_PERM, loginUser.getUserName(), projectCode);

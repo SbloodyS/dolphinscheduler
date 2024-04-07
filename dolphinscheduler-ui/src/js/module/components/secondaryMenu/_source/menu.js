@@ -118,13 +118,14 @@ const menu = {
           name: `${i18n.$t('Process Instance')}`,
           path: 'all-project-instance-index',
           id: 1,
-          enabled: Permissions.getAuth()
+          enabled: true
+          // enabled: Permissions.getAuth()
         },
         {
           name: `${i18n.$t('Task Instance')}`,
           path: 'all-project-task-instance-index',
           id: 2,
-          enabled: Permissions.getAuth()
+          enabled: true
         }
       ]
     }

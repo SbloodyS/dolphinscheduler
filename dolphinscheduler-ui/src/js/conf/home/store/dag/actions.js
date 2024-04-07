@@ -56,7 +56,7 @@ export default {
    */
   editProcessState ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.post(`projects/${state.projectCode}/process-definition/${payload.code}/release`, {
+      io.post(`projects/${payload.projectCode}/process-definition/${payload.code}/release`, {
         name: payload.name,
         releaseState: payload.releaseState
       }, res => {
@@ -111,7 +111,7 @@ export default {
    */
   editExecutorsState ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.post(`projects/${state.projectCode}/executors/execute`, {
+      io.post(`projects/${payload.projectCode}/executors/execute`, {
         processInstanceId: payload.processInstanceId,
         executeType: payload.executeType
       }, res => {
@@ -523,7 +523,7 @@ export default {
    */
   processStart ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.post(`projects/${state.projectCode}/executors/start-process-instance`, payload, res => {
+      io.post(`projects/${payload.projectCode}/executors/start-process-instance`, payload, res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -572,7 +572,7 @@ export default {
    */
   createSchedule ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.post(`projects/${state.projectCode}/schedules`, payload, res => {
+      io.post(`projects/${payload.projectCode}/schedules`, payload, res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -633,7 +633,7 @@ export default {
    */
   updateSchedule ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.put(`projects/${state.projectCode}/schedules/${payload.id}`, payload, res => {
+      io.put(`projects/${payload.projectCode}/schedules/${payload.id}`, payload, res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -645,7 +645,7 @@ export default {
    */
   deleteInstance ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.delete(`projects/${state.projectCode}/process-instances/${payload.processInstanceId}`, {}, res => {
+      io.delete(`projects/${payload.projectCode}/process-instances/${payload.processInstanceId}`, {}, res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -669,7 +669,7 @@ export default {
    */
   deleteDefinition ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.delete(`projects/${state.projectCode}/process-definition/${payload.code}`, {}, res => {
+      io.delete(`projects/${payload.projectCode}/process-definition/${payload.code}`, {}, res => {
         resolve(res)
       }).catch(e => {
         reject(e)
@@ -713,7 +713,7 @@ export default {
       }
     }
 
-    io.post(`projects/${state.projectCode}/process-definition/batch-export`, { codes: payload.codes }, res => {
+    io.post(`projects/${payload.projectCode}/process-definition/batch-export`, { codes: payload.codes }, res => {
       downloadBlob(res, payload.fileName)
     }, e => {
 
@@ -763,7 +763,7 @@ export default {
    */
   forceTaskSuccess ({ state }, payload) {
     return new Promise((resolve, reject) => {
-      io.post(`projects/${state.projectCode}/task-instances/${payload.taskInstanceId}/force-success`, payload, res => {
+      io.post(`projects/${payload.projectCode}/task-instances/${payload.taskInstanceId}/force-success`, payload, res => {
         resolve(res)
       }).catch(e => {
         reject(e)

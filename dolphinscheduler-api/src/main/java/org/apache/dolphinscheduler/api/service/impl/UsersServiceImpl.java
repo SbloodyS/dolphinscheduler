@@ -565,23 +565,21 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
             return result;
         }
 
-        //if the selected projectIds are empty, delete all items associated with the user
-        if (check(result, StringUtils.isEmpty(projectIds), Status.SUCCESS)) {
-            projectUserMapper.deleteProjectRelation(0, userId);
-            return result;
-        }
+        projectUserMapper.deleteProjectRelation(0, userId);
 
         String[] projectIdArr = projectIds.split(",");
 
-        for (String projectId : projectIdArr) {
-            Date now = new Date();
-            ProjectUser projectUser = new ProjectUser();
-            projectUser.setUserId(userId);
-            projectUser.setProjectId(Integer.parseInt(projectId));
-            projectUser.setPerm(7);
-            projectUser.setCreateTime(now);
-            projectUser.setUpdateTime(now);
-            projectUserMapper.insert(projectUser);
+        if (StringUtils.isNotEmpty(projectIds)) {
+            for (String projectId : projectIdArr) {
+                Date now = new Date();
+                ProjectUser projectUser = new ProjectUser();
+                projectUser.setUserId(userId);
+                projectUser.setProjectId(Integer.parseInt(projectId));
+                projectUser.setPerm(7);
+                projectUser.setCreateTime(now);
+                projectUser.setUpdateTime(now);
+                projectUserMapper.insert(projectUser);
+            }
         }
 
         putMsg(result, Status.SUCCESS);

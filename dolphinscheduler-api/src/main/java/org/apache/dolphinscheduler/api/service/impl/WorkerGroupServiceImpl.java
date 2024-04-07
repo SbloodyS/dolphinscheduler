@@ -234,14 +234,8 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
      * @return all worker group list
      */
     @Override
-    public Map<String, Object> queryAllGroup(User user) {
+    public Map<String, Object> queryAllGroup() {
         Map<String, Object> result = new HashMap<>();
-        List<WorkerGroupUser> workerGroupUserList = workerGroupUserMapper.queryWorkerGroupUserByUserId(user.getId());
-
-        if (user.getUserType().equals(UserType.GENERAL_USER) && CollectionUtils.isEmpty(workerGroupUserList)) {
-            putMsg(result, Status.USER_NO_OPERATION_PERM);
-            return result;
-        }
 
         List<WorkerGroup> workerGroups = getWorkerGroups(false);
         List<String> availableWorkerGroupList = workerGroups.stream()
@@ -253,12 +247,7 @@ public class WorkerGroupServiceImpl extends BaseServiceImpl implements WorkerGro
             availableWorkerGroupList.add(0, Constants.DEFAULT_WORKER_GROUP);
         }
 
-        List<String> resultWorkerGroupList = workerGroupUserList.stream()
-                .map(WorkerGroupUser::getWorkerGroupName)
-                .filter(availableWorkerGroupList::contains)
-                .collect(Collectors.toList());
-
-        result.put(Constants.DATA_LIST, resultWorkerGroupList);
+        result.put(Constants.DATA_LIST, availableWorkerGroupList);
         putMsg(result, Status.SUCCESS);
         return result;
     }

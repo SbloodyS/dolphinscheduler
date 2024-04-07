@@ -285,6 +285,7 @@
           }
         }
         let param = {
+          projectCode: this.startData.projectCode,
           processDefinitionCode: this.startData.code,
           scheduleTime: this.scheduleTime.length && this.scheduleTime.join(',') || '',
           failureStrategy: this.failureStrategy,

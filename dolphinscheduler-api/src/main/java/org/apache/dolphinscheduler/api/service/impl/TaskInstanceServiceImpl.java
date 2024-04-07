@@ -100,19 +100,6 @@ public class TaskInstanceServiceImpl extends BaseServiceImpl implements TaskInst
                                       Integer pageSize) {
         Result result = new Result();
         Status status;
-        long queryProjectCode = projectCode;
-
-        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
-            Project project = projectMapper.queryByCode(projectCode);
-            //check user access for project
-            Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-            status = (Status) checkResult.get(Constants.STATUS);
-            if (status != Status.SUCCESS) {
-                putMsg(result, status);
-                return result;
-            }
-            queryProjectCode = project.getCode();
-        }
 
         int[] statusArray = null;
         if (stateType != null) {
@@ -130,7 +117,7 @@ public class TaskInstanceServiceImpl extends BaseServiceImpl implements TaskInst
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(pageNo, pageSize);
         int executorId = usersService.getUserIdByName(executorName);
         IPage<TaskInstance> taskInstanceIPage = taskInstanceMapper.queryTaskInstanceListPaging(
-                page, queryProjectCode, processInstanceId, processInstanceName, searchVal, taskName, taskCode, taskType,
+                page, projectCode, processInstanceId, processInstanceName, searchVal, taskName, taskCode, taskType,
                 executorId, statusArray, host, start, end
         );
         Set<String> exclusionSet = new HashSet<>();

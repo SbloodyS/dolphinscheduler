@@ -257,6 +257,7 @@
         }
         // remove one
         this.deleteDefinition({
+          projectCode: item.projectCode,
           code: item.code
         }).then(res => {
           this._onUpdate()
@@ -325,6 +326,7 @@
 
       _export (item) {
         this.exportDefinition({
+          projectCode: item.projectCode,
           codes: item.code,
           fileName: item.name
         }).catch(e => {

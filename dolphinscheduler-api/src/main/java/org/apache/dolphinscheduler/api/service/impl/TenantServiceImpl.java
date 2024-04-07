@@ -296,7 +296,6 @@ public class TenantServiceImpl extends BaseServiceImpl implements TenantService 
      */
     @Override
     public Map<String, Object> queryTenantList(User loginUser) {
-
         Map<String, Object> result = new HashMap<>();
 
         List<Tenant> resourceList = tenantMapper.selectList(null);

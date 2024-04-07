@@ -286,6 +286,7 @@
         }
         // remove one
         this.deleteInstance({
+          projectCode: item.projectCode,
           processInstanceId: item.id
         }).then(res => {
           this._onUpdate()
@@ -306,6 +307,7 @@
        */
       _reRun (item, index) {
         this._countDownFn({
+          projectCode: item.projectCode,
           id: item.id,
           executeType: 'REPEAT_RUNNING',
           index: index,
@@ -319,6 +321,7 @@
        */
       _restore (item, index) {
         this._countDownFn({
+          projectCode: item.projectCode,
           id: item.id,
           executeType: 'START_FAILURE_TASK_PROCESS',
           index: index,
@@ -332,6 +335,7 @@
       _stop (item, index) {
         if (item.state === 'STOP') {
           this._countDownFn({
+            projectCode: item.projectCode,
             id: item.id,
             executeType: 'RECOVER_SUSPENDED_PROCESS',
             index: index,
@@ -382,6 +386,7 @@
       _countDownFn (param) {
         this.buttonType = param.buttonType
         this.editExecutorsState({
+          projectCode: param.projectCode,
           processInstanceId: param.id,
           executeType: param.executeType
         }).then(res => {

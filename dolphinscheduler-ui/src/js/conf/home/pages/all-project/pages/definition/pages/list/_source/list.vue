@@ -62,7 +62,7 @@
             <span v-if="!scope.row.scheduleReleaseState">-</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Operation')" width="255" fixed="right" v-if="isAuth">
+        <el-table-column :label="$t('Operation')" width="255" fixed="right">
           <template slot-scope="scope">
             <el-tooltip :content="$t('Edit')" placement="top" :enterable="false">
               <span><el-button type="primary" size="mini" icon="el-icon-edit-outline" :disabled="scope.row.releaseState === 'ONLINE'" @click="_edit(scope.row)" circle></el-button></span>
@@ -121,14 +121,6 @@
       </el-popconfirm>
     </el-tooltip>
     <el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 80px;" @click="_batchExport(item)" >{{$t('Export')}}</el-button>
-<!--    <span><el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 140px;" @click="_batchCopy(item)" >{{$t('Batch copy')}}</el-button></span>-->
-<!--    <el-button type="primary" size="mini" :disabled="!strSelectCodes" style="position: absolute; bottom: -48px; left: 225px;" @click="_batchMove(item)" >{{$t('Batch move')}}</el-button>-->
-    <el-drawer
-      :visible.sync="drawer"
-      size=""
-      :with-header="false">
-      <m-versions :versionData = versionData @mVersionSwitchProcessDefinitionVersion="mVersionSwitchProcessDefinitionVersion" @mVersionGetProcessDefinitionVersionsPage="mVersionGetProcessDefinitionVersionsPage" @mVersionDeleteProcessDefinitionVersion="mVersionDeleteProcessDefinitionVersion" @closeVersion="closeVersion"></m-versions>
-    </el-drawer>
     <el-dialog
       :title="$t('Please set the parameters before starting')"
       v-if="startDialog"
@@ -157,7 +149,6 @@
   import mRelatedItems from './relatedItems'
   import { mapActions, mapState } from 'vuex'
   import { publishStatus } from '@/conf/home/pages/dag/_source/config'
-  import mVersions from './versions'
   import Permissions from '../../../../../../../../../module/permissions'
 
   export default {
@@ -193,7 +184,7 @@
       pageSize: Number
     },
     methods: {
-      ...mapActions('dag', ['editProcessState', 'getStartCheck', 'deleteDefinition', 'batchDeleteDefinition', 'exportDefinition', 'getProcessDefinitionVersionsPage', 'copyProcess', 'switchProcessDefinitionVersion', 'deleteProcessDefinitionVersion', 'moveProcess']),
+      ...mapActions('dag', ['editProcessState', 'getStartCheck', 'deleteDefinition', 'batchDeleteDefinition', 'exportDefinition', 'getProcessDefinitionVersionsPage', 'copyProcess', 'moveProcess']),
       ...mapActions('security', ['getWorkerGroupsAll']),
 
       selectable (row, index) {
@@ -255,11 +246,13 @@
       _delete (item, i) {
         // remove tow++
         if (i < 0) {
-          this._batchDelete()
+          // this._batchDelete()
+          this.$message.error('非管理员不能删除多个工作流定义!')
           return
         }
         // remove one
         this.deleteDefinition({
+          projectCode: item.projectCode,
           code: item.code
         }).then(res => {
           this._onUpdate()
@@ -328,6 +321,7 @@
 
       _export (item) {
         this.exportDefinition({
+          projectCode: item.projectCode,
           codes: item.code,
           fileName: item.name
         }).catch(e => {
@@ -360,65 +354,6 @@
         * @param processDefinitionCode the process definition Code of page version
         * @param fromThis fromThis
       */
-      mVersionGetProcessDefinitionVersionsPage ({ pageNo, pageSize, processDefinitionCode, fromThis }) {
-        this.getProcessDefinitionVersionsPage({
-          pageNo: pageNo,
-          pageSize: pageSize,
-          code: processDefinitionCode
-        }).then(res => {
-          this.versionData.processDefinitionVersions = res.data.totalList
-          this.versionData.total = res.data.total
-          this.versionData.pageSize = res.data.pageSize
-          this.versionData.pageNo = res.data.currentPage
-        }).catch(e => {
-          this.$message.error(e.msg || '')
-        })
-      },
-      /**
-        * delete one version of process definition
-        *
-        * @param version the version need to delete
-        * @param processDefinitionCode the process definition code user want to delete
-        * @param fromThis fromThis
-      */
-      mVersionDeleteProcessDefinitionVersion ({ version, processDefinitionCode, fromThis }) {
-        this.deleteProcessDefinitionVersion({
-          version: version,
-          code: processDefinitionCode
-        }).then(res => {
-          this.$message.success(res.msg || '')
-          this.mVersionGetProcessDefinitionVersionsPage({
-            pageNo: 1,
-            pageSize: 10,
-            processDefinitionCode: processDefinitionCode,
-            fromThis: fromThis
-          })
-        }).catch(e => {
-          this.$message.error(e.msg || '')
-        })
-      },
-      _version (item) {
-        this.getProcessDefinitionVersionsPage({
-          pageNo: 1,
-          pageSize: 10,
-          code: item.code
-        }).then(res => {
-          let processDefinitionVersions = res.data.totalList
-          let total = res.data.total
-          let pageSize = res.data.pageSize
-          let pageNo = res.data.currentPage
-
-          this.versionData.processDefinition = item
-          this.versionData.processDefinitionVersions = processDefinitionVersions
-          this.versionData.total = total
-          this.versionData.pageNo = pageNo
-          this.versionData.pageSize = pageSize
-          this.drawer = true
-        }).catch(e => {
-          this.$message.error(e.msg || '')
-        })
-      },
-
       closeVersion () {
         this.drawer = false
       },
@@ -526,7 +461,7 @@
     computed: {
       ...mapState('dag', ['projectCode'])
     },
-    components: { mVersions, mStart, mTiming, mRelatedItems }
+    components: { mStart, mTiming, mRelatedItems }
   }
 </script>
 

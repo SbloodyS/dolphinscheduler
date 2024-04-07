@@ -797,7 +797,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> releaseProcessDefinition(User loginUser, long projectCode, long code, ReleaseState releaseState) {
         Map<String, Object> result = new HashMap<>();
-        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+        if (!(projectCode == 0 && isAdmin(loginUser))) {
             Project project = projectMapper.queryByCode(projectCode);
             //check user access for project
             result = projectService.checkProjectAndAuth(loginUser, project, projectCode);

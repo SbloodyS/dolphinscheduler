@@ -282,11 +282,13 @@
       _delete (item, i) {
         // remove tow++
         if (i < 0) {
-          this._batchDelete()
+          // this._batchDelete()
+          this.$message.error('非管理员不能删除多个工作流实例!')
           return
         }
         // remove one
         this.deleteInstance({
+          projectCode: item.projectCode,
           processInstanceId: item.id
         }).then(res => {
           this._onUpdate()
@@ -299,7 +301,7 @@
        * edit
        */
       _reEdit (item) {
-        this.$router.push({ path: `/projects/${this.projectCode}/instance/list/${item.id}`, query: { code: item.processDefinitionCode } })
+        this.$router.push({ path: `/projects/${item.projectCode}/instance/list/${item.id}`, query: { code: item.processDefinitionCode } })
       },
       /**
        * Rerun
@@ -307,6 +309,7 @@
        */
       _reRun (item, index) {
         this._countDownFn({
+          projectCode: item.projectCode,
           id: item.id,
           executeType: 'REPEAT_RUNNING',
           index: index,
@@ -320,6 +323,7 @@
        */
       _restore (item, index) {
         this._countDownFn({
+          projectCode: item.projectCode,
           id: item.id,
           executeType: 'START_FAILURE_TASK_PROCESS',
           index: index,
@@ -333,6 +337,7 @@
       _stop (item, index) {
         if (item.state === 'STOP') {
           this._countDownFn({
+            projectCode: item.projectCode,
             id: item.id,
             executeType: 'RECOVER_SUSPENDED_PROCESS',
             index: index,
@@ -340,6 +345,7 @@
           })
         } else {
           this._upExecutorsState({
+            projectCode: item.projectCode,
             processInstanceId: item.id,
             executeType: 'STOP'
           })
@@ -383,6 +389,7 @@
       _countDownFn (param) {
         this.buttonType = param.buttonType
         this.editExecutorsState({
+          projectCode: param.projectCode,
           processInstanceId: param.id,
           executeType: param.executeType
         }).then(res => {

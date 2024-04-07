@@ -257,19 +257,6 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
 
         Result result = new Result();
         Status resultEnum;
-        long queryProjectCode = projectCode;
-
-        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
-            Project project = projectMapper.queryByCode(projectCode);
-            //check user access for project
-            Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-            resultEnum = (Status) checkResult.get(Constants.STATUS);
-            if (resultEnum != Status.SUCCESS) {
-                putMsg(result, resultEnum);
-                return result;
-            }
-            queryProjectCode = project.getCode();
-        }
 
         int[] statusArray = null;
         // filter by state
@@ -291,7 +278,7 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         int executorId = usersService.getUserIdByName(executorName);
 
         IPage<ProcessInstance> processInstanceList = processInstanceMapper.queryProcessInstanceListPaging(page,
-                queryProjectCode, processDefineCode, searchVal, processInstanceId, runningType, executorId,
+                projectCode, processDefineCode, searchVal, processInstanceId, runningType, executorId,
                 statusArray, host, start, end);
 
         List<ProcessInstance> processInstances = processInstanceList.getRecords();
