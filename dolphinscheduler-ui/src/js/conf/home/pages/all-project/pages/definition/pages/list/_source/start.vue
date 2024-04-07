@@ -168,21 +168,21 @@
         </div>
       </div>
     </template>
-    <div class="clearfix list">
-      <div class="text">
-        <span>{{$t('Startup parameter')}}</span>
-      </div>
-      <div class="cont" style="width: 688px;">
-        <div style="padding-top: 6px;">
-          <m-local-params
-            ref="refLocalParams"
-            @on-local-params="_onLocalParams"
-            :udp-list="udpList"
-            :hide="false">
-          </m-local-params>
-        </div>
-      </div>
-    </div>
+<!--    <div class="clearfix list">-->
+<!--      <div class="text">-->
+<!--        <span>{{$t('Startup parameter')}}</span>-->
+<!--      </div>-->
+<!--      <div class="cont" style="width: 688px;">-->
+<!--        <div style="padding-top: 6px;">-->
+<!--          <m-local-params-->
+<!--            ref="refLocalParams"-->
+<!--            @on-local-params="_onLocalParams"-->
+<!--            :udp-list="udpList"-->
+<!--            :hide="false">-->
+<!--          </m-local-params>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="clearfix list">
       <span class="text">{{$t('Whether dry-run')}}</span>
       <span class="cont" style="padding-top: 5px;">

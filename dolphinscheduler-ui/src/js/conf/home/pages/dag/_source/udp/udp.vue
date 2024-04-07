@@ -58,19 +58,19 @@
         </span>
       </div>
 
-      <div class="title" style="padding-top: 6px;">
-        <span>{{$t('Set global')}}</span>
-      </div>
-      <div class="content">
-        <div>
-          <m-local-params
-                  ref="refLocalParams"
-                  @on-local-params="_onLocalParams"
-                  :udp-list="udpList"
-                  :hide="false">
-          </m-local-params>
-        </div>
-      </div>
+<!--      <div class="title" style="padding-top: 6px;">-->
+<!--        <span>{{$t('Set global')}}</span>-->
+<!--      </div>-->
+<!--      <div class="content">-->
+<!--        <div>-->
+<!--          <m-local-params-->
+<!--                  ref="refLocalParams"-->
+<!--                  @on-local-params="_onLocalParams"-->
+<!--                  :udp-list="udpList"-->
+<!--                  :hide="false">-->
+<!--          </m-local-params>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <div class="bottom">
       <div class="submit">
@@ -166,9 +166,9 @@
 
         let _verif = () => {
           // verification udf
-          if (!this.$refs.refLocalParams._verifProp()) {
-            return
-          }
+          // if (!this.$refs.refLocalParams._verifProp()) {
+          //   return
+          // }
           // verification timeout
           if (this.checkedTimeout && !this._verifTimeout()) {
             return
