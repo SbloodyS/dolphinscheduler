@@ -343,6 +343,7 @@
           })
         } else {
           this._upExecutorsState({
+            projectCode: item.projectCode,
             processInstanceId: item.id,
             executeType: 'STOP'
           })
