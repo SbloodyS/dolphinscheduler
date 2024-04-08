@@ -25,7 +25,7 @@
   import mSpin from '@/module/components/spin/spin'
   import Affirm from './_source/jumpAffirm'
   import disabledState from '@/module/mixin/disabledState'
-  import { mapActions, mapMutations } from 'vuex'
+  import {mapActions, mapMutations, mapState} from 'vuex'
 
   export default {
     name: 'definition-details',
@@ -45,9 +45,10 @@
     mixins: [disabledState],
     props: {},
     methods: {
-      ...mapMutations('dag', ['resetParams', 'setIsDetails']),
+      ...mapMutations('dag', ['resetParams', 'setIsDetails', 'setProjectCode', 'setProjectName']),
       ...mapActions('dag', ['getProjectList', 'getResourcesList', 'getProcessDetails']),
       ...mapActions('security', ['getTenantList', 'getWorkerGroupsAll', 'getAlarmGroupsAll']),
+      ...mapState('dag', ['projectCode', 'projectName']),
       /**
        * init
        */
@@ -55,9 +56,12 @@
         this.isLoading = true
         // Initialization parameters
         this.resetParams()
+        if (this.projectCode == 0) {
+          this.setProjectCode(this.$route.params.projectCode)
+        }
         // Promise Get node needs data
         Promise.all([
-          // Node details
+          // Node details)
           this.getProcessDetails(this.$route.params.code),
           // get project
           this.getProjectList(),
@@ -71,12 +75,20 @@
         ]).then((data) => {
           let item = data[0]
           this.setIsDetails(item.processDefinition.releaseState === 'ONLINE')
+          let projectItems = data[1]
+          projectItems.forEach(item => {
+            if (item.code == this.projectCode) {
+              this.setProjectName(item.name)
+              console.log('projectName:', item.name)
+            }
+          })
           this.releaseState = item.processDefinition.releaseState
           this.isLoading = false
           // Whether to pop up the box?
           Affirm.init(this.$root)
-        }).catch(() => {
+        }).catch((e) => {
           this.isLoading = false
+          this.$message.error(e.msg || '')
         })
       },
       /**
@@ -94,6 +106,7 @@
       // Listening for routing changes
       $route: {
         deep: true,
+        immediate: true,
         handler () {
           this.init()
         }
@@ -104,6 +117,9 @@
     },
     mounted () {
     },
-    components: { mDag, mSpin }
+    components: { mDag, mSpin },
+    computed: {
+      ...mapState('dag', ['projectCode'])
+    }
   }
 </script>
