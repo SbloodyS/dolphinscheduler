@@ -51,7 +51,7 @@
       width="auto"
     >
       <m-start
-        :startData="{ code: definitionCode, name: name }"
+        :startData="{ code: definitionCode, name: name, projectCode: projectCode }"
         :startNodeList="startTaskName"
         :sourceType="'contextmenu'"
         @onUpdateStart="onUpdateStart"
