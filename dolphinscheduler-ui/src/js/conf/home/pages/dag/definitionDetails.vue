@@ -79,7 +79,6 @@
           projectItems.forEach(item => {
             if (item.code == this.projectCode) {
               this.setProjectName(item.name)
-              console.log('projectName:', item.name)
             }
           })
           this.releaseState = item.processDefinition.releaseState
