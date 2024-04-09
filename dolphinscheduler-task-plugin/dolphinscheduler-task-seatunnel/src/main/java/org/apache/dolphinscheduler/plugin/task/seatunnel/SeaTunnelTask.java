@@ -19,6 +19,7 @@ package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTaskExecutor;
@@ -27,6 +28,7 @@ import org.apache.dolphinscheduler.plugin.task.api.TaskResponse;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.DataSourceNew;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.Env;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSinkParams;
@@ -39,6 +41,9 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSinkPar
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConfig;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
+import org.apache.dolphinscheduler.spi.task.Property;
+import org.apache.dolphinscheduler.spi.task.paramparser.ParamUtils;
+import org.apache.dolphinscheduler.spi.task.paramparser.ParameterUtils;
 import org.apache.dolphinscheduler.spi.task.request.TaskRequest;
 import org.apache.dolphinscheduler.spi.utils.Constants;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
@@ -52,6 +57,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -384,6 +390,22 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                         targetDataSourceInfo.getPort());
                 initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), clickhouseJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
+            case "elasticsearch":
+                ElasticSearchSinkParams elasticSearchSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ElasticSearchSinkParams.class);
+                if (elasticSearchSinkParams == null) {
+                    throw new RuntimeException("sink datasource params is invalid");
+                }
+                List<String> hosts = new ArrayList<>(Arrays.asList(targetDataSourceInfo.getHostname().split(Constants.COMMA)));
+                if (elasticSearchSinkParams.getPrimaryKeys() != null) {
+                    List<String> primaryKeys = new ArrayList<>(Arrays.asList(elasticSearchSinkParams.getPrimaryKeys().toString().split(Constants.COMMA)));
+                    elasticSearchSinkParams.setPrimaryKeys(primaryKeys);
+                }
+
+                elasticSearchSinkParams.setHosts(hosts);
+                elasticSearchSinkParams.setUserName(targetDataSourceInfo.getUserName());
+                elasticSearchSinkParams.setPassword(targetDataSourceInfo.getPassword());
+                seaTunnelConfig.setSink(Collections.singletonList(elasticSearchSinkParams));
+                break;
             default:
                 throw new RuntimeException("Unsupported target datasource type: " + targetDataSourceInfo.getDatasourceType());
         }
@@ -392,12 +414,13 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     private String buildCommand() throws Exception {
         String seaTunnelConfigFilePath = buildSeaTunnelConfigFilePath();
 
-        createSeaTunnelCommandFileIfNotExists(JSONUtils.toJsonString(seaTunnelConfig), seaTunnelConfigFilePath);
+        createSeaTunnelCommandFileIfNotExists(parseScript(JSONUtils.toJsonString(seaTunnelConfig)), seaTunnelConfigFilePath);
 
         if (!StringUtils.isEmpty(beforeHiveSinkCommand) && !StringUtils.isEmpty(afterHiveSinkCommand)) {
             String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
                     seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
-            return String.format("set -xeuo pipefail\n%s\n%s\n%s", beforeHiveSinkCommand, seatunnelCommand, afterHiveSinkCommand);
+            return String.format("set -xeuo pipefail\n%s\n%s\n%s",
+                    beforeHiveSinkCommand, seatunnelCommand, afterHiveSinkCommand);
         }
 
         if (!StringUtils.isEmpty(beforeHiveSourceCommand)) {
@@ -455,7 +478,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     }
 
     private String buildSeaTunnelConfigFilePath() {
-        logger.info("seatunnel config json: {}", JSONUtils.toJsonString(seaTunnelConfig));
+        String seaTunnelConfigStr = parseScript(JSONUtils.toJsonString(seaTunnelConfig));
+        logger.info("seatunnel config json: {}", seaTunnelConfigStr);
         return String.format("%s/%s.json", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
     }
 
@@ -479,7 +503,6 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         for (SQLReturnField sqlReturnField : sqlReturnFieldList) {
             columnsList.add(sqlReturnField.getFieldName() + " " + sqlReturnField.getFieldType());
         }
-
         return createHiveTableStatement.replace("{tableName}", tableName).replace("{columns}", String.join(",", columnsList));
     }
 
@@ -489,5 +512,17 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
     private void initSourceJdbcUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password) {
         sourceJdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password);
+    }
+
+    private String parseScript(String script) {
+        // combining local and global parameters
+        Map<String, Property> paramsMap = ParamUtils.convert(taskExecutionContext, getParameters());
+        if (MapUtils.isEmpty(paramsMap)) {
+            paramsMap = new HashMap<>();
+        }
+        if (MapUtils.isNotEmpty(taskExecutionContext.getParamsMap())) {
+            paramsMap.putAll(taskExecutionContext.getParamsMap());
+        }
+        return ParameterUtils.convertParameterPlaceholders(script, ParamUtils.convert(paramsMap));
     }
 }

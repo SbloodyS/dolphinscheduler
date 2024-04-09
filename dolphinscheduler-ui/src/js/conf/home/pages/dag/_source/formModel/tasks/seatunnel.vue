@@ -63,7 +63,7 @@
               id="code-sql-mirror-source"
               name="code-sql-mirror-source"
               style="opacity: 0">
-          </textarea>
+            </textarea>
           </div>
         </div>
       </m-list-box>
@@ -153,7 +153,7 @@
               id="code-sql-mirror-source"
               name="code-sql-mirror-source"
               style="opacity: 0">
-          </textarea>
+            </textarea>
           </div>
         </div>
       </m-list-box>
@@ -203,8 +203,8 @@
         <div slot="content">
           <div class="form-mirror">
             <textarea
-              id="code-sql-mirror-sinkbefore"
-              name="code-sql-mirror-sinkbefore"
+              id="code-sql-mirror-sink-before"
+              name="code-sql-mirror-sink-before"
               style="opacity: 0">
             </textarea>
           </div>
@@ -250,14 +250,96 @@
         </div>
       </m-list-box>
       <m-list-box>
-        <div slot="text">{{ '前置SQL' }}</div>
+        <div slot="text">{{ '前置CK SQL' }}</div>
         <div slot="content">
           <div class="form-mirror">
             <textarea
-              id="code-sql-mirror-sinkbefore"
-              name="code-sql-mirror-sinkbefore"
+              id="code-sql-mirror-sink-before"
+              name="code-sql-mirror-sink-before"
               style="opacity: 0">
             </textarea>
+          </div>
+        </div>
+      </m-list-box>
+    </template>
+    <template v-if="['elasticsearch'].includes(targetDataSourceFormType)">
+      <m-list-box>
+        <div slot="text">{{ 'Index' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model="targetElasticSearchParams.index"
+            :placeholder="'请输入Index'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'primaryKeys' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model="targetElasticSearchParams.primary_keys"
+            :placeholder="'请输入primaryKeys,多个以英文逗号,分隔'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'maxBatchSize' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model="targetElasticSearchParams.max_batch_size"
+            :placeholder="'请输入maxBatchSize'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'schemaSaveMode' }}</div>
+        <div slot="content">
+          <div style="display: inline-block;">
+            <el-select
+              style="width: 350px;"
+              size="small"
+              v-model="targetElasticSearchParams.schema_save_mode"
+              :disabled="isDetails"
+              @change="(val)=> _handleTargetElasticSearchSchemaSaveModeChange(val)"
+              filterable
+            >
+              <el-option
+                v-for="type in schemaSaveModeOptions"
+                :key="type"
+                :value="type"
+                :label="type">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'dataSaveMode' }}</div>
+        <div slot="content">
+          <div style="display: inline-block;">
+            <el-select
+              style="width: 350px;"
+              size="small"
+              v-model="targetElasticSearchParams.data_save_mode"
+              :disabled="isDetails"
+              @change="(val)=> _handleTargetElasticSearchDataSaveModeChange(val)"
+              filterable
+            >
+              <el-option
+                v-for="type in dataSaveModeOptions"
+                :key="type"
+                :value="type"
+                :label="type">
+              </el-option>
+            </el-select>
           </div>
         </div>
       </m-list-box>
@@ -268,11 +350,9 @@
   import _ from 'lodash'
   import i18n from '@/module/i18n'
   import mListBox from './_source/listBox'
-  import mScriptBox from './_source/scriptBox'
   import disabledState from '@/module/mixin/disabledState'
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
   import codemirror from '@/conf/home/pages/resource/pages/file/pages/_source/codemirror'
-  import Clipboard from 'clipboard'
   import { diGuiTree, searchTree } from './_source/resourceTree'
 
   let editorSource
@@ -303,6 +383,18 @@
         allNoResources: [],
         noRes: [],
         item: '',
+
+        schemaSaveModeOptions: [
+          'RECREATE_SCHEMA',
+          'CREATE_SCHEMA_WHEN_NOT_EXIST',
+          'ERROR_WHEN_SCHEMA_NOT_EXIST'
+        ],
+
+        dataSaveModeOptions: [
+          'DROP_DATA',
+          'APPEND_DATA',
+          'ERROR_WHEN_DATA_EXISTS'
+        ],
 
         autoCreateHiveTableRadio: 0,
         autoCreateHiveTable: false,
@@ -344,6 +436,13 @@
         },
         targetClickhouseParams: {
           table: ''
+        },
+        targetElasticSearchParams: {
+          index: '',
+          primary_keys: '',
+          max_batch_size: '',
+          schema_save_mode: '',
+          data_save_mode: ''
         }
       }
     },
@@ -352,39 +451,11 @@
       backfillItem: Object
     },
     methods: {
-      _copyPath (e, node) {
-        e.stopPropagation()
-        let clipboard = new Clipboard('.copy-path', {
-          text: function () {
-            return node.raw.fullName
-          }
-        })
-        clipboard.on('success', handler => {
-          this.$message.success(`${i18n.$t('Copy success')}`)
-          // Free memory
-          clipboard.destroy()
-        })
-        clipboard.on('error', handler => {
-          // Copy is not supported
-          this.$message.warning(`${i18n.$t('The browser does not support automatic copying')}`)
-          // Free memory
-          clipboard.destroy()
-        })
-      },
       /**
        * return localParams
        */
       _onLocalParams (a) {
         this.localParams = a
-      },
-      setEditorVal () {
-        this.item = editorSource.getValue()
-        this.scriptBoxDialogSource = true
-
-        mScriptBox.methods.setScriptBoxValue(editorSource.getValue())
-      },
-      getScriptBoxValue (val) {
-        editorSource.setValue(val)
       },
       closeAble () {
       },
@@ -420,7 +491,6 @@
 
           if (this.sourceSQLServerParams.partition_num) {
             if (!Number.isInteger(this.sourceSQLServerParams.partition_num) && this.sourceSQLServerParams.partition_num <= 0) {
-              console.log('partition_num:', this.sourceSQLServerParams.partition_num)
               this.$message.warning(`${i18n.$t('Please enter a positive integer') + '拆分数量'}`)
               return false
             }
@@ -452,7 +522,7 @@
 
           requestParams.source = this.sourceElasticSearchParams
         } else {
-          this.$message.warning(`暂不支持的数据源类型${this.sourceDataSourceType}`)
+          this.$message.warning(`暂不支持的Source数据源类型${this.sourceDataSourceType}`)
           return false
         }
 
@@ -473,8 +543,28 @@
           }
           requestParams.sinkBeforeSql = editorSinkBefore.getValue()
           requestParams.sink = this.targetClickhouseParams
+        } else if (['elasticsearch'].includes(this.targetDataSourceFormType)) {
+          if (this.targetElasticSearchParams.index === '') {
+            this.$message.warning('请输入Index')
+            return false
+          }
+          if (this.targetElasticSearchParams.max_batch_size) {
+            if (!Number.isInteger(this.targetElasticSearchParams.max_batch_size) && this.targetElasticSearchParams.max_batch_size <= 0) {
+              this.$message.warning(`${i18n.$t('Please enter a positive integer') + 'maxBatchSize'}`)
+              return false
+            }
+          }
+          if (this.targetElasticSearchParams.schema_save_mode === '') {
+            this.$message.warning('请选择schemaSaveMode')
+            return false
+          }
+          if (this.targetElasticSearchParams.data_save_mode === '') {
+            this.$message.warning('请选择dataSaveMode')
+            return false
+          }
+          requestParams.sink = this.targetElasticSearchParams
         } else {
-          this.$message.warning(`暂不支持的数据源类型${this.targetDataSourceType}`)
+          this.$message.warning(`暂不支持的Sink数据源类型${this.targetDataSourceType}`)
           return false
         }
 
@@ -582,12 +672,12 @@
       _handlerEditorSinkBefore () {
         if (editorSinkBefore) {
           editorSinkBefore.toTextArea() // Uninstall
-          editorSinkBefore.off($('.code-sql-mirror-sinkbefore'), 'keypress', this.keypress)
-          editorSinkBefore.off($('.code-sql-mirror-sinkbefore'), 'changes', this.changes)
+          editorSinkBefore.off($('.code-sql-mirror-sink-before'), 'keypress', this.keypress)
+          editorSinkBefore.off($('.code-sql-mirror-sink-before'), 'changes', this.changes)
           editorSinkBefore = null
         }
         // editor
-        editorSinkBefore = codemirror('code-sql-mirror-sinkbefore', {
+        editorSinkBefore = codemirror('code-sql-mirror-sink-before', {
           mode: 'sql',
           readOnly: this.isDetails
         })
@@ -668,7 +758,7 @@
         this.sourceDataSourceId = val
         this.sourceDataSourceName = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceName
         this.sourceDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
-
+        this._destroyAllEditorSource()
         if (['mysql', 'sqlserver', 'oracle'].includes(this.sourceDataSourceType)) {
           this.sourceDataSourceFormType = this.sourceDataSourceType
           setTimeout(() => {
@@ -689,13 +779,14 @@
         } else {
           this.sourceDataSourceFormType = ''
           this.sourceDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
-          this.$message.warning(`暂不支持的数据源类型${this.sourceDataSourceType}`)
+          this.$message.warning(`暂不支持的Source数据源类型${this.sourceDataSourceType}`)
         }
       },
       _handleTargetDataSourceTypeChange (val) {
         this.targetDataSourceId = val
         this.targetDataSourceName = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceName
         this.targetDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
+        this._destroyAllEditorTarget()
         if (['mysql', 'sqlserver'].includes(this.targetDataSourceType)) {
           this.targetDataSourceFormType = this.targetDataSourceType
           setTimeout(() => {
@@ -709,11 +800,22 @@
           setTimeout(() => {
             this._handlerEditorSinkBefore()
           }, 200)
+        } else if (['elasticsearch'].includes(this.targetDataSourceType)) {
+          this.targetDataSourceFormType = this.targetDataSourceType
+          this.targetElasticSearchParams.max_batch_size = 1000
+          this.targetElasticSearchParams.schema_save_mode = 'CREATE_SCHEMA_WHEN_NOT_EXIST'
+          this.targetElasticSearchParams.data_save_mode = 'APPEND_DATA'
         } else {
           this.targetDataSourceFormType = ''
           this.targetDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
-          this.$message.warning(`暂不支持的数据源类型${this.targetDataSourceType}`)
+          this.$message.warning(`暂不支持的Sink数据源类型${this.targetDataSourceType}`)
         }
+      },
+      _handleTargetElasticSearchSchemaSaveModeChange (val) {
+        this.targetElasticSearchParams.schema_save_mode = val
+      },
+      _handleTargetElasticSearchDataSaveModeChange (val) {
+        this.targetElasticSearchParams.data_save_mode = val
       },
       _getDataSourceInfo () {
         return new Promise((resolve, reject) => {
@@ -728,6 +830,28 @@
             resolve()
           })
         })
+      },
+      _destroyAllEditorSource () {
+        if (editorSource) {
+          editorSource.toTextArea() // Uninstall
+          editorSource.off($('.code-sql-mirror-source'), 'keypress', this.keypress)
+          editorSource.off($('.code-sql-mirror-source'), 'changes', this.changes)
+          editorSource = null
+        }
+      },
+      _destroyAllEditorTarget () {
+        if (editorTarget) {
+          editorTarget.toTextArea() // Uninstall
+          editorTarget.off($('.code-sql-mirror-target'), 'keypress', this.keypress)
+          editorTarget.off($('.code-sql-mirror-target'), 'changes', this.changes)
+          editorTarget = null
+        }
+        if (editorSinkBefore) {
+          editorSinkBefore.toTextArea() // Uninstall
+          editorSinkBefore.off($('.code-sql-mirror-sink-before'), 'keypress', this.keypress)
+          editorSinkBefore.off($('.code-sql-mirror-sink-before'), 'changes', this.changes)
+          editorSinkBefore = null
+        }
       }
     },
     watch: {
@@ -827,6 +951,12 @@
             setTimeout(() => {
               this._handlerEditorSinkBefore()
             }, 200)
+          } else if (['elasticsearch'].includes(this.targetDataSourceType)) {
+            this.targetElasticSearchParams.index = o.params.sink.index || ''
+            this.targetElasticSearchParams.primary_keys = o.params.sink.primary_keys || ''
+            this.targetElasticSearchParams.max_batch_size = o.params.sink.max_batch_size || 1000
+            this.targetElasticSearchParams.schema_save_mode = o.params.sink.schema_save_mode || 'CREATE_SCHEMA_WHEN_NOT_EXIST'
+            this.targetElasticSearchParams.data_save_mode = o.params.sink.data_save_mode || 'APPEND_DATA'
           }
           this.parallelism = o.params.env.parallelism || 1
         }
@@ -866,20 +996,13 @@
       }
     },
     mounted () {
-      // setTimeout(() => {
-      //   this._handlerEditor()
-      //   this._handlerEditorTarget()
-      // }, 200)
     },
     destroyed () {
-      if (editorSource) {
-        editorSource.toTextArea() // Uninstall
-        editorSource.off($('.code-shell-mirror'), 'keypress', this.keypress)
-      }
+      this._destroyAllEditorSource()
+      this._destroyAllEditorTarget()
     },
     components: {
-      mListBox,
-      mScriptBox
+      mListBox
     }
   }
 </script>
