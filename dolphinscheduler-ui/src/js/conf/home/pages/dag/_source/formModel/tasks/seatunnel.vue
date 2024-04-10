@@ -23,7 +23,7 @@
           :disabled="isDetails"
           type="text"
           size="small"
-          v-model="parallelism"
+          v-model.trim="parallelism"
           :placeholder="'请输入并行度'">
         </el-input>
       </div>
@@ -74,7 +74,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="sourceSQLServerParams.partition_column"
+            v-model.trim="sourceSQLServerParams.partition_column"
             :placeholder="'请输入partition_column'">
           </el-input>
         </div>
@@ -86,7 +86,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="sourceSQLServerParams.partition_num"
+            v-model.trim="sourceSQLServerParams.partition_num"
             :placeholder="'请输入partition_num'">
           </el-input>
         </div>
@@ -112,7 +112,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="sourceElasticSearchParams.index"
+            v-model.trim="sourceElasticSearchParams.index"
             :placeholder="'请输入index'">
           </el-input>
         </div>
@@ -124,7 +124,7 @@
             :disabled="isDetails"
             type="textarea"
             size="small"
-            v-model="sourceElasticSearchParams.source"
+            v-model.trim="sourceElasticSearchParams.source"
             :placeholder="'请输入source'">
           </el-input>
         </div>
@@ -138,7 +138,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="sourceHiveParams.table_name"
+            v-model.trim="sourceHiveParams.table_name"
             :placeholder="'请输入Hive表名'">
           </el-input>
         </div>
@@ -219,7 +219,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="targetHiveParams.table_name"
+            v-model.trim="targetHiveParams.table_name"
             :placeholder="'请输入Hive表名'">
           </el-input>
         </div>
@@ -244,7 +244,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="targetClickhouseParams.table"
+            v-model.trim="targetClickhouseParams.table"
             :placeholder="'请输入ClickHouse表名'">
           </el-input>
         </div>
@@ -270,7 +270,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="targetElasticSearchParams.index"
+            v-model.trim="targetElasticSearchParams.index"
             :placeholder="'请输入Index'">
           </el-input>
         </div>
@@ -282,7 +282,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="targetElasticSearchParams.primary_keys"
+            v-model.trim="targetElasticSearchParams.primary_keys"
             :placeholder="'请输入primaryKeys,多个以英文逗号,分隔'">
           </el-input>
         </div>
@@ -294,7 +294,7 @@
             :disabled="isDetails"
             type="text"
             size="small"
-            v-model="targetElasticSearchParams.max_batch_size"
+            v-model.trim="targetElasticSearchParams.max_batch_size"
             :placeholder="'请输入maxBatchSize'">
           </el-input>
         </div>
