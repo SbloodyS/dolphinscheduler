@@ -487,6 +487,10 @@
             this.$message.warning('请输入查询SQL')
             return false
           }
+          if (editorSource.getValue().indexOf(';') === 1 || editorSource.getValue().indexOf('；') === 1) {
+            this.$message.warning('查询SQL不能包含分号;')
+            return false
+          }
           this.sourceSQLServerParams.query = editorSource.getValue()
 
           if (this.sourceSQLServerParams.partition_num) {
@@ -501,6 +505,10 @@
         } else if (['clickhouse'].includes(this.sourceDataSourceFormType)) {
           if (!editorSource.getValue()) {
             this.$message.warning('请输入查询SQL')
+            return false
+          }
+          if (editorSource.getValue().indexOf(';') === 1 || editorSource.getValue().indexOf('；') === 1) {
+            this.$message.warning('查询SQL不能包含分号;')
             return false
           }
           this.sourceClickhouseParams.sql = editorSource.getValue()
@@ -528,7 +536,11 @@
 
         if (['mysql', 'sqlserver'].includes(this.targetDataSourceFormType)) {
           if (!editorTarget.getValue()) {
-            this.$message.warning(`${i18n.$t('Please enter sql(required)')}`)
+            this.$message.warning('请输入写入SQL')
+            return false
+          }
+          if (editorTarget.getValue().indexOf(';') === 1 || editorTarget.getValue().indexOf('；') === 1) {
+            this.$message.warning('写入SQL不能包含分号;')
             return false
           }
           this.targetSQLServerParams.query = editorTarget.getValue()

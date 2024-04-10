@@ -735,6 +735,10 @@
           this.$message.warning(`${i18n.$t('Please enter name (required)')}`)
           return false
         }
+        if (this.name.indexOf(' ') !== -1) {
+          this.$message.warning('任务名称不能包含空格')
+          return false
+        }
         if (
           this.successBranch &&
           this.successBranch === this.failedBranch
