@@ -184,14 +184,14 @@
         </div>
       </m-list-box>
       <m-list-box>
-        <div slot="text">{{ '最大消费数量' }}</div>
+        <div slot="text">{{ '每批消费数量' }}</div>
         <div slot="content">
           <el-input
             :disabled="isDetails"
             type="text"
             size="small"
             v-model.trim="sourceKafkaParams['kafka.config']['max.poll.records']"
-            :placeholder="'请输入最大消费数量'">
+            :placeholder="'请输入每批消费数量'">
           </el-input>
         </div>
       </m-list-box>
@@ -613,11 +613,11 @@
             return false
           }
           if (!this.sourceKafkaParams['kafka.config']['max.poll.records']) {
-            this.$message.warning('请输入最大消费数量')
+            this.$message.warning('请输入每批消费数量')
             return false
           }
           if (!Number.isInteger(this.sourceKafkaParams['kafka.config']['max.poll.records']) && this.sourceKafkaParams['kafka.config']['max.poll.records'] <= 0) {
-            this.$message.warning(`${i18n.$t('Please enter a positive integer') + '最大消费数量'}`)
+            this.$message.warning(`${i18n.$t('Please enter a positive integer') + '每批消费数量'}`)
             return false
           }
           if (!this.sourceKafkaParams.start_mode) {
