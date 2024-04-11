@@ -52,8 +52,11 @@
   import codemirror from '@/conf/home/pages/resource/pages/file/pages/_source/codemirror'
   import Clipboard from 'clipboard'
   import { diGuiTree, searchTree } from './_source/resourceTree'
+  import getters from '../../../../../store/user/getters'
 
   let editor
+  let currentUserName = getters.getUserInfo().userName
+  let currentDate = new Date().toLocaleString()
 
   export default {
     name: 'hive',
@@ -61,7 +64,7 @@
       return {
         valueConsistsOf: 'LEAF_PRIORITY',
         // script
-        sql: '',
+        sql: `--******************************************************--\n--说明：\n\n--作者：${currentUserName}\n\n--时间：${currentDate}\n--******************************************************--\n\n`,
         // Custom parameter
         localParams: [],
         // resource(list)
@@ -278,6 +281,7 @@
 
       // Non-null objects represent backfill
       if (!_.isEmpty(o)) {
+        console.log(111)
         this.sql = o.params.sql || ''
 
         // backfill resourceList

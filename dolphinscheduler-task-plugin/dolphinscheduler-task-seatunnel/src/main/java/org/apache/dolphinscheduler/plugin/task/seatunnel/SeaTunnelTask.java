@@ -33,6 +33,7 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSou
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.Env;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.HiveSourceParams;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.KafkaSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.MysqlSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.MysqlSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.OracleSourceParams;
@@ -40,6 +41,7 @@ import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLReturnField;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLServerSourceParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConfig;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConnector;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.Property;
 import org.apache.dolphinscheduler.spi.task.paramparser.ParamUtils;
@@ -175,9 +177,9 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         seaTunnelConfig.setEnv(env);
 
         DataSourceNew sourceDataSourceInfo = JSONUtils.convertValue(seaTunnelParameters.getSourceDataSourceInfo(), DataSourceNew.class);
-
-        switch (sourceDataSourceInfo.getDatasourceType().toLowerCase()) {
-            case "mysql":
+        SeaTunnelConnector sourceConnector = SeaTunnelConnector.of(sourceDataSourceInfo.getDatasourceType().toLowerCase());
+        switch (sourceConnector) {
+            case MYSQL:
                 MysqlSourceParams mysqlSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), MysqlSourceParams.class);
                 if (mysqlSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -197,7 +199,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), mysqlJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
                 sourceJdbcUtilsQuerySql = mysqlSourceParams.getQuery();
                 break;
-            case "sqlserver":
+            case SQLSERVER:
                 SQLServerSourceParams sqlServerSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), SQLServerSourceParams.class);
                 if (sqlServerSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -217,7 +219,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), sqlServerJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
                 sourceJdbcUtilsQuerySql = sqlServerSourceParams.getQuery();
                 break;
-            case "oracle":
+            case ORACLE:
                 OracleSourceParams oracleSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), OracleSourceParams.class);
                 if (oracleSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -237,7 +239,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), oracleJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
                 sourceJdbcUtilsQuerySql = oracleSourceParams.getQuery();
                 break;
-            case "clickhouse":
+            case CLICKHOUSE:
                 ClickHouseSourceParams clickHouseSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), ClickHouseSourceParams.class);
                 if (clickHouseSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -256,7 +258,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), clickhouseJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
                 sourceJdbcUtilsQuerySql = clickHouseSourceParams.getSql();
                 break;
-            case "hive":
+            case HIVE:
                 HiveSourceParams hiveSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), HiveSourceParams.class);
                 if (hiveSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -279,7 +281,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
                 generateHiveSourceCommand(originTable, tmpTable);
                 break;
-            case "elasticsearch":
+            case ELASTICSEARCH:
                 ElasticSearchSourceParams elasticSearchSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), ElasticSearchSourceParams.class);
                 if (elasticSearchSourceParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -293,14 +295,25 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 elasticSearchSourceParams.setPassword(sourceDataSourceInfo.getPassword());
                 seaTunnelConfig.setSource(Collections.singletonList(elasticSearchSourceParams));
                 break;
+            case KAFKA:
+                KafkaSourceParams kafkaSourceParams = JSONUtils.convertValue(seaTunnelParameters.getSource(), KafkaSourceParams.class);
+                if (kafkaSourceParams == null) {
+                    throw new RuntimeException("source datasource params is invalid");
+                }
+                kafkaSourceParams.setBootstrapServers(sourceDataSourceInfo.getHostname());
+                KafkaSourceParams.KafkaConfig kafkaConfig = kafkaSourceParams.getKafkaConfig();
+                kafkaConfig.setClientId(String.format("%s_%s", kafkaSourceParams.getConsumerGroup(), (int) (Math.random() * 10000000)));
+                kafkaSourceParams.setKafkaConfig(kafkaConfig);
+                seaTunnelConfig.setSource(Collections.singletonList(kafkaSourceParams));
+                break;
             default:
                 throw new RuntimeException("Unsupported source datasource type: " + sourceDataSourceInfo.getDatasourceType());
         }
 
         DataSourceNew targetDataSourceInfo = JSONUtils.convertValue(seaTunnelParameters.getTargetDataSourceInfo(), DataSourceNew.class);
-
-        switch (targetDataSourceInfo.getDatasourceType().toLowerCase()) {
-            case "mysql":
+        SeaTunnelConnector targetConnector = SeaTunnelConnector.of(targetDataSourceInfo.getDatasourceType().toLowerCase());
+        switch (targetConnector) {
+            case MYSQL:
                 MysqlSinkParams mysqlSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), MysqlSinkParams.class);
                 if (mysqlSinkParams == null) {
                     throw new RuntimeException("sink datasource params is invalid");
@@ -320,7 +333,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
                 initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), mysqlJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
-            case "sqlserver":
+            case SQLSERVER:
                 SQLServerSinkParams sqlServerSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), SQLServerSinkParams.class);
                 if (sqlServerSinkParams == null) {
                     throw new RuntimeException("sink datasource params is invalid");
@@ -340,7 +353,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
                 initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), sqlServerJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
-            case "hive":
+            case HIVE:
                 HiveSinkParams hiveSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), HiveSinkParams.class);
                 if (hiveSinkParams == null) {
                     throw new RuntimeException("target datasource params is invalid");
@@ -364,7 +377,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 seaTunnelConfig.setSink(Collections.singletonList(hiveSinkParams));
                 generateHiveSinkCommand(originTable, tmpTable, seaTunnelParameters.getAutoCreateHiveTable());
                 break;
-            case "clickhouse":
+            case CLICKHOUSE:
                 ClickHouseSinkParams clickHouseSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ClickHouseSinkParams.class);
                 if (clickHouseSinkParams == null) {
                     throw new RuntimeException("source datasource params is invalid");
@@ -390,7 +403,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                         targetDataSourceInfo.getPort());
                 initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), clickhouseJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
                 break;
-            case "elasticsearch":
+            case ELASTICSEARCH:
                 ElasticSearchSinkParams elasticSearchSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ElasticSearchSinkParams.class);
                 if (elasticSearchSinkParams == null) {
                     throw new RuntimeException("sink datasource params is invalid");

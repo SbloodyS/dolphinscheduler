@@ -15,5 +15,10 @@
  * limitations under the License.
  */
 
+import state from './state'
+
 export default {
+  getUserInfo () {
+    return state.userInfo
+  }
 }

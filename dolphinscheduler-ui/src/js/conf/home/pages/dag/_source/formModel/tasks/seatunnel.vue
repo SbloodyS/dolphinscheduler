@@ -158,6 +158,66 @@
         </div>
       </m-list-box>
     </template>
+    <template v-if="['kafka'].includes(sourceDataSourceFormType)">
+      <m-list-box>
+        <div slot="text">{{ 'Topic' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model.trim="sourceKafkaParams.topic"
+            :placeholder="'请输入Topic名称'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'ConsumerGroup' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model.trim="sourceKafkaParams['consumer.group']"
+            :placeholder="'请输入消费者组名称'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ '最大消费数量' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model.trim="sourceKafkaParams['kafka.config']['max.poll.records']"
+            :placeholder="'请输入最大消费数量'">
+          </el-input>
+        </div>
+      </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ 'start_mode' }}</div>
+        <div slot="content">
+          <div style="display: inline-block;">
+            <el-select
+              style="width: 350px;"
+              size="small"
+              v-model="sourceKafkaParams.start_mode"
+              :disabled="isDetails"
+              @change="(val)=> _handleSourceKafkaStartModeChange(val)"
+              filterable
+            >
+              <el-option
+                v-for="type in kafkaStartModeOptions"
+                :key="type"
+                :value="type"
+                :label="type">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </m-list-box>
+    </template>
 
     <m-list-box>
       <div slot="text" style="font-weight:bold">{{ $t('Data Target') }}</div>
@@ -396,6 +456,12 @@
           'ERROR_WHEN_DATA_EXISTS'
         ],
 
+        kafkaStartModeOptions: [
+          'earliest',
+          'latest',
+          'group_offsets'
+        ],
+
         autoCreateHiveTableRadio: 0,
         autoCreateHiveTable: false,
         sinkBeforeSql: '',
@@ -426,6 +492,14 @@
           query: '',
           index: '',
           source: ''
+        },
+        sourceKafkaParams: {
+          topic: '',
+          'consumer.group': '',
+          'kafka.config': {
+            'max.poll.records': ''
+          },
+          start_mode: ''
         },
 
         targetHiveParams: {
@@ -529,6 +603,27 @@
           }
 
           requestParams.source = this.sourceElasticSearchParams
+        } else if (['kafka'].includes(this.sourceDataSourceFormType)) {
+          if (!this.sourceKafkaParams.topic) {
+            this.$message.warning('请输入Topic')
+            return false
+          }
+          if (!this.sourceKafkaParams['consumer.group']) {
+            this.$message.warning('请输入消费者组')
+            return false
+          }
+          if (!this.sourceKafkaParams['kafka.config']['max.poll.records']) {
+            this.$message.warning('请输入最大消费数量')
+            return false
+          }
+          if (!Number.isInteger(this.sourceKafkaParams['kafka.config']['max.poll.records']) && this.sourceKafkaParams['kafka.config']['max.poll.records'] <= 0) {
+            this.$message.warning(`${i18n.$t('Please enter a positive integer') + '最大消费数量'}`)
+            return false
+          }
+          if (!this.sourceKafkaParams.start_mode) {
+            this.$message.warning('请选择start_mode')
+          }
+          requestParams.source = this.sourceKafkaParams
         } else {
           this.$message.warning(`暂不支持的Source数据源类型${this.sourceDataSourceType}`)
           return false
@@ -788,6 +883,8 @@
           setTimeout(() => {
             this._handlerJsonEditorSource()
           }, 200)
+        } else if (['kafka'].includes(this.sourceDataSourceType)) {
+          this.sourceDataSourceFormType = this.sourceDataSourceType
         } else {
           this.sourceDataSourceFormType = ''
           this.sourceDataSourceType = this.dataSourceTypeList.filter(item => item.id === val)[0].datasourceType
@@ -828,6 +925,9 @@
       },
       _handleTargetElasticSearchDataSaveModeChange (val) {
         this.targetElasticSearchParams.data_save_mode = val
+      },
+      _handleSourceKafkaStartModeChange (val) {
+        this.sourceKafkaParams.start_mode = val
       },
       _getDataSourceInfo () {
         return new Promise((resolve, reject) => {
@@ -938,6 +1038,11 @@
             this.sourceJson = o.params.source.query || ''
             this.sourceElasticSearchParams.index = o.params.source.index || ''
             this.sourceElasticSearchParams.source = o.params.source.source || ''
+          } else if (['kafka'].includes(this.sourceDataSourceType)) {
+            this.sourceKafkaParams.topic = o.params.source.topic || ''
+            this.sourceKafkaParams['consumer.group'] = o.params.source['consumer.group'] || ''
+            this.sourceKafkaParams['kafka.config']['max.poll.records'] = o.params.source['kafka.config']['max.poll.records'] || 1000
+            this.sourceKafkaParams.start_mode = o.params.source.start_mode || 'group_offsets'
           }
 
           let targetDataSourceId = o.params.targetDataSourceId || ''
