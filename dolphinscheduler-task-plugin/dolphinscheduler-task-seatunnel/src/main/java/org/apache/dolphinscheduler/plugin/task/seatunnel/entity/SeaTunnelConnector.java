@@ -16,7 +16,7 @@ public enum SeaTunnelConnector {
     ORACLE("oracle"),
     POSTGRESQL("postgresql"),
     SQLSERVER("sqlserver"),
-    CLICKHOUSE("clickHouse"),
+    CLICKHOUSE("clickhouse"),
     ELASTICSEARCH("elasticsearch"),
     REDIS("redis"),
     MONGODB("mongodb"),
