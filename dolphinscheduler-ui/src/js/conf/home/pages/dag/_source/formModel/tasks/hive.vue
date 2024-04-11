@@ -64,7 +64,7 @@
       return {
         valueConsistsOf: 'LEAF_PRIORITY',
         // script
-        sql: `--******************************************************--\n--说明：\n\n--作者：${currentUserName}\n\n--时间：${currentDate}\n--******************************************************--\n\n`,
+        sql: `--******************************************************--\n\n--说明：\n\n--作者：${currentUserName}\n\n--时间：${currentDate}\n\n--******************************************************--\n\n`,
         // Custom parameter
         localParams: [],
         // resource(list)

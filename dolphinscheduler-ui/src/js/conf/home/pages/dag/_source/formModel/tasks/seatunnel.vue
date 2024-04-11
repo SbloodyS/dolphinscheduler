@@ -497,9 +497,9 @@
           topic: '',
           'consumer.group': '',
           'kafka.config': {
-            'max.poll.records': ''
+            'max.poll.records': '1000'
           },
-          start_mode: ''
+          start_mode: 'group_offsets'
         },
 
         targetHiveParams: {
