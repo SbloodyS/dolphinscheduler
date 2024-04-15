@@ -78,6 +78,7 @@ public interface ProcessInstanceService {
                                     String endDate,
                                     String searchVal,
                                     Long processInstanceId,
+                                    String projectName,
                                     CommandType runningType,
                                     String executorName,
                                     ExecutionStatus stateType,

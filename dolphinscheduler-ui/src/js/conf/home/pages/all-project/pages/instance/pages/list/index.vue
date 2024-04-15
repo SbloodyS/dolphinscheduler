@@ -54,7 +54,7 @@
   import { setUrlParams } from '@/module/util/routerUtil'
   import mNoData from '@/module/components/noData/noData'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
-  import mInstanceConditions from '@/conf/home/pages/projects/pages/_source/conditions/instance/processInstance'
+  import mInstanceConditions from '@/conf/home/pages/all-project/pages/_source/conditions/instance/processInstance'
   import { formatDate } from '../../../../../../../../module/filter/filter'
 
   export default {

@@ -252,8 +252,9 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
      */
     @Override
     public Result queryProcessInstanceList(User loginUser, long projectCode, long processDefineCode, String startDate,
-                                           String endDate, String searchVal, Long processInstanceId, CommandType runningType,
-                                           String executorName, ExecutionStatus stateType, String host, Integer pageNo, Integer pageSize) {
+                                           String endDate, String searchVal, Long processInstanceId, String projectName,
+                                           CommandType runningType, String executorName, ExecutionStatus stateType,
+                                           String host, Integer pageNo, Integer pageSize) {
 
         Result result = new Result();
         Status resultEnum;
@@ -278,7 +279,7 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         int executorId = usersService.getUserIdByName(executorName);
 
         IPage<ProcessInstance> processInstanceList = processInstanceMapper.queryProcessInstanceListPaging(page,
-                projectCode, processDefineCode, searchVal, processInstanceId, runningType, executorId,
+                projectCode, processDefineCode, searchVal, processInstanceId, projectName, runningType, executorId,
                 statusArray, host, start, end);
 
         List<ProcessInstance> processInstances = processInstanceList.getRecords();

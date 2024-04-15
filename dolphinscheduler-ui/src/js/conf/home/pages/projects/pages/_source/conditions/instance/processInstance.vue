@@ -60,7 +60,7 @@
         </el-select>
       </div>
       <div class="list">
-        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('Name')"></el-input>
+        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('ProcessInstanceName')"></el-input>
       </div>
       <div class="list">
         <el-input v-model="searchParams.processInstanceId" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('ProcessInstanceId')"></el-input>

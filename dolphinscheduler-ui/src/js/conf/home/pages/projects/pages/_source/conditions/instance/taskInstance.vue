@@ -56,7 +56,7 @@
         <el-input v-model="searchParams.processInstanceName" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Process Instance')"></el-input>
       </div>
       <div class="list">
-        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Name')"></el-input>
+        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Task Instance Name')"></el-input>
       </div>
       <div class="list">
         <el-input v-model="searchParams.taskCode" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('taskCode')"></el-input>

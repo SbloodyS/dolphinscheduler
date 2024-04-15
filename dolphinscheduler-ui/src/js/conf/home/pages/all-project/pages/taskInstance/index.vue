@@ -54,7 +54,7 @@
   import mNoData from '@/module/components/noData/noData'
   import listUrlParamHandle from '@/module/mixin/listUrlParamHandle'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
-  import mInstanceConditions from '@/conf/home/pages/projects/pages/_source/conditions/instance/taskInstance'
+  import mInstanceConditions from '@/conf/home/pages/all-project/pages/_source/conditions/instance/taskInstance'
   import { formatDate } from '../../../../../../module/filter/filter'
 
   export default {

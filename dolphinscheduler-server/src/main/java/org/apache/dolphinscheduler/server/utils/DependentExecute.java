@@ -112,11 +112,11 @@ public class DependentExecute {
         for (DateInterval dateInterval : dateIntervals) {
             ProcessInstance processInstance = findLastProcessInterval(dependentItem.getDefinitionCode(), dateInterval);
             if (processInstance == null) {
-                logger.info("Cannot find dependent processInstance, waiting for workflow to run," +
-                                "processDefinitionCode: {}," +
-                                "taskCode: {}",
+                logger.info("Cannot find dependent processInstance, waiting for workflow to run, " +
+                                "processDefinitionCode: {}, taskCode: {}, dateInterval: {}",
                         dependentItem.getDefinitionCode(),
-                        dependentItem.getDepTaskCode()
+                        dependentItem.getDepTaskCode(),
+                        JSONUtils.toJsonString(dateInterval)
                 );
                 return DependResult.WAITING;
             }
@@ -148,11 +148,10 @@ public class DependentExecute {
             if (!taskRelations.isEmpty()) {
                 List<TaskDefinition> taskDefinitions = processService.genLatestTaskDefineList(taskRelations);
                 Map<Long, String> definiteTask = taskDefinitions.stream().filter(log -> !log.getTaskType().equals(TaskType.SUB_PROCESS.getDesc())
-                        || !log.getTaskType().equals(TaskType.DEPENDENT.getDesc())
-                        || !log.getTaskType().equals(TaskType.CONDITIONS.getDesc()))
+                        && !log.getTaskType().equals(TaskType.DEPENDENT.getDesc())
+                        && !log.getTaskType().equals(TaskType.CONDITIONS.getDesc()))
                         .filter(log -> log.getFlag() == Flag.YES)
                         .collect(Collectors.toMap(TaskDefinition::getCode, TaskDefinition::getName));
-//                logger.info("The definite task: {}", JSONUtils.toJsonString(definiteTask));
                 if (!definiteTask.isEmpty()) {
                     List<TaskInstance> taskInstanceList = processService.findLastTaskInstanceListInterval(
                             definiteTask.keySet(), processInstance.getId());

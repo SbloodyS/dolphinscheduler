@@ -192,12 +192,15 @@ public class DependentDateUtils {
      */
     public static List<DateInterval> getDateIntervalListBetweenTwoDates(Date firstDay, Date lastDay) {
         List<DateInterval> dateIntervals = new ArrayList<>();
-        while(!firstDay.after(lastDay)){
-            Date beginTime = DateUtils.getStartOfDay(firstDay);
-            Date endTime = DateUtils.getEndOfDay(firstDay);
-            dateIntervals.add(new DateInterval(beginTime, endTime));
-            firstDay = DateUtils.getSomeDay(firstDay, 1);
-        }
+//        while(!firstDay.after(lastDay)){
+//            Date beginTime = DateUtils.getStartOfDay(firstDay);
+//            Date endTime = DateUtils.getEndOfDay(firstDay);
+//            dateIntervals.add(new DateInterval(beginTime, endTime));
+//            firstDay = DateUtils.getSomeDay(firstDay, 1);
+//        }
+        Date beginTime = DateUtils.getStartOfDay(firstDay);
+        Date endTime = DateUtils.getEndOfDay(lastDay);
+        dateIntervals.add(new DateInterval(beginTime, endTime));
         return dateIntervals;
     }
 }

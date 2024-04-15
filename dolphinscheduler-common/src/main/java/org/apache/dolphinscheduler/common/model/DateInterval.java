@@ -17,6 +17,7 @@
 package org.apache.dolphinscheduler.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.util.Date;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import java.util.Objects;
 /**
  * date interval class
  */
+@Data
 public class DateInterval {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date startTime;
@@ -47,22 +49,6 @@ public class DateInterval {
             return startTime.equals(that.startTime) &&
                     endTime.equals(that.endTime);
         }
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
     }
 
     @Override

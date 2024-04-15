@@ -113,6 +113,7 @@ public interface ProcessInstanceMapper extends BaseMapper<ProcessInstance> {
                                                           @Param("processDefinitionCode") Long processDefinitionCode,
                                                           @Param("searchVal") String searchVal,
                                                           @Param("processInstanceId") Long processInstanceId,
+                                                          @Param("projectName") String projectName,
                                                           @Param("runningType") CommandType runningType,
                                                           @Param("executorId") Integer executorId,
                                                           @Param("states") int[] statusArray,

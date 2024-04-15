@@ -23,15 +23,19 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.field.CronField;
 import com.cronutils.model.field.CronFieldName;
 import com.cronutils.model.field.expression.*;
+import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.CycleEnum;
 import org.apache.dolphinscheduler.common.utils.DateUtils;
+import org.apache.dolphinscheduler.dao.entity.Schedule;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.cronutils.model.field.expression.FieldExpressionFactory.*;
 
@@ -95,18 +99,18 @@ public class CronUtilsTest {
 
         CycleEnum cycleEnum3 = CronUtils.getMiniCycle(CronUtils.parse2Cron("0 * * * * ? *"));
         Assert.assertEquals("MINUTE", cycleEnum3.name());
-    
+
         CycleEnum cycleEnum4 = CronUtils.getMaxCycle(CronUtils.parse2Cron("0 0 7 * 1 ? *"));
         Assert.assertEquals("YEAR", cycleEnum4.name());
         cycleEnum4 = CronUtils.getMiniCycle(CronUtils.parse2Cron("0 0 7 * 1 ? *"));
         Assert.assertEquals("DAY", cycleEnum4.name());
-    
+
         CycleEnum cycleEnum5 = CronUtils.getMaxCycle(CronUtils.parse2Cron("0 0 7 * 1/1 ? *"));
         Assert.assertEquals("MONTH", cycleEnum5.name());
-    
+
         CycleEnum cycleEnum6 = CronUtils.getMaxCycle(CronUtils.parse2Cron("0 0 7 * 1-2 ? *"));
         Assert.assertEquals("YEAR", cycleEnum6.name());
-    
+
         CycleEnum cycleEnum7 = CronUtils.getMaxCycle(CronUtils.parse2Cron("0 0 7 * 1,2 ? *"));
         Assert.assertEquals("YEAR", cycleEnum7.name());
     }
@@ -169,7 +173,7 @@ public class CronUtilsTest {
             logger.info("dayOfWeekField instanceof On:"+(dayOfWeekField.getExpression() instanceof On));
             logger.info("dayOfWeekField instanceof And:"+(dayOfWeekField.getExpression() instanceof And));
             logger.info("dayOfWeekField instanceof QuestionMark:"+(dayOfWeekField.getExpression() instanceof QuestionMark));
-    
+
             CronField yearField = cron.retrieve(CronFieldName.YEAR);
             logger.info("yearField instanceof Between:"+(yearField.getExpression() instanceof Between));
             logger.info("yearField instanceof Always:"+(yearField.getExpression() instanceof Always));
@@ -225,5 +229,13 @@ public class CronUtilsTest {
         Assert.assertEquals("2020-02-07 23:59:59", DateUtils.dateToString(expirationTime));
         expirationTime = CronUtils.getExpirationTime(startTime, CycleEnum.YEAR);
         Assert.assertEquals("2020-02-07 18:30:00", DateUtils.dateToString(expirationTime));
+    }
+
+    @Test
+    public void testGetSelfFireDateList() {
+        // support left closed and right closed time interval (startDate <= N <= endDate)
+        Date from = DateUtils.getScheduleDate("2024-04-01 00:00:00");
+        Date to = DateUtils.getScheduleDate("2024-04-03 00:00:00");
+        List<Date> resultDate = CronUtils.getSelfFireDateList(from, to, new ArrayList<>());
     }
 }

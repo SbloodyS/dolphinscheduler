@@ -120,6 +120,7 @@ public class ProcessInstanceController extends BaseController {
                                            @RequestParam(value = "processDefineCode", required = false, defaultValue = "0") long processDefineCode,
                                            @RequestParam(value = "searchVal", required = false) String searchVal,
                                            @RequestParam(value = "processInstanceId", required = false) Long processInstanceId,
+                                           @RequestParam(value = "projectName", required = false) String projectName,
                                            @RequestParam(value = "runningType", required = false) CommandType runningType,
                                            @RequestParam(value = "executorName", required = false) String executorName,
                                            @RequestParam(value = "stateType", required = false) ExecutionStatus stateType,
@@ -135,7 +136,7 @@ public class ProcessInstanceController extends BaseController {
         }
         searchVal = ParameterUtils.handleEscapes(searchVal);
         result = processInstanceService.queryProcessInstanceList(loginUser, projectCode, processDefineCode, startTime, endTime,
-                searchVal, processInstanceId, runningType, executorName, stateType, host, pageNo, pageSize);
+                searchVal, processInstanceId, projectName, runningType, executorName, stateType, host, pageNo, pageSize);
         return result;
     }
 

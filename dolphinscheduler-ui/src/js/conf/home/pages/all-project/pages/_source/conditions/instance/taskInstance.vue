@@ -50,10 +50,16 @@
         <el-input v-model="searchParams.executorName" @keyup.enter.native="_ckQuery" style="width: 140px;" size="mini" :placeholder="$t('Executor')"></el-input>
       </div>
       <div class="list">
+        <el-input v-model="searchParams.taskType" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Node Type')"></el-input>
+      </div>
+      <div class="list">
         <el-input v-model="searchParams.processInstanceName" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Process Instance')"></el-input>
       </div>
       <div class="list">
-        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Name')"></el-input>
+        <el-input v-model="searchParams.searchVal" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('Task Instance Name')"></el-input>
+      </div>
+      <div class="list">
+        <el-input v-model="searchParams.taskCode" @keyup.enter.native="_ckQuery" style="width: 160px;" size="mini" :placeholder="$t('taskCode')"></el-input>
       </div>
     </template>
   </m-conditions>
@@ -62,9 +68,12 @@
   import _ from 'lodash'
   import { stateType } from './common'
   import mConditions from '@/module/components/conditions/conditions'
+  import { formatDate } from '../../../../../../../../module/filter/filter'
   export default {
     name: 'task-instance-conditions',
     data () {
+      let today = new Date()
+
       return {
         // state(list)
         stateTypeList: stateType,
@@ -72,16 +81,18 @@
           // state
           stateType: '',
           // start date
-          startDate: '',
+          startDate: formatDate(today.toString(), 'YYYY-MM-DD 00:00:00'),
           // end date
-          endDate: '',
+          endDate: formatDate(new Date(today.setDate(today.getDate() + 1)).toString(), 'YYYY-MM-DD 23:59:59'),
           // search value
           searchVal: '',
           // host
           host: '',
           // executor name
           executorName: '',
-          processInstanceName: ''
+          processInstanceName: '',
+          taskCode: '',
+          taskType: ''
         },
         dataTime: []
       }

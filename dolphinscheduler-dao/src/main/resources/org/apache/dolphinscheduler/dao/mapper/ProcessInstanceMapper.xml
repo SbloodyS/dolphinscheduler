@@ -136,6 +136,9 @@
         <if test="executorId != 0">
             and instance.executor_id = #{executorId}
         </if>
+        <if test="projectName != null and projectName != ''">
+            and project.name like concat('%', #{projectName}, '%')
+        </if>
         order by instance.start_time desc,instance.end_time desc
     </select>
     <update id="setFailoverByHostAndStateArray">
