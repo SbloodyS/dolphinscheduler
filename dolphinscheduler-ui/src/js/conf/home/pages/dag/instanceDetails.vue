@@ -30,6 +30,7 @@
   import mStartingParam from './_source/startingParam'
   import Affirm from './_source/jumpAffirm'
   import disabledState from '@/module/mixin/disabledState'
+  import getters from '../../store/dag/getters'
 
   export default {
     name: 'instance-details',
@@ -42,7 +43,7 @@
     mixins: [disabledState],
     props: {},
     methods: {
-      ...mapMutations('dag', ['setIsDetails', 'resetParams']),
+      ...mapMutations('dag', ['setIsDetails', 'resetParams', 'setProjectCode', 'setProjectName']),
       ...mapActions('dag', ['getProjectList', 'getResourcesList', 'getInstancedetail']),
       ...mapActions('security', ['getTenantList', 'getWorkerGroupsAll', 'getAlarmGroupsAll']),
       /**
@@ -52,6 +53,11 @@
         this.isLoading = true
         // Initialization parameters
         this.resetParams()
+        let stateProjectCode = getters.getProjectCode()
+        if (stateProjectCode == 0) {
+          this.setProjectCode(this.$route.params.projectCode)
+          stateProjectCode = getters.getProjectCode()
+        }
         // Promise Get node needs data
         Promise.all([
           // Process instance details
@@ -74,12 +80,19 @@
             flag = false
           }
           this.setIsDetails(flag)
+          let projectItems = data[1]
+          projectItems.forEach(item => {
+            if (item.code == stateProjectCode) {
+              this.setProjectName(item.name)
+            }
+          })
           this.isLoading = false
 
           // Whether to pop up the box?
           Affirm.init(this.$root)
-        }).catch(() => {
+        }).catch((e) => {
           this.isLoading = false
+          this.$message.error(e.msg || '')
         })
       },
       /**
