@@ -225,7 +225,7 @@
         from t_ds_process_instance
         where process_definition_code=#{processDefinitionCode}
         and schedule_time is null
-        <if test="startTime!=null and endTime != null ">
+        <if test="startTime != null and endTime != null ">
             and start_time <![CDATA[ >= ]]> #{startTime} and start_time <![CDATA[ <= ]]> #{endTime}
         </if>
         order by end_time desc limit 1
@@ -251,5 +251,29 @@
         select count(0)
         from t_ds_process_instance
         where state = 1
+    </select>
+
+    <select id="queryRunningProcessInstanceIdsByFuzzySearch" resultType="int">
+        select
+            a.id
+        from
+        t_ds_process_instance a
+        join t_ds_process_definition b on b.code = a.process_definition_code and b.version = a.process_definition_version
+        join t_ds_project c on c.code = b.project_code
+        where 1=1
+        <if test="startTime != null and endTime != null ">
+            and start_time <![CDATA[ >= ]]> #{startTime} and start_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+        and a.state IN
+        <foreach collection="states" item="i" index="index" open="(" separator="," close=")">
+             #{i}
+        </foreach>
+
+        <if test="projectName != null and projectName != ''">
+            and c.name like concat('%', #{projectName}, '%')
+        </if>
+        <if test="processDefinitionName != null and processDefinitionName != ''">
+            and b.name like concat('%', #{processDefinitionName}, '%')
+        </if>
     </select>
 </mapper>

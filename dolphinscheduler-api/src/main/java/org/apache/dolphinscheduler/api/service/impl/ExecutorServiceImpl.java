@@ -28,11 +28,25 @@ import org.apache.dolphinscheduler.api.service.ExecutorService;
 import org.apache.dolphinscheduler.api.service.MonitorService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
 import org.apache.dolphinscheduler.common.Constants;
-import org.apache.dolphinscheduler.common.enums.*;
+import org.apache.dolphinscheduler.common.enums.CommandType;
+import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
+import org.apache.dolphinscheduler.common.enums.FailureStrategy;
+import org.apache.dolphinscheduler.common.enums.Priority;
+import org.apache.dolphinscheduler.common.enums.ReleaseState;
+import org.apache.dolphinscheduler.common.enums.RunMode;
+import org.apache.dolphinscheduler.common.enums.TaskDependType;
+import org.apache.dolphinscheduler.common.enums.UserType;
+import org.apache.dolphinscheduler.common.enums.WarningType;
 import org.apache.dolphinscheduler.common.model.Server;
 import org.apache.dolphinscheduler.common.utils.DateUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
-import org.apache.dolphinscheduler.dao.entity.*;
+import org.apache.dolphinscheduler.dao.entity.Command;
+import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
+import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
+import org.apache.dolphinscheduler.dao.entity.Project;
+import org.apache.dolphinscheduler.dao.entity.Schedule;
+import org.apache.dolphinscheduler.dao.entity.Tenant;
+import org.apache.dolphinscheduler.dao.entity.User;
 import org.apache.dolphinscheduler.dao.mapper.ProcessDefinitionMapper;
 import org.apache.dolphinscheduler.dao.mapper.ProcessInstanceMapper;
 import org.apache.dolphinscheduler.dao.mapper.ProjectMapper;
@@ -45,9 +59,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import static org.apache.dolphinscheduler.common.Constants.*;
+import static org.apache.dolphinscheduler.common.Constants.CMDPARAM_COMPLEMENT_DATA_END_DATE;
+import static org.apache.dolphinscheduler.common.Constants.CMDPARAM_COMPLEMENT_DATA_START_DATE;
+import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_RECOVER_PROCESS_ID_STRING;
+import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_START_NODES;
+import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_START_PARAMS;
+import static org.apache.dolphinscheduler.common.Constants.COMMA;
+import static org.apache.dolphinscheduler.common.Constants.MAX_TASK_TIMEOUT;
 
 /**
  * executor service impl
@@ -221,7 +247,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     @Override
     public Map<String, Object> execute(User loginUser, long projectCode, Integer processInstanceId, ExecuteType executeType) {
         Map<String, Object> result = null;
-        if (!(projectCode == 0 && loginUser.getUserType().equals(UserType.ADMIN_USER))) {
+        if (!(projectCode == 0 && isAdmin(loginUser))) {
             Project project = projectMapper.queryByCode(projectCode);
             //check user access for project
             result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
@@ -649,5 +675,60 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         }
         logger.info("create complement command count: {}", createCount);
         return createCount;
+    }
+
+    public Map<String, Object> batchExecuteProcessInstance(User loginUser, ExecuteType executeType, String scheduleTime, String projectName, String processDefinitionName) {
+        Map<String, Object> result = new HashMap<>();
+        if (!isAdmin(loginUser)) {
+            putMsg(result, Status.USER_NO_OPERATION_PERM);
+            return result;
+        }
+        Date startDate = null;
+        Date endDate = null;
+
+        if (StringUtils.isNotEmpty(scheduleTime)) {
+            String[] scheduleTimes = scheduleTime.split(COMMA);
+            startDate = DateUtils.getScheduleDate(scheduleTimes[0]);
+            endDate = DateUtils.getScheduleDate(scheduleTimes[1]);
+            if (startDate == null || endDate == null) {
+                putMsg(result, Status.REQUEST_PARAMS_NOT_VALID_ERROR, "scheduleTime");
+                return result;
+            }
+        }
+
+        List<Integer> states = new ArrayList<>();
+        if (executeType.equals(ExecuteType.REPEAT_RUNNING)) {
+            states.add(ExecutionStatus.FAILURE.ordinal());
+            states.add(ExecutionStatus.KILL.ordinal());
+            states.add(ExecutionStatus.STOP.ordinal());
+        } else if (executeType.equals(ExecuteType.STOP)) {
+            states.add(ExecutionStatus.RUNNING_EXECUTION.ordinal());
+        } else {
+            putMsg(result, Status.REQUEST_PARAMS_NOT_VALID_ERROR, "executeType");
+            return result;
+        }
+
+        List<Integer> runningProcessInstanceIdList = processInstanceMapper.queryRunningProcessInstanceIdsByFuzzySearch(
+                startDate, endDate, projectName, processDefinitionName, states);
+        if (runningProcessInstanceIdList.isEmpty()) {
+            putMsg(result, Status.NO_ELIGIBLE_PROCESS_INSTANCE);
+            return result;
+        }
+
+        List<String> startFailedProcessInstanceIdList = new ArrayList<>();
+        for (Integer processInstanceId : runningProcessInstanceIdList) {
+            result = execute(loginUser, 0, processInstanceId, executeType);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                startFailedProcessInstanceIdList.add(String.valueOf(processInstanceId));
+            }
+        }
+
+        if (!startFailedProcessInstanceIdList.isEmpty()) {
+            putMsg(result, Status.BATCH_EXECUTE_PROCESS_INSTANCE_ERROR_DETAIL, String.join(Constants.COMMA, startFailedProcessInstanceIdList));
+        } else {
+            putMsg(result, Status.SUCCESS);
+        }
+
+        return result;
     }
 }

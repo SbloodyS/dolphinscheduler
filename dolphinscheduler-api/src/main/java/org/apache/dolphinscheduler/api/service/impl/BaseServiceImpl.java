@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

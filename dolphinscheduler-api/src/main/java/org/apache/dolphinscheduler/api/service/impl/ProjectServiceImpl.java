@@ -169,7 +169,7 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
             if (projectCode != 0) {
                 putMsg(result, Status.PROJECT_NOT_FOUNT, projectCode);
             } else {
-                putMsg(result, Status.USER_NO_OPERATION_PROJECT_PERM, "", "");
+                putMsg(result, Status.USER_NO_OPERATION_PROJECT_PERM,loginUser.getUserName(), projectCode);
             }
         } else if (!checkReadPermission(loginUser, project)) {
             // check read permission

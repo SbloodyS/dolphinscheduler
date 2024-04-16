@@ -18,7 +18,7 @@
   <m-list-construction :title="$t('Project')">
     <template slot="conditions">
       <m-conditions @on-conditions="_onConditions">
-        <template slot="button-group">
+        <template slot="button-group" v-if="isAdmin">
           <el-button size="mini" @click="_create('')">{{ $t('Create Project') }}</el-button>
           <el-dialog
             :title="item ? $t('Edit') : $t('Create Project')"
@@ -64,6 +64,7 @@
   import listUrlParamHandle from '@/module/mixin/listUrlParamHandle'
   import mConditions from '@/module/components/conditions/conditions'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
+  import permissions from '../../../../../../module/permissions'
 
   export default {
     name: 'projects-list',
@@ -78,7 +79,8 @@
           searchVal: ''
         },
         createProjectDialog: false,
-        item: {}
+        item: {},
+        isAdmin: permissions.getAuth()
       }
     },
     mixins: [listUrlParamHandle],

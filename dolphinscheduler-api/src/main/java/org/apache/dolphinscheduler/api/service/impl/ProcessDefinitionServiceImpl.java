@@ -687,8 +687,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             Map<String, Object> checkResult = projectService.checkProjectAndAuth(loginUser, project, projectCode);
             Status resultStatus = (Status) checkResult.get(Constants.STATUS);
             if (resultStatus != Status.SUCCESS) {
-                putMsg(result, resultStatus);
-                return result;
+                return checkResult;
             }
         }
 

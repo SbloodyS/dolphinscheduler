@@ -46,7 +46,7 @@ public enum Status {
     DATASOURCE_EXIST(10015, "data source name already exists", "数据源名称已存在"),
     DATASOURCE_CONNECT_FAILED(10016, "data source connection failed", "建立数据源连接失败"),
     TENANT_NOT_EXIST(10017, "tenant not exists", "租户不存在"),
-    PROJECT_NOT_FOUNT(10018, "project {0} not found ", "项目[{0}]不存在"),
+    PROJECT_NOT_FOUNT(10018, "project {0} not found", "项目[{0}]不存在"),
     PROJECT_ALREADY_EXISTS(10019, "project {0} already exists", "项目名称[{0}]已存在"),
     TASK_INSTANCE_NOT_EXISTS(10020, "task instance {0} does not exist", "任务实例[{0}]不存在"),
     TASK_INSTANCE_NOT_SUB_WORKFLOW_INSTANCE(10021, "task instance {0} is not sub process instance", "任务实例[{0}]不是子流程实例"),
@@ -233,7 +233,7 @@ public enum Status {
     RESOURCE_IS_AUTHORIZED(20017, "resource is authorized to user {0},suffix not allowed to be modified", "资源文件已授权其他用户[{0}],后缀不允许修改"),
 
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
-    USER_NO_OPERATION_PROJECT_PERM(30002, "user {0} is not has project {1} permission", "当前用户[{0}]没有[{1}]项目的操作权限"),
+    USER_NO_OPERATION_PROJECT_PERM(30002, "user {0} is not has project {1} permission", "当前用户{0}没有{1}项目的操作权限"),
 
 
     PROCESS_INSTANCE_NOT_EXIST(50001, "process instance {0} does not exist", "工作流实例[{0}]不存在"),
@@ -354,7 +354,11 @@ public enum Status {
             "您不能修改工作组选项，因为该工作组 [{0}] 和 该环境 [{1}] 已经被用在任务 [{2}] 中"),
     NOT_ALLOW_TO_DISABLE_OWN_ACCOUNT(130020, "Not allow to disable your own account", "不能停用自己的账号"),
     VERIFY_PARAMETER_NAME_FAILED(1300009, "The file name verify failed", "文件命名校验失败"),
-    TENANT_FULL_NAME_TOO_LONG_ERROR(1300016, "tenant's fullname is too long error", "租户名过长");
+    TENANT_FULL_NAME_TOO_LONG_ERROR(1300016, "tenant's fullname is too long error", "租户名过长"),
+    BATCH_EXECUTE_PROCESS_INSTANCE_ERROR(1300017, "batch execute process instance error", "批量操作工作流实例错误"),
+    NO_ELIGIBLE_PROCESS_INSTANCE(1300018, "no running process instance", "没有符合条件的工作流实例"),
+    BATCH_EXECUTE_PROCESS_INSTANCE_ERROR_DETAIL(1300019, "batch execute process instance error: {0}", "批量操作工作流实例错误: {0}"),
+    ;
 
 
     private final int code;

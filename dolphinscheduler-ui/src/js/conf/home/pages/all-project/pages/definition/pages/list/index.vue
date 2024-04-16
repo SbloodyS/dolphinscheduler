@@ -19,6 +19,17 @@
     <m-list-construction :title="$t('Process definition')">
       <template slot="conditions">
         <m-conditions @on-conditions="_onConditions">
+          <template slot="button-group" v-if="isAdmin">
+<!--            <el-button size="mini"  @click="_batchExecuteProcessInstance">{{ '批量启动工作流' }}</el-button>-->
+            <el-button size="mini" @click="_batchExecuteProcessInstance">{{'批量操作工作流实例'}}</el-button>
+            <el-dialog
+              :title="'批量操作工作流实例'"
+              v-if="batchExecuteProcessInstanceDialog"
+              :visible.sync="batchExecuteProcessInstanceDialog"
+              width="auto">
+              <m-batch-execute-process-instance :item="item" @_onUpdate="_onUpdate" @closeBatchExecuteProcessInstanceDialog="closeBatchExecuteProcessInstanceDialog"></m-batch-execute-process-instance>
+            </el-dialog>
+          </template>
         </m-conditions>
       </template>
       <template slot="content">
@@ -56,6 +67,8 @@
   import mConditions from '@/module/components/conditions/conditions'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   import { findComponentDownward } from '@/module/util/'
+  import mBatchExecuteProcessInstance from './_source/batchExecuteProcessInstance'
+  import permissions from '../../../../../../../../module/permissions'
 
   export default {
     name: 'all-project-definition-list',
@@ -70,7 +83,9 @@
           searchVal: '',
           userId: ''
         },
-        isLeft: true
+        isLeft: true,
+        batchExecuteProcessInstanceDialog: false,
+        isAdmin: permissions.getAuth()
       }
     },
     mixins: [listUrlParamHandle],
@@ -130,6 +145,12 @@
         this.searchParams.pageNo = 1
         this.searchParams.searchVal = ''
         this._debounceGET()
+      },
+      _batchExecuteProcessInstance () {
+        this.batchExecuteProcessInstanceDialog = true
+      },
+      closeBatchExecuteProcessInstanceDialog () {
+        this.batchExecuteProcessInstanceDialog = false
       }
     },
     watch: {
@@ -147,7 +168,7 @@
     beforeDestroy () {
       sessionStorage.setItem('isLeft', 1)
     },
-    components: { mList, mConditions, mSpin, mListConstruction, mNoData }
+    components: { mBatchExecuteProcessInstance, mList, mConditions, mSpin, mListConstruction, mNoData }
   }
 </script>
 

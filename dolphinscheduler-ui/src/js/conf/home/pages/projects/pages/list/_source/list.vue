@@ -47,7 +47,7 @@
             <span>{{scope.row.updateTime | formatDate}}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Operation')" width="150">
+        <el-table-column :label="$t('Operation')" width="150" v-if="isAdmin">
           <template slot-scope="scope">
             <el-tooltip :content="$t('Edit')" placement="top" :enterable="false">
               <span><el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="_edit(scope.row)" circle></el-button></span>
@@ -74,12 +74,14 @@
   import { mapActions, mapMutations } from 'vuex'
   import localStore from '@/module/util/localStorage'
   import { findComponentDownward } from '@/module/util/'
+  import permissions from '../../../../../../../module/permissions'
 
   export default {
     name: 'projects-list',
     data () {
       return {
-        list: []
+        list: [],
+        isAdmin: permissions.getAuth()
       }
     },
     props: {

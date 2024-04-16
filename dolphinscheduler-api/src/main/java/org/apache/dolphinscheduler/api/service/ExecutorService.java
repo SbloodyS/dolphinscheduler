@@ -93,4 +93,6 @@ public interface ExecutorService {
      * @return check result code
      */
     Map<String, Object> startCheckByProcessDefinedCode(long processDefinitionCode);
+
+    Map<String, Object> batchExecuteProcessInstance(User loginUser, ExecuteType executeType, String scheduleTime, String projectName, String processDefinitionName);
 }

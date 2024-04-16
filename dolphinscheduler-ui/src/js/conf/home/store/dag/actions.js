@@ -530,6 +530,15 @@ export default {
       })
     })
   },
+  batchExecuteProcessInstance ({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      io.post(`projects/${state.projectCode}/executors/batch-execute-process-instance`, payload, res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
   /**
    * View log
    */
