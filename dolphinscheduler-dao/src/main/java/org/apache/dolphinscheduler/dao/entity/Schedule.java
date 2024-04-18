@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.dao.entity;
 
+import lombok.Data;
 import org.apache.dolphinscheduler.common.enums.FailureStrategy;
 import org.apache.dolphinscheduler.common.enums.Priority;
 import org.apache.dolphinscheduler.common.enums.ReleaseState;
@@ -35,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  *
  */
 @TableName("t_ds_schedules")
+@Data
 public class Schedule {
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -56,6 +58,9 @@ public class Schedule {
      */
     @TableField(exist = false)
     private String projectName;
+
+    @TableField(exist = false)
+    private Long projectCode;
 
     /**
      * schedule description

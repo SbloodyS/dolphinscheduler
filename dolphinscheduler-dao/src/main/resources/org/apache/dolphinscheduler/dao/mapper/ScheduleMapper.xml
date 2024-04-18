@@ -29,7 +29,7 @@
         ${alias}.update_time
     </sql>
     <select id="queryByProcessDefineCodePaging" resultType="org.apache.dolphinscheduler.dao.entity.Schedule">
-        select p_f.name as process_definition_name, p.name as project_name,u.user_name,
+        select p_f.name as process_definition_name, p.name as project_name,u.user_name, p.code as project_code,
         <include refid="baseSqlV2">
             <property name="alias" value="s"/>
         </include>
