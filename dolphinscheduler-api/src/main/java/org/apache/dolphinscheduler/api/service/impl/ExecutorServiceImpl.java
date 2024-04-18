@@ -109,22 +109,22 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     /**
      * execute process instance
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param processDefinitionCode process definition code
-     * @param cronTime cron time
-     * @param commandType command type
-     * @param failureStrategy failure strategy
-     * @param startNodeList start nodelist
-     * @param taskDependType node dependency type
-     * @param warningType warning type
-     * @param warningGroupId notify group id
-     * @param processInstancePriority process instance priority
-     * @param workerGroup worker group name
-     * @param environmentCode environment code
-     * @param runMode run mode
-     * @param timeout timeout
-     * @param startParams the global param values which pass to new process instance
+     * @param loginUser                 login user
+     * @param projectCode               project code
+     * @param processDefinitionCode     process definition code
+     * @param cronTime                  cron time
+     * @param commandType               command type
+     * @param failureStrategy           failure strategy
+     * @param startNodeList             start nodelist
+     * @param taskDependType            node dependency type
+     * @param warningType               warning type
+     * @param warningGroupId            notify group id
+     * @param processInstancePriority   process instance priority
+     * @param workerGroup               worker group name
+     * @param environmentCode           environment code
+     * @param runMode                   run mode
+     * @param timeout                   timeout
+     * @param startParams               the global param values which pass to new process instance
      * @param expectedParallelismNumber the expected parallelism number when execute complement in parallel mode
      * @return execute process instance code
      */
@@ -134,7 +134,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
                                                    FailureStrategy failureStrategy, String startNodeList,
                                                    TaskDependType taskDependType, WarningType warningType, int warningGroupId,
                                                    RunMode runMode,
-                                                   Priority processInstancePriority, String workerGroup, Long environmentCode,Integer timeout,
+                                                   Priority processInstancePriority, String workerGroup, Long environmentCode, Integer timeout,
                                                    Map<String, String> startParams, Integer expectedParallelismNumber,
                                                    int dryRun) {
         Map<String, Object> result = new HashMap<>();
@@ -215,7 +215,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     /**
      * check whether the process definition can be executed
      *
-     * @param projectCode project code
+     * @param projectCode       project code
      * @param processDefinition process definition
      * @param processDefineCode process definition code
      * @return check result code
@@ -238,10 +238,10 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     /**
      * do action to process instance：pause, stop, repeat, recover from pause, recover from stop
      *
-     * @param loginUser login user
-     * @param projectCode project code
+     * @param loginUser         login user
+     * @param projectCode       project code
      * @param processInstanceId process instance id
-     * @param executeType execute type
+     * @param executeType       execute type
      * @return execute result code
      */
     @Override
@@ -287,7 +287,8 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         }
 
         //get the startParams user specified at the first starting while repeat running is needed
-        Map<String, Object> commandMap = JSONUtils.parseObject(processInstance.getCommandParam(), new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> commandMap = JSONUtils.parseObject(processInstance.getCommandParam(), new TypeReference<Map<String, Object>>() {
+        });
         String startParams = null;
         if (MapUtils.isNotEmpty(commandMap) && executeType == ExecuteType.REPEAT_RUNNING) {
             Object startParamsJson = commandMap.get(Constants.CMD_PARAM_START_PARAMS);
@@ -345,7 +346,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
      * Check the state of process instance and the type of operation match
      *
      * @param processInstance process instance
-     * @param executeType execute type
+     * @param executeType     execute type
      * @return check result code
      */
     private Map<String, Object> checkExecuteType(ProcessInstance processInstance, ExecuteType executeType) {
@@ -390,7 +391,7 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
      * prepare to update process instance command type and status
      *
      * @param processInstance process instance
-     * @param commandType command type
+     * @param commandType     command type
      * @param executionStatus execute status
      * @return update result
      */
@@ -421,11 +422,11 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     /**
      * insert command, used in the implementation of the page, re run, recovery (pause / failure) execution
      *
-     * @param loginUser           login user
-     * @param instanceId          instance id
+     * @param loginUser             login user
+     * @param instanceId            instance id
      * @param processDefinitionCode process definition code
      * @param processVersion
-     * @param commandType         command type
+     * @param commandType           command type
      * @return insert result code
      */
     private Map<String, Object> insertCommand(User loginUser, Integer instanceId, long processDefinitionCode, int processVersion, CommandType commandType, String startParams) {
@@ -505,19 +506,19 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
     /**
      * create command
      *
-     * @param commandType commandType
-     * @param processDefineCode processDefineCode
-     * @param nodeDep nodeDep
-     * @param failureStrategy failureStrategy
-     * @param startNodeList startNodeList
-     * @param schedule schedule
-     * @param warningType warningType
-     * @param executorId executorId
-     * @param warningGroupId warningGroupId
-     * @param runMode runMode
+     * @param commandType             commandType
+     * @param processDefineCode       processDefineCode
+     * @param nodeDep                 nodeDep
+     * @param failureStrategy         failureStrategy
+     * @param startNodeList           startNodeList
+     * @param schedule                schedule
+     * @param warningType             warningType
+     * @param executorId              executorId
+     * @param warningGroupId          warningGroupId
+     * @param runMode                 runMode
      * @param processInstancePriority processInstancePriority
-     * @param workerGroup workerGroup
-     * @param environmentCode environmentCode
+     * @param workerGroup             workerGroup
+     * @param environmentCode         environmentCode
      * @return command id
      */
     private int createCommand(CommandType commandType, long processDefineCode,
@@ -730,5 +731,26 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         }
 
         return result;
+    }
+
+    public Map<String, Object> batchStartProcessInstanceAllProject(User loginUser, long processDefinitionCode, String cronTime, CommandType commandType,
+                                                                   FailureStrategy failureStrategy, WarningType warningType, int warningGroupId,
+                                                                   RunMode runMode, Priority processInstancePriority, String workerGroup,
+                                                                   Long environmentCode, Integer timeout,
+                                                                   Integer expectedParallelismNumber,
+                                                                   int dryRun, String projectName, String processDefinitionName) {
+        Map<String, Object> result = new HashMap<>();
+        if (!isAdmin(loginUser)) {
+            putMsg(result, Status.USER_NO_OPERATION_PERM);
+            return result;
+        }
+
+        List<Long> processDefinitionCodes = processDefinitionMapper.queryProcessDefinitionCodesByFuzzySearch(projectName, processDefinitionName);
+        if (processDefinitionCodes.isEmpty()) {
+            putMsg(result, Status.NO_ELIGIBLE_PROCESS_INSTANCE);
+            return result;
+        }
+
+        return null;
     }
 }

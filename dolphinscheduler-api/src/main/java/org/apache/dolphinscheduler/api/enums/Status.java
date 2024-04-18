@@ -358,6 +358,7 @@ public enum Status {
     BATCH_EXECUTE_PROCESS_INSTANCE_ERROR(1300017, "batch execute process instance error", "批量操作工作流实例错误"),
     NO_ELIGIBLE_PROCESS_INSTANCE(1300018, "no running process instance", "没有符合条件的工作流实例"),
     BATCH_EXECUTE_PROCESS_INSTANCE_ERROR_DETAIL(1300019, "batch execute process instance error: {0}", "批量操作工作流实例错误: {0}"),
+    NO_ELIGIBLE_PROCESS_DEFINITION(1300020, "no running process definition", "没有符合条件的工作流定义"),
     ;
 
 
