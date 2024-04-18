@@ -539,6 +539,15 @@ export default {
       })
     })
   },
+  batchStartProcessDefinition ({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      io.post(`projects/${state.projectCode}/executors/batch-start-process-instance-all-project`, payload, res => {
+        resolve(res)
+      }).catch(e => {
+        reject(e)
+      })
+    })
+  },
   /**
    * View log
    */

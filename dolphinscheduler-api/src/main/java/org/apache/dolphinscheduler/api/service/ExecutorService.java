@@ -95,4 +95,11 @@ public interface ExecutorService {
     Map<String, Object> startCheckByProcessDefinedCode(long processDefinitionCode);
 
     Map<String, Object> batchExecuteProcessInstance(User loginUser, ExecuteType executeType, String scheduleTime, String projectName, String processDefinitionName);
+
+    Map<String, Object> batchStartProcessInstanceAllProject(User loginUser, String cronTime,
+                                                            FailureStrategy failureStrategy, WarningType warningType, int warningGroupId,
+                                                            RunMode runMode, Priority processInstancePriority, String workerGroup,
+                                                            Long environmentCode, Integer timeout,
+                                                            Integer expectedParallelismNumber, int dryRun,
+                                                            CommandType execType, String projectName, String processDefinitionName);
 }

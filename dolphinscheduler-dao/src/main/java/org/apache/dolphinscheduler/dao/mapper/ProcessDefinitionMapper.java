@@ -17,23 +17,20 @@
 
 package org.apache.dolphinscheduler.dao.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.dolphinscheduler.dao.entity.DefinitionGroupByUser;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
-
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionForDependent;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * process definition mapper interface
@@ -77,7 +74,7 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
      * verify process definition by name
      *
      * @param projectCode projectCode
-     * @param name name
+     * @param name        name
      * @return process definition
      */
     ProcessDefinition verifyByDefineName(@Param("projectCode") long projectCode,
@@ -87,7 +84,7 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
      * query process definition by name
      *
      * @param projectCode projectCode
-     * @param name name
+     * @param name        name
      * @return process definition
      */
     ProcessDefinition queryByDefineName(@Param("projectCode") long projectCode,
@@ -104,11 +101,11 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
     /**
      * process definition page
      *
-     * @param page page
-     * @param searchVal searchVal
-     * @param userId userId
+     * @param page        page
+     * @param searchVal   searchVal
+     * @param userId      userId
      * @param projectCode projectCode
-     * @param isAdmin isAdmin
+     * @param isAdmin     isAdmin
      * @return process definition IPage
      */
     IPage<ProcessDefinition> queryDefineListPaging(IPage<ProcessDefinition> page,
@@ -152,9 +149,9 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
     /**
      * count process definition group by user
      *
-     * @param userId userId
+     * @param userId       userId
      * @param projectCodes projectCodes
-     * @param isAdmin isAdmin
+     * @param isAdmin      isAdmin
      * @return process definition list
      */
     List<DefinitionGroupByUser> countDefinitionGroupByUser(
@@ -184,4 +181,7 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
      * @return project ids list
      */
     List<Integer> listProjectIds();
+
+    List<Long> queryProcessDefinitionCodesByFuzzySearch(@Param("projectName") String projectName,
+                                                        @Param("processDefinitionName") String processDefinitionName);
 }

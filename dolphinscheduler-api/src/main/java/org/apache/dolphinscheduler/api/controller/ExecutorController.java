@@ -297,4 +297,35 @@ public class ExecutorController extends BaseController {
         Map<String, Object> result = execService.batchExecuteProcessInstance(loginUser, executeType, scheduleTime, projectName, processDefinitionName);
         return returnDataList(result);
     }
+
+    @PostMapping(value = "batch-start-process-instance-all-project")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(BATCH_EXECUTE_PROCESS_INSTANCE_ERROR)
+    @AccessLogAnnotation(ignoreRequestArgs = "loginUser")
+    public Result batchStartProcessInstanceAllProject(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                                                      @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode,
+                                                      @RequestParam(value = "scheduleTime", required = false) String scheduleTime,
+                                                      @RequestParam(value = "failureStrategy") FailureStrategy failureStrategy,
+                                                      @RequestParam(value = "warningType") WarningType warningType,
+                                                      @RequestParam(value = "warningGroupId", required = false) int warningGroupId,
+                                                      @RequestParam(value = "runMode", required = false) RunMode runMode,
+                                                      @RequestParam(value = "processInstancePriority", required = false) Priority processInstancePriority,
+                                                      @RequestParam(value = "workerGroup", required = false, defaultValue = "default") String workerGroup,
+                                                      @RequestParam(value = "environmentCode", required = false, defaultValue = "-1") Long environmentCode,
+                                                      @RequestParam(value = "timeout", required = false) Integer timeout,
+                                                      @RequestParam(value = "startParams", required = false) String startParams,
+                                                      @RequestParam(value = "expectedParallelismNumber", required = false) Integer expectedParallelismNumber,
+                                                      @RequestParam(value = "dryRun", defaultValue = "0", required = false) int dryRun,
+                                                      @RequestParam(value = "execType", required = false) CommandType execType,
+                                                      @RequestParam(value = "projectName", required = false) String projectName,
+                                                      @RequestParam(value = "processDefinitionName", required = false) String processDefinitionName) {
+        if (timeout == null) {
+            timeout = Constants.MAX_TASK_TIMEOUT;
+        }
+
+        Map<String, Object> result = execService.batchStartProcessInstanceAllProject(loginUser, scheduleTime, failureStrategy, warningType, warningGroupId,
+                runMode, processInstancePriority, workerGroup, environmentCode, timeout, expectedParallelismNumber,
+                dryRun, execType, projectName, processDefinitionName);
+        return returnDataList(result);
+    }
 }

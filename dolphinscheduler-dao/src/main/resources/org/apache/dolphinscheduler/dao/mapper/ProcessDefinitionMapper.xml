@@ -180,4 +180,20 @@
         SELECT DISTINCT(id) as project_id
         FROM t_ds_project
     </select>
+
+    <select id="queryProcessDefinitionCodesByFuzzySearch" resultType="java.lang.Long">
+        SELECT
+            a.code
+        FROM
+        t_ds_process_definition a
+        JOIN t_ds_project b ON b.code = a.project_code
+        WHERE 1=1
+        AND a.release_state = 1
+        <if test="projectName != null and projectName != ''">
+            and b.name like concat('%', #{projectName}, '%')
+        </if>
+        <if test="processDefinitionName != null and processDefinitionName != ''">
+            and a.name like concat('%', #{processDefinitionName}, '%')
+        </if>
+    </select>
 </mapper>
