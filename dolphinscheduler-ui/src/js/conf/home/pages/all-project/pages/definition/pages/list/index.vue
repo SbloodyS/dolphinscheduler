@@ -20,12 +20,21 @@
       <template slot="conditions">
         <m-conditions @on-conditions="_onConditions">
           <template slot="button-group" v-if="isAdmin">
-<!--            <el-button size="mini"  @click="_batchExecuteProcessInstance">{{ '批量启动工作流' }}</el-button>-->
+            <el-button size="mini"  @click="_batchStartProcessDefinition">{{ '批量启动工作流定义' }}</el-button>
+            <el-dialog
+              :title="'批量启动工作流定义'"
+              v-if="batchStartProcessDefinitionDialog"
+              :visible.sync="batchStartProcessDefinitionDialog"
+              :close-on-click-modal="false"
+              width="auto">
+              <m-batch-start-process-definition :item="item" @_onUpdate="_onUpdate" @closeBatchStartProcessDefinitionDialog="closeBatchStartProcessDefinitionDialog"></m-batch-start-process-definition>
+            </el-dialog>
             <el-button size="mini" @click="_batchExecuteProcessInstance">{{'批量操作工作流实例'}}</el-button>
             <el-dialog
               :title="'批量操作工作流实例'"
               v-if="batchExecuteProcessInstanceDialog"
               :visible.sync="batchExecuteProcessInstanceDialog"
+              :close-on-click-modal="false"
               width="auto">
               <m-batch-execute-process-instance :item="item" @_onUpdate="_onUpdate" @closeBatchExecuteProcessInstanceDialog="closeBatchExecuteProcessInstanceDialog"></m-batch-execute-process-instance>
             </el-dialog>
@@ -68,6 +77,7 @@
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
   import { findComponentDownward } from '@/module/util/'
   import mBatchExecuteProcessInstance from './_source/batchExecuteProcessInstance'
+  import mBatchStartProcessDefinition from './_source/batchStartProcessDefinition'
   import permissions from '../../../../../../../../module/permissions'
 
   export default {
@@ -84,6 +94,7 @@
           userId: ''
         },
         isLeft: true,
+        batchStartProcessDefinitionDialog: false,
         batchExecuteProcessInstanceDialog: false,
         isAdmin: permissions.getAuth()
       }
@@ -146,6 +157,12 @@
         this.searchParams.searchVal = ''
         this._debounceGET()
       },
+      _batchStartProcessDefinition () {
+        this.batchStartProcessDefinitionDialog = true
+      },
+      closeBatchStartProcessDefinitionDialog () {
+        this.batchStartProcessDefinitionDialog = false
+      },
       _batchExecuteProcessInstance () {
         this.batchExecuteProcessInstanceDialog = true
       },
@@ -168,7 +185,7 @@
     beforeDestroy () {
       sessionStorage.setItem('isLeft', 1)
     },
-    components: { mBatchExecuteProcessInstance, mList, mConditions, mSpin, mListConstruction, mNoData }
+    components: { mBatchExecuteProcessInstance, mBatchStartProcessDefinition, mList, mConditions, mSpin, mListConstruction, mNoData }
   }
 </script>
 

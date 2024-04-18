@@ -306,7 +306,6 @@ public class ExecutorController extends BaseController {
                                                       @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode,
                                                       @RequestParam(value = "scheduleTime", required = false) String scheduleTime,
                                                       @RequestParam(value = "failureStrategy") FailureStrategy failureStrategy,
-                                                      @RequestParam(value = "execType", required = false) CommandType execType,
                                                       @RequestParam(value = "warningType") WarningType warningType,
                                                       @RequestParam(value = "warningGroupId", required = false) int warningGroupId,
                                                       @RequestParam(value = "runMode", required = false) RunMode runMode,
@@ -317,12 +316,16 @@ public class ExecutorController extends BaseController {
                                                       @RequestParam(value = "startParams", required = false) String startParams,
                                                       @RequestParam(value = "expectedParallelismNumber", required = false) Integer expectedParallelismNumber,
                                                       @RequestParam(value = "dryRun", defaultValue = "0", required = false) int dryRun,
+                                                      @RequestParam(value = "execType", required = false) CommandType execType,
                                                       @RequestParam(value = "projectName", required = false) String projectName,
                                                       @RequestParam(value = "processDefinitionName", required = false) String processDefinitionName) {
-        Map<String, Object> result = execService.batchStartProcessInstanceAllProject(loginUser, projectCode,
-                scheduleTime, execType, failureStrategy, warningType, warningGroupId,
+        if (timeout == null) {
+            timeout = Constants.MAX_TASK_TIMEOUT;
+        }
+
+        Map<String, Object> result = execService.batchStartProcessInstanceAllProject(loginUser, scheduleTime, failureStrategy, warningType, warningGroupId,
                 runMode, processInstancePriority, workerGroup, environmentCode, timeout, expectedParallelismNumber,
-                dryRun, projectName, processDefinitionName);
+                dryRun, execType, projectName, processDefinitionName);
         return returnDataList(result);
     }
 }

@@ -18,9 +18,31 @@
   <div class="start-process-model">
     <div class="clearfix list">
       <div class="text">
-        {{$t('Process Name')}}
+        {{ '项目名称' }}
       </div>
-      <div style="line-height: 32px;">{{workflowName}}</div>
+      <div class="cont">
+        <el-input
+          type="text"
+          size="small"
+          v-model.trim="projectName"
+          style="width: 250px;"
+          :placeholder="'请输入项目名称'">
+        </el-input>
+      </div>
+    </div>
+    <div class="clearfix list">
+      <div class="text">
+        {{ '工作流名称' }}
+      </div>
+      <div class="cont">
+        <el-input
+          type="text"
+          size="small"
+          v-model.trim="processDefinitionName"
+          style="width: 250px;"
+          :placeholder="'请输入工作流名称'">
+        </el-input>
+      </div>
     </div>
     <div class="clearfix list">
       <div class="text">
@@ -168,21 +190,6 @@
         </div>
       </div>
     </template>
-<!--    <div class="clearfix list">-->
-<!--      <div class="text">-->
-<!--        <span>{{$t('Startup parameter')}}</span>-->
-<!--      </div>-->
-<!--      <div class="cont" style="width: 688px;">-->
-<!--        <div style="padding-top: 6px;">-->
-<!--          <m-local-params-->
-<!--            ref="refLocalParams"-->
-<!--            @on-local-params="_onLocalParams"-->
-<!--            :udp-list="udpList"-->
-<!--            :hide="false">-->
-<!--          </m-local-params>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
     <div class="clearfix list">
       <span class="text">{{$t('Whether dry-run')}}</span>
       <span class="cont" style="padding-top: 5px;">
@@ -204,12 +211,11 @@
   import mPriority from '@/module/components/priority/priority'
   import mWorkerGroups from '@/conf/home/pages/dag/_source/formModel/_source/workerGroups'
   import mRelatedEnvironment from '@/conf/home/pages/dag/_source/formModel/_source/relatedEnvironment'
-  import mLocalParams from '@/conf/home/pages/dag/_source/formModel/tasks/_source/localParams'
   import disabledState from '@/module/mixin/disabledState'
   import { mapMutations } from 'vuex'
 
   export default {
-    name: 'start-process',
+    name: 'batch-start-process-definition',
     data () {
       return {
         store,
@@ -233,7 +239,9 @@
         // Global custom parameters
         definitionGlobalParams: [],
         udpList: [],
-        dryRun: 0
+        dryRun: 0,
+        projectName: '',
+        processDefinitionName: ''
       }
     },
     mixins: [disabledState],
@@ -285,14 +293,12 @@
           }
         }
         let param = {
-          projectCode: this.startData.projectCode,
-          processDefinitionCode: this.startData.code,
+          projectCode: 0,
           scheduleTime: this.scheduleTime.length && this.scheduleTime.join(',') || '',
           failureStrategy: this.failureStrategy,
           warningType: this.warningType,
           warningGroupId: this.warningGroupId === '' ? 0 : this.warningGroupId,
           execType: this.execType ? 'COMPLEMENT_DATA' : null,
-          startNodeList: this.startNodeList,
           taskDependType: this.taskDependType,
           runMode: this.runMode,
           processInstancePriority: this.processInstancePriority,
@@ -300,15 +306,16 @@
           environmentCode: this.environmentCode,
           startParams: !_.isEmpty(startParams) ? JSON.stringify(startParams) : '',
           expectedParallelismNumber: this.parallismNumber,
-          dryRun: this.dryRun
+          dryRun: this.dryRun,
+          projectName: this.projectName,
+          processDefinitionName: this.processDefinitionName
         }
         // Executed from the specified node
         if (this.sourceType === 'contextmenu') {
           param.taskDependType = this.taskDependType
         }
-        this.store.dispatch('dag/processStart', param).then(res => {
+        this.store.dispatch('dag/batchStartProcessDefinition', param).then(res => {
           this.$message.success(res.msg)
-          this.$emit('onUpdateStart')
           // recovery
           this.udpList = _.cloneDeep(this.definitionGlobalParams)
           setTimeout(() => {
@@ -341,17 +348,12 @@
           })
         }
       },
-      _getGlobalParams () {
-        this.store.dispatch('dag/getProcessDetails', this.startData.code).then(res => {
-          this.definitionGlobalParams = _.cloneDeep(this.store.state.dag.globalParams)
-          this.udpList = _.cloneDeep(this.store.state.dag.globalParams)
-        })
-      },
       ok () {
+        console.log(111)
         this._start()
       },
       close () {
-        this.$emit('closeStart')
+        this.$emit('closeBatchStartProcessDefinitionDialog')
       }
     },
     watch: {
@@ -360,8 +362,6 @@
       }
     },
     created () {
-      this.workflowName = this.startData.name
-      this._getGlobalParams()
       let stateWorkerGroupsList = this.store.state.security.workerGroupsListAll || []
       if (stateWorkerGroupsList.length) {
         this.workerGroup = stateWorkerGroupsList[0].id
@@ -381,10 +381,9 @@
           this.warningGroupId = ''
         })
       })
-      this.workflowName = this.startData.name
     },
     computed: {},
-    components: { mPriority, mWorkerGroups, mLocalParams, mRelatedEnvironment }
+    components: { mPriority, mWorkerGroups, mRelatedEnvironment }
   }
 </script>
 

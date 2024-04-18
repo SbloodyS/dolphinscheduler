@@ -733,12 +733,12 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         return result;
     }
 
-    public Map<String, Object> batchStartProcessInstanceAllProject(User loginUser, long processDefinitionCode, String cronTime, CommandType commandType,
+    public Map<String, Object> batchStartProcessInstanceAllProject(User loginUser, String cronTime,
                                                                    FailureStrategy failureStrategy, WarningType warningType, int warningGroupId,
                                                                    RunMode runMode, Priority processInstancePriority, String workerGroup,
                                                                    Long environmentCode, Integer timeout,
-                                                                   Integer expectedParallelismNumber,
-                                                                   int dryRun, String projectName, String processDefinitionName) {
+                                                                   Integer expectedParallelismNumber, int dryRun,
+                                                                   CommandType execType, String projectName, String processDefinitionName) {
         Map<String, Object> result = new HashMap<>();
         if (!isAdmin(loginUser)) {
             putMsg(result, Status.USER_NO_OPERATION_PERM);
@@ -747,10 +747,25 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
 
         List<Long> processDefinitionCodes = processDefinitionMapper.queryProcessDefinitionCodesByFuzzySearch(projectName, processDefinitionName);
         if (processDefinitionCodes.isEmpty()) {
-            putMsg(result, Status.NO_ELIGIBLE_PROCESS_INSTANCE);
+            putMsg(result, Status.NO_ELIGIBLE_PROCESS_DEFINITION);
             return result;
         }
 
-        return null;
+        List<String> startFailedProcessDefinitionCodeList = new ArrayList<>();
+        for (Long processDefinitionCode : processDefinitionCodes) {
+            result = execProcessInstance(loginUser, 0, processDefinitionCode, cronTime, execType, failureStrategy, null,
+                    TaskDependType.TASK_POST, warningType, warningGroupId, runMode, processInstancePriority, workerGroup, environmentCode, timeout, null, expectedParallelismNumber, dryRun);
+            if (result.get(Constants.STATUS) != Status.SUCCESS) {
+                startFailedProcessDefinitionCodeList.add(String.valueOf(processDefinitionCode));
+            }
+        }
+
+        if (!startFailedProcessDefinitionCodeList.isEmpty()) {
+            putMsg(result, Status.BATCH_EXECUTE_PROCESS_INSTANCE_ERROR_DETAIL, String.join(Constants.COMMA, startFailedProcessDefinitionCodeList));
+        } else {
+            putMsg(result, Status.SUCCESS);
+        }
+
+        return result;
     }
 }
