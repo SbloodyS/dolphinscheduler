@@ -99,6 +99,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
     private String sourceJdbcUtilsQuerySql;
 
+    private String yarnQueue;
+
     /**
      * constructor
      *
@@ -123,7 +125,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
             if (seaTunnelParameters != null && !seaTunnelParameters.checkParameters()) {
                 throw new RuntimeException("seatunnel task params is not valid");
             }
-
+            yarnQueue = String.format("root.query.%s", taskExecutionContext.getTenantCode());
             generateSeaTunnelConfig();
 
             this.sinkBeforeSql = seaTunnelParameters.getSinkBeforeSql();
@@ -430,20 +432,20 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         createSeaTunnelCommandFileIfNotExists(parseScript(JSONUtils.toJsonString(seaTunnelConfig)), seaTunnelConfigFilePath);
 
         if (!StringUtils.isEmpty(beforeHiveSinkCommand) && !StringUtils.isEmpty(afterHiveSinkCommand)) {
-            String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
-                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
+            String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s --queue %s",
+                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName(), yarnQueue);
             return String.format("set -xeuo pipefail\n%s\n%s\n%s",
                     beforeHiveSinkCommand, seatunnelCommand, afterHiveSinkCommand);
         }
 
         if (!StringUtils.isEmpty(beforeHiveSourceCommand)) {
-            String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
-                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
+            String seatunnelCommand = String.format("${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s --queue %s",
+                    seaTunnelConfigFilePath, taskExecutionContext.getTaskName(), yarnQueue);
             return String.format("set -xeuo pipefail\n%s\n%s", beforeHiveSourceCommand, seatunnelCommand);
         }
 
-        return String.format("set -xeuo pipefail\n${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s",
-                seaTunnelConfigFilePath, taskExecutionContext.getTaskName());
+        return String.format("set -xeuo pipefail\n${ST_HOME} --master yarn --deploy-mode cluster --config %s --name %s --queue %s",
+                seaTunnelConfigFilePath, taskExecutionContext.getTaskName(), yarnQueue);
     }
 
     @Override
@@ -468,11 +470,11 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
         beforeHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
                 taskExecutionContext.getTaskName(),
-                "root.query.dmp",
+                yarnQueue,
                 beforeHiveSqlPath);
         afterHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
                 taskExecutionContext.getTaskName(),
-                "root.query.dmp",
+                yarnQueue,
                 afterHiveSqlPath);
     }
 
@@ -486,7 +488,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
         beforeHiveSourceCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
                 taskExecutionContext.getTaskName(),
-                "root.query.dmp",
+                yarnQueue,
                 beforeHiveSourceSqlPath);
     }
 

@@ -59,6 +59,8 @@ public class HiveTask extends AbstractTaskExecutor {
      */
     private TaskRequest taskExecutionContext;
 
+    private String yarnQueue;
+
     /**
      * constructor
      *
@@ -83,6 +85,7 @@ public class HiveTask extends AbstractTaskExecutor {
             throw new RuntimeException("hive task params is not valid");
         }
         taskExecutionContext.setTaskName(taskExecutionContext.getTaskName().trim());
+        yarnQueue = String.format("root.query.%s", taskExecutionContext.getTenantCode());
     }
 
     @Override
@@ -125,8 +128,8 @@ public class HiveTask extends AbstractTaskExecutor {
         return String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf spark.app.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf spark.yarn.queue=%s -f %s",
                 taskExecutionContext.getTaskName(),
                 taskExecutionContext.getTaskName(),
-                String.format("root.query.%s", taskExecutionContext.getTenantCode()),
-                String.format("root.query.%s", taskExecutionContext.getTenantCode()),
+                yarnQueue,
+                yarnQueue,
                 hiveScriptFile);
     }
 
