@@ -20,10 +20,12 @@ package org.apache.dolphinscheduler.plugin.task.seatunnel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.CustomParams;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.ResourceInfo;
 
 import java.util.List;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -35,7 +37,7 @@ public class SeaTunnelParameters extends AbstractParameters {
     private Object source;
     private Object sink;
     private String sinkBeforeSql;
-    private Boolean autoCreateHiveTable;
+    private CustomParams customParams;
 
     @JsonIgnore
     private List<ResourceInfo> resourceList;

@@ -377,7 +377,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 hiveSinkParams.setTargetTable(tmpTable);
 
                 seaTunnelConfig.setSink(Collections.singletonList(hiveSinkParams));
-                generateHiveSinkCommand(originTable, tmpTable, seaTunnelParameters.getAutoCreateHiveTable());
+                generateHiveSinkCommand(originTable, tmpTable, seaTunnelParameters.getCustomParams().getAutoCreateHiveTable(),
+                        seaTunnelParameters.getCustomParams().getSinkHiveTablePartition());
                 break;
             case CLICKHOUSE:
                 ClickHouseSinkParams clickHouseSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ClickHouseSinkParams.class);
@@ -454,14 +455,23 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     }
 
     @SneakyThrows
-    private void generateHiveSinkCommand(String targetTable, String tmpTable, Boolean autoCreateHiveTable) {
+    private void generateHiveSinkCommand(String targetTable, String tmpTable, Boolean autoCreateHiveTable, String sinkHiveTablePartition) {
         String createHiveTableStatement= "";
         if (autoCreateHiveTable) {
             createHiveTableStatement = generateCreateHiveTableStatement(targetTable);
         }
         String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS TEXTFILE AS SELECT * FROM %s WHERE 1=2;", tmpTable, targetTable);
         String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
-        String insertTableStatement = String.format("INSERT OVERWRITE TABLE %s SELECT * FROM %s;", targetTable, tmpTable);
+        String insertTableStatement;
+        if (StringUtils.isEmpty(sinkHiveTablePartition)) {
+            insertTableStatement = String.format("INSERT OVERWRITE TABLE %s SELECT * FROM %s;", targetTable, tmpTable);
+        } else {
+            insertTableStatement = String.format("set hive.exec.dynamic.partition=true;\n" +
+                    "set hive.exec.dynamic.partition.mode=nonstrict;\n" +
+                    "set hive.exec.max.dynamic.partitions=10000;\n" +
+                    "set hive.exec.max.dynamic.partitions.pernode=10000;\n" +
+                    "INSERT OVERWRITE TABLE %s PARTITION(%s) SELECT * FROM %s;", targetTable, sinkHiveTablePartition, tmpTable);
+        }
 
         String beforeHiveSqlPath = String.format("%s/%s_before.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
         String afterHiveSqlPath = String.format("%s/%s_after.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());

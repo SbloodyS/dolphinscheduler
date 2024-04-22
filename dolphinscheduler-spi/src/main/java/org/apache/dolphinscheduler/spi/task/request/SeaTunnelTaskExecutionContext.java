@@ -12,5 +12,5 @@ public class SeaTunnelTaskExecutionContext implements Serializable {
     private Object source;
     private Object sink;
     private String sinkBeforeSql;
-    private Boolean autoCreateHiveTable;
+    private Object customParams;
 }

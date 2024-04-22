@@ -31,18 +31,12 @@ import java.util.List;
 @Data
 public class SeaTunnelParameters extends AbstractParameters {
     private Integer sourceDataSourceId;
-
     private Integer targetDataSourceId;
-
     private Object env;
-
     private Object source;
-
     private Object sink;
-
     private String sinkBeforeSql;
-
-    private Boolean autoCreateHiveTable;
+    private Object customParams;
 
     private List<ResourceInfo> resourceList;
 

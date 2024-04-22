@@ -284,6 +284,18 @@
           </el-input>
         </div>
       </m-list-box>
+      <m-list-box>
+        <div slot="text">{{ '分区键' }}</div>
+        <div slot="content">
+          <el-input
+            :disabled="isDetails"
+            type="text"
+            size="small"
+            v-model.trim="customParams.sinkHiveTablePartition"
+            :placeholder="'请输入Hive表分区键'">
+          </el-input>
+        </div>
+      </m-list-box>
       <template v-if="['mysql', 'sqlserver', 'oracle', 'clickhouse'].includes(sourceDataSourceFormType)">
         <m-list-box>
         <div slot="text">{{ '自动创建Hive表' }}</div>
@@ -463,7 +475,6 @@
         ],
 
         autoCreateHiveTableRadio: 0,
-        autoCreateHiveTable: false,
         sinkBeforeSql: '',
         sourceDataSourceFormType: '',
         targetDataSourceFormType: '',
@@ -476,6 +487,11 @@
         targetDataSourceType: '',
         dataSourceTypeList: [],
         parallelism: 1,
+
+        customParams: {
+          autoCreateHiveTable: false,
+          sinkHiveTablePartition: ''
+        },
 
         sourceHiveParams: {
           table_name: ''
@@ -678,7 +694,7 @@
         requestParams.env = { parallelism: this.parallelism }
         requestParams.sourceDataSourceId = this.sourceDataSourceId
         requestParams.targetDataSourceId = this.targetDataSourceId
-        requestParams.autoCreateHiveTable = this.autoCreateHiveTable
+        requestParams.customParams = this.customParams
 
         // storage
         this.$emit('on-params', requestParams)
@@ -706,7 +722,10 @@
         this.keypress = () => {
           if (!editorSource.getOption('readOnly')) {
             editorSource.showHint({
-              completeSingle: false
+              completeSingle: false,
+              extraKeys: {
+                Enter: ''
+              }
             })
           }
         }
@@ -736,7 +755,10 @@
         this.keypress = () => {
           if (!editorSource.getOption('readOnly')) {
             editorSource.showHint({
-              completeSingle: false
+              completeSingle: false,
+              extraKeys: {
+                Enter: ''
+              }
             })
           }
         }
@@ -765,7 +787,10 @@
         this.keypress = () => {
           if (!editorTarget.getOption('readOnly')) {
             editorTarget.showHint({
-              completeSingle: false
+              completeSingle: false,
+              extraKeys: {
+                Enter: ''
+              }
             })
           }
         }
@@ -794,7 +819,10 @@
         this.keypress = () => {
           if (!editorSinkBefore.getOption('readOnly')) {
             editorSinkBefore.showHint({
-              completeSingle: false
+              completeSingle: false,
+              extraKeys: {
+                Enter: ''
+              }
             })
           }
         }
@@ -806,7 +834,7 @@
         return editorSinkBefore
       },
       _handleAutoCreateHiveTable (val) {
-        this.autoCreateHiveTable = val === 1
+        this.customParams.autoCreateHiveTable = val === 1
       },
       dataProcess (backResource) {
         let isResourceId = []
@@ -1056,8 +1084,9 @@
             }, 200)
           } else if (['hive'].includes(this.targetDataSourceType)) {
             this.targetHiveParams.table_name = o.params.sink.table_name || ''
-            this.autoCreateHiveTable = o.params.autoCreateHiveTable || false
-            if (this.autoCreateHiveTable) {
+            this.customParams.autoCreateHiveTable = o.params.customParams.autoCreateHiveTable || false
+            this.customParams.sinkHiveTablePartition = o.params.customParams.sinkHiveTablePartition || ''
+            if (this.customParams.autoCreateHiveTable) {
               this.autoCreateHiveTableRadio = 1
             } else {
               this.autoCreateHiveTableRadio = 0
