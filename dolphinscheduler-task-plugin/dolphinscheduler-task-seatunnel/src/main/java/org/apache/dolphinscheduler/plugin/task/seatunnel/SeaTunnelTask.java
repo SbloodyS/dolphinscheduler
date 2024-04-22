@@ -27,6 +27,7 @@ import org.apache.dolphinscheduler.plugin.task.api.ShellCommandExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.TaskResponse;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ClickHouseSourceParams;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.CustomParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.DataSourceNew;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSinkParams;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.ElasticSearchSourceParams;
@@ -377,6 +378,15 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 hiveSinkParams.setTargetTable(tmpTable);
 
                 seaTunnelConfig.setSink(Collections.singletonList(hiveSinkParams));
+
+                // 兼容旧逻辑
+                if (seaTunnelParameters.getCustomParams() == null) {
+                    CustomParams customParams = new CustomParams();
+                    customParams.setAutoCreateHiveTable(false);
+                    customParams.setSinkHiveTablePartition("");
+                    seaTunnelParameters.setCustomParams(customParams);
+                }
+
                 generateHiveSinkCommand(originTable, tmpTable, seaTunnelParameters.getCustomParams().getAutoCreateHiveTable(),
                         seaTunnelParameters.getCustomParams().getSinkHiveTablePartition());
                 break;
