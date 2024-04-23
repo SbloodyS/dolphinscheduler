@@ -243,6 +243,7 @@
   import _ from 'lodash'
   import { mapActions, mapState } from 'vuex'
   import { tasksState, runningType } from '@/conf/home/pages/dag/_source/config'
+  import permissions from '../../../../../../../../../module/permissions'
 
   export default {
     name: 'list',
@@ -253,7 +254,8 @@
         // btn type
         buttonType: '',
         strDelete: '',
-        checkAll: false
+        checkAll: false,
+        isAdmin: permissions.getAuth()
       }
     },
     props: {
@@ -282,8 +284,11 @@
       _delete (item, i) {
         // remove tow++
         if (i < 0) {
-          // this._batchDelete()
-          this.$message.error('非管理员不能删除多个工作流实例!')
+          if (!this.isAdmin) {
+            this.$message.error('非管理员不能删除多个工作流实例!')
+          } else {
+            this._batchDelete()
+          }
           return
         }
         // remove one

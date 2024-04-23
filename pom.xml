@@ -70,7 +70,7 @@
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <mybatis.spring.version>2.0.1</mybatis.spring.version>
         <cron.utils.version>9.1.3</cron.utils.version>
-        <druid.version>1.2.4</druid.version>
+        <druid.version>1.2.22</druid.version>
         <h2.version>1.4.200</h2.version>
         <commons.codec.version>1.11</commons.codec.version>
         <commons.logging.version>1.1.1</commons.logging.version>
@@ -96,7 +96,7 @@
         <commons.io.version>2.4</commons.io.version>
         <oshi.core.version>6.1.1</oshi.core.version>
         <clickhouse.jdbc.version>0.1.52</clickhouse.jdbc.version>
-        <mssql.jdbc.version>6.1.0.jre8</mssql.jdbc.version>
+        <mssql.jdbc.version>8.2.0.jre8</mssql.jdbc.version>
         <presto.jdbc.version>0.238.1</presto.jdbc.version>
         <spotbugs.version>3.1.12</spotbugs.version>
         <checkstyle.version>3.1.2</checkstyle.version>
@@ -891,6 +891,7 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

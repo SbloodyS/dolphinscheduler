@@ -8,4 +8,5 @@ import lombok.Data;
 public class SQLReturnField {
     private String fieldName;
     private String fieldType;
+    private String fieldComment;
 }

@@ -1,6 +1,16 @@
 package org.apache.dolphinscheduler.plugin.task.seatunnel;
 
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.dialect.sqlserver.visitor.SQLServerSchemaStatVisitor;
+import com.alibaba.druid.stat.TableStat;
+import com.alibaba.druid.util.JdbcConstants;
+import lombok.SneakyThrows;
 import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SQLReturnField;
+import org.apache.dolphinscheduler.plugin.task.seatunnel.entity.SeaTunnelConnector;
+import org.apache.dolphinscheduler.spi.utils.Constants;
+import org.apache.dolphinscheduler.spi.utils.StringUtils;
 import org.slf4j.Logger;
 
 import java.sql.Connection;
@@ -11,8 +21,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class JDBCUtils {
     private final String driverName;
@@ -20,13 +33,15 @@ public class JDBCUtils {
     private final String userName;
     private final String password;
     private final Logger logger;
+    private final SeaTunnelConnector seaTunnelConnector;
 
-    JDBCUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password) {
+    JDBCUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password, SeaTunnelConnector seaTunnelConnector) {
         this.logger = logger;
         this.driverName = driverName;
         this.jdbcUrl = jdbcUrl;
         this.userName = userName;
         this.password = password;
+        this.seaTunnelConnector = seaTunnelConnector;
     }
 
     public boolean executeMultiQuery(String sql) {
@@ -93,15 +108,19 @@ public class JDBCUtils {
             }
             if (!sql.trim().isEmpty()) {
                 logger.info("Executing SQL: {}", sql);
+                stmt.setMaxRows(10);
+                stmt.setQueryTimeout(30);
                 boolean hasResultSet = stmt.execute(sql);
                 if (hasResultSet) {
                     ResultSet resultSet = stmt.getResultSet();
                     ResultSetMetaData metaData = resultSet.getMetaData();
+                    String tableName = getTableNameBySql(metaData, sql);
+                    Map<String, String> columnsComment = getColumnsComment(tableName);
                     int count = metaData.getColumnCount();
                     for (int i = 1; i <= count; i++) {
                         String name = metaData.getColumnName(i).toLowerCase();
-                        String columnType = toJavaType(metaData.getColumnType(i));
-                        arrayList.add(new SQLReturnField(name, columnType));
+                        String columnType = toHiveType(metaData.getColumnType(i));
+                        arrayList.add(new SQLReturnField(name, columnType, columnsComment.getOrDefault(name, "")));
                     }
                 }
             }
@@ -112,7 +131,7 @@ public class JDBCUtils {
         }
     }
 
-    private String toJavaType(int type) {
+    private String toHiveType(int type) {
         switch (type) {
             case Types.CHAR:
             case Types.VARCHAR:
@@ -155,4 +174,105 @@ public class JDBCUtils {
                 throw new RuntimeException("Unsupported Data type: " + type);
         }
     }
+
+    public Map<String, String> getColumnsComment(String tableName) {
+        logger.info("Get columns comment tableName: {}", tableName);
+        Map<String, String> columnsComment = new HashMap<>();
+        if (StringUtils.isEmpty(tableName)) {
+            logger.warn("TableName is empty, fill in empty values with comments");
+            return columnsComment;
+        }
+
+        try {
+            Connection connection = getConnector();
+            Statement stmt = connection.createStatement();
+            String getCommentsSql;
+
+            switch (seaTunnelConnector) {
+                case MYSQL:
+                    getCommentsSql = String.format("SHOW FULL COLUMNS FROM %s", tableName);
+                    break;
+                case SQLSERVER:
+                    getCommentsSql = String.format("SELECT c.name as field, ex.value as comment FROM syscolumns c LEFT JOIN sys.extended_properties ex ON c.id = ex.major_id AND c.colid = ex.minor_id WHERE c.id = OBJECT_ID('%s')", tableName);
+                    break;
+                case ORACLE:
+                    getCommentsSql = String.format("SELECT column_name as field, comments as \"comment\" FROM user_col_comments WHERE table_name = upper('%s')", tableName);
+                    break;
+                default:
+                    logger.warn("Unsupported Data type: {}, fill in empty values with comments", seaTunnelConnector);
+                    return columnsComment;
+            }
+
+            boolean hasResultSet = stmt.execute(getCommentsSql);
+            if (hasResultSet) {
+                ResultSet resultSet = stmt.getResultSet();
+                while (resultSet.next()) {
+                    String name = resultSet.getString("field").toLowerCase();
+                    String value = resultSet.getString("comment");
+                    if (StringUtils.isNotEmpty(value)) {
+                        value = value.replace(Constants.SEMICOLON, "").replace(Constants.SINGLE_QUOTATION_MARK, "");
+                    }
+                    columnsComment.put(name, value);
+                }
+            }
+            closeConnector(connection, stmt);
+            return columnsComment;
+        } catch (Exception e) {
+            logger.warn("Get columns comment failed:", e);
+        }
+
+        return columnsComment;
+    }
+
+    @SneakyThrows
+    private String getTableNameBySql(ResultSetMetaData metaData, String sql) {
+        switch (seaTunnelConnector) {
+            case MYSQL:
+                return String.format("%s.%s", metaData.getSchemaName(1), metaData.getTableName(1));
+            case SQLSERVER:
+                List<String> tableList = new ArrayList<>();
+                DbType dbType = JdbcConstants.SQL_SERVER;
+                List<SQLStatement> statementList = SQLUtils.parseStatements(sql, dbType);
+                SQLStatement statement = statementList.get(0);
+                SQLServerSchemaStatVisitor visitor = new SQLServerSchemaStatVisitor();
+                statement.accept(visitor);
+                Map<TableStat.Name, TableStat> tables = visitor.getTables();
+                Set<TableStat.Name> tableNames = tables.keySet();
+                for (TableStat.Name name : tableNames) {
+                    String tableName = name.getName();
+                    if (StringUtils.isNotEmpty(tableName)) {
+                        tableList.add(name.getName());
+                    }
+                }
+                if (tableList.size() == 1) {
+                    return tableList.get(0);
+                } else {
+                    return "";
+                }
+            case ORACLE:
+                List<String> oracleTableList = new ArrayList<>();
+                DbType oracleDbType = JdbcConstants.ORACLE;
+                List<SQLStatement> oracleStatementList = SQLUtils.parseStatements(sql, oracleDbType);
+                SQLStatement oracleStatement = oracleStatementList.get(0);
+                SQLServerSchemaStatVisitor oracleVisitor = new SQLServerSchemaStatVisitor();
+                oracleStatement.accept(oracleVisitor);
+                Map<TableStat.Name, TableStat> oracleTables = oracleVisitor.getTables();
+                Set<TableStat.Name> oracleTableNames = oracleTables.keySet();
+                for (TableStat.Name name : oracleTableNames) {
+                    String tableName = name.getName();
+                    if (StringUtils.isNotEmpty(tableName)) {
+                        oracleTableList.add(name.getName());
+                    }
+                }
+                if (oracleTableList.size() == 1) {
+                    return oracleTableList.get(0);
+                } else {
+                    return "";
+                }
+            default:
+                logger.warn("Unsupported SeaTunnel Connector: " + seaTunnelConnector);
+                return "";
+        }
+    }
+
 }

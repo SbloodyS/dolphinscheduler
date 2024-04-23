@@ -199,7 +199,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 mysqlSourceParams.setUser(sourceDataSourceInfo.getUserName());
                 mysqlSourceParams.setPassword(sourceDataSourceInfo.getPassword());
                 seaTunnelConfig.setSource(Collections.singletonList(mysqlSourceParams));
-                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), mysqlJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
+                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), mysqlJdbcUrl,
+                        sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword(), sourceConnector);
                 sourceJdbcUtilsQuerySql = mysqlSourceParams.getQuery();
                 break;
             case SQLSERVER:
@@ -219,7 +220,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 sqlServerSourceParams.setUser(sourceDataSourceInfo.getUserName());
                 sqlServerSourceParams.setPassword(sourceDataSourceInfo.getPassword());
                 seaTunnelConfig.setSource(Collections.singletonList(sqlServerSourceParams));
-                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), sqlServerJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
+                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), sqlServerJdbcUrl,
+                        sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword(), sourceConnector);
                 sourceJdbcUtilsQuerySql = sqlServerSourceParams.getQuery();
                 break;
             case ORACLE:
@@ -239,7 +241,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 oracleSourceParams.setUser(sourceDataSourceInfo.getUserName());
                 oracleSourceParams.setPassword(sourceDataSourceInfo.getPassword());
                 seaTunnelConfig.setSource(Collections.singletonList(oracleSourceParams));
-                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), oracleJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
+                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), oracleJdbcUrl,
+                        sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword(), sourceConnector);
                 sourceJdbcUtilsQuerySql = oracleSourceParams.getQuery();
                 break;
             case CLICKHOUSE:
@@ -258,7 +261,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 String clickhouseJdbcUrl = String.format("jdbc:clickhouse://%s:%s",
                         sourceDataSourceInfo.getHostname(),
                         sourceDataSourceInfo.getPort());
-                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), clickhouseJdbcUrl, sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword());
+                initSourceJdbcUtils(logger, sourceDataSourceInfo.getDriverName(), clickhouseJdbcUrl,
+                        sourceDataSourceInfo.getUserName(), sourceDataSourceInfo.getPassword(), sourceConnector);
                 sourceJdbcUtilsQuerySql = clickHouseSourceParams.getSql();
                 break;
             case HIVE:
@@ -334,7 +338,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 mysqlSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(mysqlSinkParams));
 
-                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), mysqlJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
+                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), mysqlJdbcUrl,
+                        targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword(), targetConnector);
                 break;
             case SQLSERVER:
                 SQLServerSinkParams sqlServerSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), SQLServerSinkParams.class);
@@ -354,7 +359,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 sqlServerSinkParams.setPassword(targetDataSourceInfo.getPassword());
                 seaTunnelConfig.setSink(Collections.singletonList(sqlServerSinkParams));
 
-                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), sqlServerJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
+                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), sqlServerJdbcUrl,
+                        targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword(), targetConnector);
                 break;
             case HIVE:
                 HiveSinkParams hiveSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), HiveSinkParams.class);
@@ -414,7 +420,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
                 String clickhouseJdbcUrl = String.format("jdbc:clickhouse://%s:%s",
                         targetDataSourceInfo.getHostname(),
                         targetDataSourceInfo.getPort());
-                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), clickhouseJdbcUrl, targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword());
+                initSinkBeforeSqlJdbcUtils(logger, targetDataSourceInfo.getDriverName(), clickhouseJdbcUrl,
+                        targetDataSourceInfo.getUserName(), targetDataSourceInfo.getPassword(), targetConnector);
                 break;
             case ELASTICSEARCH:
                 ElasticSearchSinkParams elasticSearchSinkParams = JSONUtils.convertValue(seaTunnelParameters.getSink(), ElasticSearchSinkParams.class);
@@ -468,7 +475,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
     private void generateHiveSinkCommand(String targetTable, String tmpTable, Boolean autoCreateHiveTable, String sinkHiveTablePartition) {
         String createHiveTableStatement= "";
         if (autoCreateHiveTable) {
-            createHiveTableStatement = generateCreateHiveTableStatement(targetTable);
+            createHiveTableStatement = generateCreateHiveTableStatement(targetTable, sinkHiveTablePartition);
         }
         String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS TEXTFILE AS SELECT * FROM %s WHERE 1=2;", tmpTable, targetTable);
         String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
@@ -531,22 +538,39 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         }
     }
 
-    private String generateCreateHiveTableStatement(String tableName) {
-        String createHiveTableStatement = "CREATE TABLE IF NOT EXISTS {tableName} ({columns}) STORED AS ORC;";
-        List<SQLReturnField> sqlReturnFieldList = sourceJdbcUtils.getSQLReturnField(sourceJdbcUtilsQuerySql);
+    private String generateCreateHiveTableStatement(String tableName, String sinkHiveTablePartition) {
+        String createHiveTableStatement;
+        String sinkHiveTablePartitionColumnType = "STRING";
+        List<SQLReturnField> sqlReturnFieldList = sourceJdbcUtils.getSQLReturnField(parseScript(sourceJdbcUtilsQuerySql));
         List<String> columnsList = new ArrayList<>();
         for (SQLReturnField sqlReturnField : sqlReturnFieldList) {
-            columnsList.add(sqlReturnField.getFieldName() + " " + sqlReturnField.getFieldType());
+            if (StringUtils.isNotEmpty(sinkHiveTablePartition) && sinkHiveTablePartition.equals(sqlReturnField.getFieldName())) {
+                sinkHiveTablePartitionColumnType = sqlReturnField.getFieldType();
+                continue;
+            }
+
+            columnsList.add(String.format("%s %s COMMENT '%s'",
+                    sqlReturnField.getFieldName(), sqlReturnField.getFieldType(), sqlReturnField.getFieldComment()));
         }
+
+        if (StringUtils.isEmpty(sinkHiveTablePartition)) {
+            createHiveTableStatement = "CREATE TABLE IF NOT EXISTS {tableName} ({columns}) STORED AS ORC;";
+        } else {
+            createHiveTableStatement = String.format("CREATE TABLE IF NOT EXISTS {tableName} ({columns}) PARTITIONED BY (%s %s) STORED AS ORC;", sinkHiveTablePartition, sinkHiveTablePartitionColumnType);
+        }
+
         return createHiveTableStatement.replace("{tableName}", tableName).replace("{columns}", String.join(",", columnsList));
     }
 
-    private void initSinkBeforeSqlJdbcUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password) {
-        sinkBeforeSqlJdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password);
+    private void initSinkBeforeSqlJdbcUtils(Logger logger, String driverName,
+                                            String jdbcUrl, String userName,
+                                            String password, SeaTunnelConnector seaTunnelConnector) {
+        sinkBeforeSqlJdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password, seaTunnelConnector);
     }
 
-    private void initSourceJdbcUtils(Logger logger, String driverName, String jdbcUrl, String userName, String password) {
-        sourceJdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password);
+    private void initSourceJdbcUtils(Logger logger, String driverName, String jdbcUrl,
+                                     String userName, String password, SeaTunnelConnector seaTunnelConnector) {
+        sourceJdbcUtils = new JDBCUtils(logger, driverName, jdbcUrl, userName, password, seaTunnelConnector);
     }
 
     private String parseScript(String script) {

@@ -198,6 +198,10 @@ public class Constants {
      */
     public static final String AT_SIGN = "@";
 
+    public static final String SEMICOLON = ";";
+
+    public static final String SINGLE_QUOTATION_MARK = "'";
+
     /**
      * datasource encryption salt
      */
