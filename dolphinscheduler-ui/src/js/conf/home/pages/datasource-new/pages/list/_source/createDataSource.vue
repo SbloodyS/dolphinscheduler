@@ -266,7 +266,7 @@
       _rtParam () {
         return {
           id: this.id,
-          datasourceType: this.datasourceType,
+          datasourceType: this.datasourceType.toLowerCase(),
           datasourceName: this.datasourceName,
           datasourceDesc: this.datasourceDesc,
           hostname: this.hostname,

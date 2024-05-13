@@ -103,7 +103,7 @@ public class PythonTask extends AbstractTaskExecutor {
 
             // create this file
             createPythonCommandFileIfNotExists(pythonScriptContent,pythonScriptFile);
-            String command = "${PYTHON_HOME} " + pythonScriptFile;
+            String command = "${PYTHON_HOME} -u " + pythonScriptFile;
 
             TaskResponse taskResponse = shellCommandExecutor.run(command);
             setExitStatusCode(taskResponse.getExitStatusCode());
