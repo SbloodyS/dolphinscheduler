@@ -12,4 +12,7 @@ public class SQLServerSinkParams {
     private String user;
     private String password;
     private String query;
+
+    @JsonProperty("enable_upsert")
+    private String enableUpsert = "false";
 }

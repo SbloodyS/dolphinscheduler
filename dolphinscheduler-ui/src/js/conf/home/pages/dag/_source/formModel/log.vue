@@ -246,8 +246,8 @@
       _rtParam () {
         return {
           taskInstanceId: this.taskInstanceId,
-          skipLineNum: parseInt(`${this.loadingIndex ? this.loadingIndex + '000' : 0}`),
-          limit: parseInt(`${this.loadingIndex ? this.loadingIndex + 1 : 1}000`)
+          skipLineNum: parseInt(`${this.loadingIndex ? this.loadingIndex + '000000' : 0}`),
+          limit: parseInt(`${this.loadingIndex ? this.loadingIndex + 1 : 1}000000`)
         }
       }
     },
