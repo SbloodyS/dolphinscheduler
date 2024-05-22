@@ -1,11 +1,16 @@
 后端本地启动:
 启动类 org.apache.dolphinscheduler.server.StandaloneServer
 
+后端环境:
+JDK 1.8
 
 前端本地启动:
 npm install
 npm start
 
+前端环境:
+Node v12.20.2
+Npm 6.14.11
 
 整体编译命令:
 mvn -Dmaven.test.skip=true -DskipTests clean install -Prelease
