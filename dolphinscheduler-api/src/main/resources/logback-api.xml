@@ -40,7 +40,6 @@
             <maxHistory>5</maxHistory>
             <maxFileSize>1000MB</maxFileSize>
             <totalSizeCap>5GB</totalSizeCap>
-            <cleanHistoryOnStart>true</cleanHistoryOnSta            <totalSizeCap>5GB</totalSizeCap>
             <cleanHistoryOnStart>true</cleanHistoryOnStart>rt>
         </rollingPolicy>
         <encoder>
