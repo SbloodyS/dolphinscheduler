@@ -1261,12 +1261,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      */
     @Override
     public Map<String, Object> queryAllProcessDefinitionByProjectCodeForDependent(User loginUser, long projectCode) {
-        Project project = projectMapper.queryByCode(projectCode);
-        //check user access for project
-        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
-        if (result.get(Constants.STATUS) != Status.SUCCESS) {
-            return result;
-        }
+        Map<String, Object> result = new HashMap<>();
         List<ProcessDefinitionForDependent> processDefinitionForDependentList = processDefinitionMapper.queryAllDefinitionListForDependent(projectCode);
         result.put(Constants.DATA_LIST, processDefinitionForDependentList);
         putMsg(result, Status.SUCCESS);
