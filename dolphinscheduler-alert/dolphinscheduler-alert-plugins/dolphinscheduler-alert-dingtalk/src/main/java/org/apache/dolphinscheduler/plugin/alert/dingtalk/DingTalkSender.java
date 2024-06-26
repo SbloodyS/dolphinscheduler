@@ -163,7 +163,7 @@ public final class DingTalkSender {
             String resp = sendMsg(title, content);
             return checkSendDingTalkSendMsgResult(resp);
         } catch (Exception e) {
-            logger.info("send ding talk alert msg  exception : {}", e.getMessage());
+            logger.error("send ding talk alert msg exception:", e);
             alertResult = new AlertResult();
             alertResult.setStatus("false");
             alertResult.setMessage("send ding talk alert fail.");

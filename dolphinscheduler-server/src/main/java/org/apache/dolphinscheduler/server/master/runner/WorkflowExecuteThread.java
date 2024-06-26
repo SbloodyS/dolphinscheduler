@@ -296,7 +296,7 @@ public class WorkflowExecuteThread implements Runnable {
 
     public boolean addStateEvent(StateEvent stateEvent) {
         if (processInstance.getId() != stateEvent.getProcessInstanceId()) {
-            logger.info("state event would be abounded :{}", stateEvent.toString());
+            logger.info("state event would be abounded: {}", stateEvent.toString());
             return false;
         }
         this.stateEvents.add(stateEvent);
@@ -486,7 +486,7 @@ public class WorkflowExecuteThread implements Runnable {
             } else {
                 errorTaskList.put(Long.toString(task.getTaskCode()), task);
                 if (processInstance.getFailureStrategy() == FailureStrategy.END) {
-                    killAllTasks();
+                    killAllTasks(ExecutionStatus.FAILURE);
                 }
             }
         }
@@ -517,11 +517,14 @@ public class WorkflowExecuteThread implements Runnable {
             }
 
             if (stateEvent.getExecutionStatus().typeIsFinished()) {
+                if (stateEvent.getExecutionStatus().typeIsFailure()) {
+                    this.updateProcessInstanceState(stateEvent);
+                }
                 endProcess();
             }
 
             if (processInstance.getState() == ExecutionStatus.READY_STOP) {
-                killAllTasks();
+                killAllTasks(ExecutionStatus.KILL);
             }
             return true;
         } catch (Exception e) {
@@ -1412,6 +1415,14 @@ public class WorkflowExecuteThread implements Runnable {
         return false;
     }
 
+    private void addProcessFailedEvent(ProcessInstance processInstance) {
+        StateEvent stateEvent = new StateEvent();
+        stateEvent.setType(StateEventType.PROCESS_STATE_CHANGE);
+        stateEvent.setProcessInstanceId(processInstance.getId());
+        stateEvent.setExecutionStatus(ExecutionStatus.FAILURE);
+        this.addStateEvent(stateEvent);
+    }
+
     private void addProcessStopEvent(ProcessInstance processInstance) {
         StateEvent stateEvent = new StateEvent();
         stateEvent.setType(StateEventType.PROCESS_STATE_CHANGE);
@@ -1423,7 +1434,7 @@ public class WorkflowExecuteThread implements Runnable {
     /**
      * close the on going tasks
      */
-    private void killAllTasks() {
+    private void killAllTasks(ExecutionStatus executionStatus) {
         logger.info("kill called on process instance id: {}, num: {}", processInstance.getId(),
                 activeTaskProcessorMaps.size());
 
@@ -1448,7 +1459,12 @@ public class WorkflowExecuteThread implements Runnable {
             this.taskRetryCheckList.remove(taskId);
             this.depStateCheckList.remove(taskId);
         }
-        this.addProcessStopEvent(processInstance);
+
+        if (executionStatus == ExecutionStatus.KILL) {
+            this.addProcessStopEvent(processInstance);
+        } else if (executionStatus == ExecutionStatus.FAILURE) {
+            this.addProcessFailedEvent(processInstance);
+        }
     }
 
     public boolean workFlowFinish() {
