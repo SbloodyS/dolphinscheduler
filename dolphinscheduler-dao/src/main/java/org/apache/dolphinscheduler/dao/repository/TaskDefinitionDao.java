@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.dao.repository;
 
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
+import org.apache.dolphinscheduler.dao.entity.TaskDefinitionLog;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,4 +57,10 @@ public interface TaskDefinitionDao extends IDao<TaskDefinition> {
      * @return task definition
      */
     TaskDefinition queryByCode(long taskCode);
+
+    int batchInsert(List<TaskDefinitionLog> taskDefinitionLogs);
+
+    int updateById(TaskDefinitionLog taskDefinitionLog);
+
+    List<TaskDefinition> queryByCodeList(List<Long> taskDefinitionCodes);
 }

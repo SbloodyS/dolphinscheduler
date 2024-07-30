@@ -43,7 +43,6 @@ import org.apache.dolphinscheduler.common.enums.WarningType;
 import org.apache.dolphinscheduler.common.enums.WorkflowExecutionStatus;
 import org.apache.dolphinscheduler.common.graph.DAG;
 import org.apache.dolphinscheduler.common.model.TaskNodeRelation;
-import org.apache.dolphinscheduler.common.utils.CodeGenerateUtils;
 import org.apache.dolphinscheduler.common.utils.CodeGenerateUtils.CodeGenerateException;
 import org.apache.dolphinscheduler.common.utils.DateUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
@@ -92,11 +91,11 @@ import org.apache.dolphinscheduler.dao.mapper.ProjectMapper;
 import org.apache.dolphinscheduler.dao.mapper.ScheduleMapper;
 import org.apache.dolphinscheduler.dao.mapper.TaskDefinitionLogMapper;
 import org.apache.dolphinscheduler.dao.mapper.TaskDefinitionMapper;
-import org.apache.dolphinscheduler.dao.mapper.TaskGroupMapper;
 import org.apache.dolphinscheduler.dao.mapper.TaskGroupQueueMapper;
-import org.apache.dolphinscheduler.dao.mapper.TaskInstanceMapper;
 import org.apache.dolphinscheduler.dao.mapper.TenantMapper;
 import org.apache.dolphinscheduler.dao.mapper.UserMapper;
+import org.apache.dolphinscheduler.dao.repository.ProcessDefinitionDao;
+import org.apache.dolphinscheduler.dao.repository.ProcessDefinitionLogDao;
 import org.apache.dolphinscheduler.dao.repository.ProcessInstanceDao;
 import org.apache.dolphinscheduler.dao.repository.ProcessInstanceMapDao;
 import org.apache.dolphinscheduler.dao.repository.TaskDefinitionDao;
@@ -142,7 +141,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -201,9 +199,6 @@ public class ProcessServiceImpl implements ProcessService {
     private ProcessInstanceMapMapper processInstanceMapMapper;
 
     @Autowired
-    private TaskInstanceMapper taskInstanceMapper;
-
-    @Autowired
     private CommandMapper commandMapper;
 
     @Autowired
@@ -252,9 +247,6 @@ public class ProcessServiceImpl implements ProcessService {
     private TaskGroupQueueMapper taskGroupQueueMapper;
 
     @Autowired
-    private TaskGroupMapper taskGroupMapper;
-
-    @Autowired
     private ClusterMapper clusterMapper;
 
     @Autowired
@@ -265,6 +257,12 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Autowired
     private TriggerRelationService triggerRelationService;
+
+    @Autowired
+    private ProcessDefinitionLogDao processDefinitionLogDao;
+
+    @Autowired
+    private ProcessDefinitionDao processDefinitionDao;
 
     /**
      * todo: split this method
@@ -1614,197 +1612,6 @@ public class ProcessServiceImpl implements ProcessService {
         taskDefinitionUpdate.setUpdateTime(new Date());
         taskDefinitionUpdate.setId(taskDefinition.getId());
         return taskDefinitionMapper.updateById(taskDefinitionUpdate);
-    }
-
-    /**
-     * get resource ids
-     *
-     * @param taskDefinition taskDefinition
-     * @return resource ids
-     */
-    @Deprecated
-    @Override
-    public String getResourceIds(TaskDefinition taskDefinition) {
-        return "";
-    }
-
-    @Override
-    public int saveTaskDefine(User operator, long projectCode, List<TaskDefinitionLog> taskDefinitionLogs,
-                              Boolean syncDefine) {
-        Date now = new Date();
-        List<TaskDefinitionLog> newTaskDefinitionLogs = new ArrayList<>();
-        List<TaskDefinitionLog> updateTaskDefinitionLogs = new ArrayList<>();
-        for (TaskDefinitionLog taskDefinitionLog : taskDefinitionLogs) {
-            taskDefinitionLog.setProjectCode(projectCode);
-            taskDefinitionLog.setUpdateTime(now);
-            taskDefinitionLog.setOperateTime(now);
-            taskDefinitionLog.setOperator(operator.getId());
-            if (taskDefinitionLog.getCode() == 0) {
-                taskDefinitionLog.setCode(CodeGenerateUtils.genCode());
-            }
-            if (taskDefinitionLog.getVersion() == 0) {
-                // init first version
-                taskDefinitionLog.setVersion(Constants.VERSION_FIRST);
-            }
-
-            TaskDefinitionLog definitionCodeAndVersion = taskDefinitionLogMapper.queryByDefinitionCodeAndVersion(
-                    taskDefinitionLog.getCode(), taskDefinitionLog.getVersion());
-            if (definitionCodeAndVersion == null) {
-                taskDefinitionLog.setUserId(operator.getId());
-                taskDefinitionLog.setCreateTime(now);
-                newTaskDefinitionLogs.add(taskDefinitionLog);
-                continue;
-            }
-            if (taskDefinitionLog.equals(definitionCodeAndVersion)) {
-                // do nothing if equals
-                continue;
-            }
-            taskDefinitionLog.setUserId(definitionCodeAndVersion.getUserId());
-            Integer version = taskDefinitionLogMapper.queryMaxVersionForDefinition(taskDefinitionLog.getCode());
-            taskDefinitionLog.setVersion(version + 1);
-            taskDefinitionLog.setCreateTime(definitionCodeAndVersion.getCreateTime());
-            updateTaskDefinitionLogs.add(taskDefinitionLog);
-        }
-
-        if (CollectionUtils.isNotEmpty(updateTaskDefinitionLogs)) {
-            List<Long> taskDefinitionCodes = updateTaskDefinitionLogs
-                    .stream()
-                    .map(TaskDefinition::getCode)
-                    .distinct()
-                    .collect(Collectors.toList());
-            Map<Long, TaskDefinition> taskDefinitionMap = taskDefinitionMapper.queryByCodeList(taskDefinitionCodes)
-                    .stream()
-                    .collect(Collectors.toMap(TaskDefinition::getCode, Function.identity()));
-            for (TaskDefinitionLog taskDefinitionToUpdate : updateTaskDefinitionLogs) {
-                TaskDefinition task = taskDefinitionMap.get(taskDefinitionToUpdate.getCode());
-                if (task == null) {
-                    newTaskDefinitionLogs.add(taskDefinitionToUpdate);
-                } else {
-                    taskDefinitionToUpdate.setId(task.getId());
-                }
-            }
-        }
-
-        // for each taskDefinitionLog, we will insert a new version into db
-        // and update the origin one if exist
-        int updateResult = 0;
-        int insertResult = 0;
-
-        // only insert new task definitions if they not in updateTaskDefinitionLogs
-        List<TaskDefinitionLog> newInsertTaskDefinitionLogs = newTaskDefinitionLogs.stream()
-                .filter(taskDefinitionLog -> !updateTaskDefinitionLogs.contains(taskDefinitionLog))
-                .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(newInsertTaskDefinitionLogs)) {
-            insertResult = taskDefinitionLogMapper.batchInsert(newInsertTaskDefinitionLogs);
-        }
-        if (CollectionUtils.isNotEmpty(updateTaskDefinitionLogs)) {
-            insertResult += taskDefinitionLogMapper.batchInsert(updateTaskDefinitionLogs);
-        }
-
-        if (CollectionUtils.isNotEmpty(newTaskDefinitionLogs) && Boolean.TRUE.equals(syncDefine)) {
-            updateResult += taskDefinitionMapper.batchInsert(newTaskDefinitionLogs);
-        }
-        if (CollectionUtils.isNotEmpty(updateTaskDefinitionLogs) && Boolean.TRUE.equals(syncDefine)) {
-            for (TaskDefinitionLog taskDefinitionLog : updateTaskDefinitionLogs) {
-                updateResult += taskDefinitionMapper.updateById(taskDefinitionLog);
-            }
-        }
-
-        return (insertResult & updateResult) > 0 ? 1 : Constants.EXIT_CODE_SUCCESS;
-    }
-
-    /**
-     * save processDefinition (including create or update processDefinition)
-     */
-    @Override
-    public int saveProcessDefine(User operator, ProcessDefinition processDefinition, Boolean syncDefine,
-                                 Boolean isFromProcessDefine) {
-        ProcessDefinitionLog processDefinitionLog = new ProcessDefinitionLog(processDefinition);
-        Integer version = processDefineLogMapper.queryMaxVersionForDefinition(processDefinition.getCode());
-        int insertVersion = version == null || version == 0 ? Constants.VERSION_FIRST : version + 1;
-        processDefinitionLog.setVersion(insertVersion);
-        processDefinitionLog
-                .setReleaseState(!isFromProcessDefine || processDefinitionLog.getReleaseState() == ReleaseState.ONLINE
-                        ? ReleaseState.ONLINE
-                        : ReleaseState.OFFLINE);
-        processDefinitionLog.setOperator(operator.getId());
-        processDefinitionLog.setOperateTime(processDefinition.getUpdateTime());
-        processDefinitionLog.setId(null);
-        int insertLog = processDefineLogMapper.insert(processDefinitionLog);
-        int result = 1;
-        if (Boolean.TRUE.equals(syncDefine)) {
-            if (processDefinition.getId() == null) {
-                result = processDefineMapper.insert(processDefinitionLog);
-                processDefinition.setId(processDefinitionLog.getId());
-            } else {
-                processDefinitionLog.setId(processDefinition.getId());
-                result = processDefineMapper.updateById(processDefinitionLog);
-            }
-        }
-        return (insertLog & result) > 0 ? insertVersion : 0;
-    }
-
-    /**
-     * save task relations
-     */
-    @Override
-    public int saveTaskRelation(User operator, long projectCode, long processDefinitionCode,
-                                int processDefinitionVersion,
-                                List<ProcessTaskRelationLog> taskRelationList,
-                                List<TaskDefinitionLog> taskDefinitionLogs,
-                                Boolean syncDefine) {
-        if (taskRelationList.isEmpty()) {
-            return Constants.EXIT_CODE_SUCCESS;
-        }
-        Map<Long, TaskDefinitionLog> taskDefinitionLogMap = null;
-        if (CollectionUtils.isNotEmpty(taskDefinitionLogs)) {
-            taskDefinitionLogMap = taskDefinitionLogs
-                    .stream()
-                    .collect(Collectors.toMap(TaskDefinition::getCode, taskDefinitionLog -> taskDefinitionLog));
-        }
-        Date now = new Date();
-        for (ProcessTaskRelationLog processTaskRelationLog : taskRelationList) {
-            processTaskRelationLog.setProjectCode(projectCode);
-            processTaskRelationLog.setProcessDefinitionCode(processDefinitionCode);
-            processTaskRelationLog.setProcessDefinitionVersion(processDefinitionVersion);
-            if (taskDefinitionLogMap != null) {
-                TaskDefinitionLog preTaskDefinitionLog =
-                        taskDefinitionLogMap.get(processTaskRelationLog.getPreTaskCode());
-                if (preTaskDefinitionLog != null) {
-                    processTaskRelationLog.setPreTaskVersion(preTaskDefinitionLog.getVersion());
-                }
-                TaskDefinitionLog postTaskDefinitionLog =
-                        taskDefinitionLogMap.get(processTaskRelationLog.getPostTaskCode());
-                if (postTaskDefinitionLog != null) {
-                    processTaskRelationLog.setPostTaskVersion(postTaskDefinitionLog.getVersion());
-                }
-            }
-            processTaskRelationLog.setCreateTime(now);
-            processTaskRelationLog.setUpdateTime(now);
-            processTaskRelationLog.setOperator(operator.getId());
-            processTaskRelationLog.setOperateTime(now);
-        }
-        int insert = taskRelationList.size();
-        if (Boolean.TRUE.equals(syncDefine)) {
-            List<ProcessTaskRelation> processTaskRelationList =
-                    processTaskRelationMapper.queryByProcessCode(processDefinitionCode);
-            if (!processTaskRelationList.isEmpty()) {
-                Set<Integer> processTaskRelationSet =
-                        processTaskRelationList.stream().map(ProcessTaskRelation::hashCode).collect(toSet());
-                Set<Integer> taskRelationSet =
-                        taskRelationList.stream().map(ProcessTaskRelationLog::hashCode).collect(toSet());
-                boolean result = CollectionUtils.isEqualCollection(processTaskRelationSet, taskRelationSet);
-                if (result) {
-                    return Constants.EXIT_CODE_SUCCESS;
-                }
-                processTaskRelationMapper.deleteByCode(projectCode, processDefinitionCode);
-            }
-            List<ProcessTaskRelation> processTaskRelations =
-                    taskRelationList.stream().map(ProcessTaskRelation::new).collect(Collectors.toList());
-            insert = processTaskRelationMapper.batchInsert(processTaskRelations);
-        }
-        int resultLog = processTaskRelationLogMapper.batchInsert(taskRelationList);
-        return (insert & resultLog) > 0 ? Constants.EXIT_CODE_SUCCESS : Constants.EXIT_CODE_FAILURE;
     }
 
     @Override

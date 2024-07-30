@@ -38,7 +38,9 @@ import org.apache.dolphinscheduler.api.service.ExecutorService;
 import org.apache.dolphinscheduler.api.service.LoggerService;
 import org.apache.dolphinscheduler.api.service.ProcessDefinitionService;
 import org.apache.dolphinscheduler.api.service.ProcessInstanceService;
+import org.apache.dolphinscheduler.api.service.ProcessTaskRelationService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
+import org.apache.dolphinscheduler.api.service.TaskDefinitionService;
 import org.apache.dolphinscheduler.api.service.TaskInstanceService;
 import org.apache.dolphinscheduler.api.service.UsersService;
 import org.apache.dolphinscheduler.api.utils.PageInfo;
@@ -176,6 +178,12 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
 
     @Autowired
     private CuringParamsService curingGlobalParamsService;
+
+    @Autowired
+    private TaskDefinitionService taskDefinitionService;
+
+    @Autowired
+    private ProcessTaskRelationService processTaskRelationService;
 
     /**
      * return top n SUCCESS process instance order by running time which started between startTime and endTime
@@ -655,7 +663,8 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
                 return result;
             }
         }
-        int saveTaskResult = processService.saveTaskDefine(loginUser, projectCode, taskDefinitionLogs, syncDefine);
+        int saveTaskResult =
+                taskDefinitionService.saveTaskDefinitions(loginUser, projectCode, taskDefinitionLogs, syncDefine);
         if (saveTaskResult == Constants.DEFINITION_FAILURE) {
             log.error("Update task definition error, projectCode:{}, processInstanceId:{}", projectCode,
                     processInstanceId);
@@ -675,8 +684,9 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         processDefinition.set(projectCode, processDefinition.getName(), processDefinition.getDescription(),
                 globalParams, locations, timeout);
         processDefinition.setUpdateTime(new Date());
-        int insertVersion = processService.saveProcessDefine(loginUser, processDefinition, syncDefine, Boolean.FALSE);
-        if (insertVersion == 0) {
+        int insertVersion =
+                processDefinitionService.saveProcessDefinition(loginUser, processDefinition, syncDefine, Boolean.FALSE);
+        if (insertVersion == Constants.EXIT_CODE_FAILURE) {
             log.error("Update process definition error, projectCode:{}, processDefinitionName:{}.", projectCode,
                     processDefinition.getName());
             putMsg(result, Status.UPDATE_PROCESS_DEFINITION_ERROR);
@@ -691,8 +701,9 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
                     insertVersion, taskDefinitionLogs);
         }
 
-        int insertResult = processService.saveTaskRelation(loginUser, processDefinition.getProjectCode(),
-                processDefinition.getCode(), insertVersion, taskRelationList, taskDefinitionLogs, syncDefine);
+        int insertResult =
+                processTaskRelationService.saveProcessTaskRelation(loginUser, processDefinition.getProjectCode(),
+                        processDefinition.getCode(), insertVersion, taskRelationList, taskDefinitionLogs, syncDefine);
         if (insertResult == Constants.EXIT_CODE_SUCCESS) {
             log.info(
                     "Update task relations complete, projectCode:{}, processDefinitionCode:{}, processDefinitionVersion:{}.",

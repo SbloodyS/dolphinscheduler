@@ -112,7 +112,6 @@ public class TaskCreateRequest {
         taskDefinition.setFailRetryTimes(this.failRetryTimes);
         taskDefinition.setFailRetryInterval(this.failRetryInterval);
         taskDefinition.setTimeout(this.timeout);
-        taskDefinition.setResourceIds(this.resourceIds);
         taskDefinition.setTaskGroupId(this.taskGroupId);
         taskDefinition.setTaskGroupPriority(this.taskGroupPriority);
         taskDefinition.setCpuQuota(this.cpuQuota);

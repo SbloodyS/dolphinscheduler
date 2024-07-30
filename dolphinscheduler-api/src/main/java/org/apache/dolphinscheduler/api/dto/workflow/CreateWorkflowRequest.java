@@ -15,19 +15,29 @@
  * limitations under the License.
  */
 
-package org.apache.dolphinscheduler.dao.repository;
+package org.apache.dolphinscheduler.api.dto.workflow;
 
-import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionLog;
+import org.apache.dolphinscheduler.common.enums.ProcessExecutionTypeEnum;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface ProcessDefinitionLogDao extends IDao<ProcessDefinitionLog> {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateWorkflowRequest {
 
-    ProcessDefinitionLog queryByDefinitionCodeAndVersion(long workflowDefinitionCode, int workflowDefinitionVersion);
-
-    void deleteByWorkflowDefinitionCode(long workflowDefinitionCode);
-
-    Integer queryMaxVersionForDefinition(long code);
-
-    int insert(@NotNull ProcessDefinitionLog processDefinitionLog);
+    private Long projectCode;
+    private String name;
+    private String description;
+    private String globalParams;
+    private String locations;
+    private Integer timeout;
+    private String taskRelationJson;
+    private String taskDefinitionJson;
+    private String otherParamsJson;
+    private ProcessExecutionTypeEnum executionType;
 }

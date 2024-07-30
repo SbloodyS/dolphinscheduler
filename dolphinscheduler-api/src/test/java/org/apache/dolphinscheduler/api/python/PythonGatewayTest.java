@@ -150,7 +150,6 @@ public class PythonGatewayTest {
         taskDefinition.setProjectCode(1L);
         taskDefinition.setTaskType("SHELL");
         taskDefinition.setUserId(111);
-        taskDefinition.setResourceIds("1");
         taskDefinition.setWorkerGroup("default");
         taskDefinition.setEnvironmentCode(1L);
         taskDefinition.setVersion(1);

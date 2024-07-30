@@ -87,4 +87,23 @@ public class TaskDefinitionLogDaoImpl extends BaseDao<TaskDefinitionLog, TaskDef
         }
         mybatisMapper.deleteByTaskDefinitionCodes(taskDefinitionCodes);
     }
+
+    @Override
+    public int batchInsert(List<TaskDefinitionLog> taskDefinitionLogs) {
+        if (CollectionUtils.isNotEmpty(taskDefinitionLogs)) {
+            return mybatisMapper.batchInsert(taskDefinitionLogs);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public TaskDefinitionLog queryByDefinitionCodeAndVersion(Long definitionCode, Integer definitionVersion) {
+        return mybatisMapper.queryByDefinitionCodeAndVersion(definitionCode, definitionVersion);
+    }
+
+    @Override
+    public Integer queryMaxVersionForDefinition(Long definitionCode) {
+        return mybatisMapper.queryMaxVersionForDefinition(definitionCode);
+    }
 }

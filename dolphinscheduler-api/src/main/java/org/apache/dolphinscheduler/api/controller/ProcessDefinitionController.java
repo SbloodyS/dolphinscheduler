@@ -38,6 +38,7 @@ import static org.apache.dolphinscheduler.api.enums.Status.VERIFY_PROCESS_DEFINI
 
 import org.apache.dolphinscheduler.api.audit.OperatorLog;
 import org.apache.dolphinscheduler.api.audit.enums.AuditType;
+import org.apache.dolphinscheduler.api.dto.workflow.CreateWorkflowRequest;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.exceptions.ApiException;
 import org.apache.dolphinscheduler.api.service.ProcessDefinitionService;
@@ -117,19 +118,29 @@ public class ProcessDefinitionController extends BaseController {
     @OperatorLog(auditType = AuditType.PROCESS_CREATE)
     public Result createProcessDefinition(@Parameter(hidden = true) @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
                                           @Parameter(name = "projectCode", description = "PROJECT_CODE", required = true) @PathVariable long projectCode,
-                                          @RequestParam(value = "name", required = true) String name,
+                                          @RequestParam(value = "name") String name,
                                           @RequestParam(value = "description", required = false) String description,
                                           @RequestParam(value = "globalParams", required = false, defaultValue = "[]") String globalParams,
                                           @RequestParam(value = "locations", required = false) String locations,
                                           @RequestParam(value = "timeout", required = false, defaultValue = "0") int timeout,
-                                          @RequestParam(value = "taskRelationJson", required = true) String taskRelationJson,
-                                          @RequestParam(value = "taskDefinitionJson", required = true) String taskDefinitionJson,
+                                          @RequestParam(value = "taskRelationJson") String taskRelationJson,
+                                          @RequestParam(value = "taskDefinitionJson") String taskDefinitionJson,
                                           @RequestParam(value = "otherParamsJson", required = false) String otherParamsJson,
                                           @RequestParam(value = "executionType", defaultValue = "PARALLEL") ProcessExecutionTypeEnum executionType) {
-        Map<String, Object> result = processDefinitionService.createProcessDefinition(loginUser, projectCode, name,
-                description, globalParams,
-                locations, timeout, taskRelationJson, taskDefinitionJson, otherParamsJson, executionType);
-        return returnDataList(result);
+        CreateWorkflowRequest createWorkflowRequest = CreateWorkflowRequest.builder()
+                .name(name)
+                .description(description)
+                .projectCode(projectCode)
+                .globalParams(globalParams)
+                .timeout(timeout)
+                .executionType(executionType)
+                .locations(locations)
+                .taskRelationJson(taskRelationJson)
+                .taskDefinitionJson(taskDefinitionJson)
+                .otherParamsJson(otherParamsJson)
+                .build();
+        processDefinitionService.createProcessDefinition(loginUser, createWorkflowRequest);
+        return Result.success();
     }
 
     /**

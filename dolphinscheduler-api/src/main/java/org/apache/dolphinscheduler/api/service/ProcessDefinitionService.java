@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.api.service;
 
+import org.apache.dolphinscheduler.api.dto.workflow.CreateWorkflowRequest;
 import org.apache.dolphinscheduler.api.dto.workflow.WorkflowCreateRequest;
 import org.apache.dolphinscheduler.api.dto.workflow.WorkflowFilterRequest;
 import org.apache.dolphinscheduler.api.dto.workflow.WorkflowUpdateRequest;
@@ -41,31 +42,9 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ProcessDefinitionService {
 
     /**
-     * create process definition
-     *
-     * @param loginUser          login user
-     * @param projectCode        project code
-     * @param name               process definition name
-     * @param description        description
-     * @param globalParams       global params
-     * @param locations          locations for nodes
-     * @param timeout            timeout
-     * @param taskRelationJson   relation json for nodes
-     * @param taskDefinitionJson taskDefinitionJson
-     * @param otherParamsJson    otherParamsJson handle other params
-     * @return create result code
+     * create process definition and its task definition, task relation and location
      */
-    Map<String, Object> createProcessDefinition(User loginUser,
-                                                long projectCode,
-                                                String name,
-                                                String description,
-                                                String globalParams,
-                                                String locations,
-                                                int timeout,
-                                                String taskRelationJson,
-                                                String taskDefinitionJson,
-                                                String otherParamsJson,
-                                                ProcessExecutionTypeEnum executionType);
+    ProcessDefinition createProcessDefinition(User loginUser, CreateWorkflowRequest createWorkflowRequest);
 
     /**
      * create process definition V2
@@ -432,4 +411,12 @@ public interface ProcessDefinitionService {
                             long processDefinitionCode,
                             int processDefinitionVersion,
                             List<TaskDefinitionLog> taskDefinitionLogList);
+
+    int saveProcessDefinition(User operator, ProcessDefinition processDefinition, Boolean syncDefine,
+                              Boolean isFromProcessDefine);
+
+    /*
+     * check whether the new process definition name exists
+     */
+    void verifyProcessDefinitionByName(Long projectCode, String name);
 }

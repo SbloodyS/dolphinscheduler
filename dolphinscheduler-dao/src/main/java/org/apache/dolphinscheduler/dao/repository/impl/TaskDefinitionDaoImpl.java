@@ -119,4 +119,30 @@ public class TaskDefinitionDaoImpl extends BaseDao<TaskDefinition, TaskDefinitio
         return mybatisMapper.queryByCode(taskCode);
     }
 
+    @Override
+    public int batchInsert(List<TaskDefinitionLog> taskDefinitionLogList) {
+        if (CollectionUtils.isNotEmpty(taskDefinitionLogList)) {
+            return mybatisMapper.batchInsert(taskDefinitionLogList);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int updateById(TaskDefinitionLog taskDefinitionLog) {
+        if (taskDefinitionLog != null) {
+            return mybatisMapper.updateById(taskDefinitionLog);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public List<TaskDefinition> queryByCodeList(List<Long> taskDefinitionCodes) {
+        if (CollectionUtils.isEmpty(taskDefinitionCodes)) {
+            return Collections.emptyList();
+        }
+
+        return mybatisMapper.queryByCodeList(taskDefinitionCodes);
+    }
 }

@@ -20,6 +20,8 @@ package org.apache.dolphinscheduler.api.service;
 import org.apache.dolphinscheduler.api.dto.taskRelation.TaskRelationCreateRequest;
 import org.apache.dolphinscheduler.api.dto.taskRelation.TaskRelationUpdateUpstreamRequest;
 import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelation;
+import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelationLog;
+import org.apache.dolphinscheduler.dao.entity.TaskDefinitionLog;
 import org.apache.dolphinscheduler.dao.entity.User;
 
 import java.util.List;
@@ -162,4 +164,10 @@ public interface ProcessTaskRelationService {
     List<ProcessTaskRelation> queryByWorkflowDefinitionCode(long workflowDefinitionCode, int workflowDefinitionVersion);
 
     void deleteByWorkflowDefinitionCode(long workflowDefinitionCode, int workflowDefinitionVersion);
+
+    int saveProcessTaskRelation(User operator, long projectCode, long processDefinitionCode,
+                                int processDefinitionVersion,
+                                List<ProcessTaskRelationLog> taskRelationList,
+                                List<TaskDefinitionLog> taskDefinitionLogs,
+                                Boolean syncDefine);
 }

@@ -106,6 +106,11 @@ public interface BaseService {
      * @param description input String
      * @return ture if Length acceptable, Length exceeds return false
      */
+    @Deprecated
     boolean checkDescriptionLength(String description);
 
+    /**
+     * check description length and throw exception if length exceeds
+     */
+    void checkDescriptionLengthThrowException(String description) throws ServiceException;
 }

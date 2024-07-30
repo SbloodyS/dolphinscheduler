@@ -34,4 +34,10 @@ public interface TaskDefinitionLogDao extends IDao<TaskDefinitionLog> {
     List<TaskDefinitionLog> queryTaskDefineLogList(List<ProcessTaskRelation> processTaskRelations);
 
     void deleteByTaskDefinitionCodes(Set<Long> taskDefinitionCodes);
+
+    int batchInsert(List<TaskDefinitionLog> taskDefinitionLogs);
+
+    TaskDefinitionLog queryByDefinitionCodeAndVersion(Long definitionCode, Integer definitionVersion);
+
+    Integer queryMaxVersionForDefinition(Long definitionCode);
 }

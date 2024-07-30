@@ -185,6 +185,13 @@ public class BaseServiceImpl implements BaseService {
         return description != null && description.codePointCount(0, description.length()) > 255;
     }
 
+    @Override
+    public void checkDescriptionLengthThrowException(String description) {
+        if (description != null && description.codePointCount(0, description.length()) > 255) {
+            throw new ServiceException("description length exceeds limit 255");
+        }
+    }
+
     protected Date transformDate(String dateStr) {
         Date date = DateUtils.stringToDate(dateStr);
         if (date == null) {

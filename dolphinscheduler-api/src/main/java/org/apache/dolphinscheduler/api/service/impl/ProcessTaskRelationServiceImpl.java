@@ -24,6 +24,7 @@ import org.apache.dolphinscheduler.api.dto.taskRelation.TaskRelationFilterReques
 import org.apache.dolphinscheduler.api.dto.taskRelation.TaskRelationUpdateUpstreamRequest;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.exceptions.ServiceException;
+import org.apache.dolphinscheduler.api.service.ProcessDefinitionService;
 import org.apache.dolphinscheduler.api.service.ProcessTaskRelationService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
 import org.apache.dolphinscheduler.common.constants.Constants;
@@ -80,6 +81,9 @@ public class ProcessTaskRelationServiceImpl extends BaseServiceImpl implements P
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private ProcessDefinitionService processDefinitionService;
 
     @Autowired
     private ProcessTaskRelationMapper processTaskRelationMapper;
@@ -273,8 +277,9 @@ public class ProcessTaskRelationServiceImpl extends BaseServiceImpl implements P
 
     private void updateProcessDefiniteVersion(User loginUser, Map<String, Object> result,
                                               ProcessDefinition processDefinition) {
-        int insertVersion = processService.saveProcessDefine(loginUser, processDefinition, Boolean.TRUE, Boolean.TRUE);
-        if (insertVersion <= 0) {
+        int insertVersion = processDefinitionService.saveProcessDefinition(loginUser, processDefinition, Boolean.TRUE,
+                Boolean.TRUE);
+        if (insertVersion == Constants.EXIT_CODE_FAILURE) {
             log.error("Update process definition error, projectCode:{}, processDefinitionCode:{}.",
                     processDefinition.getProjectCode(), processDefinition.getCode());
             putMsg(result, Status.UPDATE_PROCESS_DEFINITION_ERROR);
@@ -591,7 +596,7 @@ public class ProcessTaskRelationServiceImpl extends BaseServiceImpl implements P
                                 List<ProcessTaskRelation> processTaskRelationList) {
         List<ProcessTaskRelationLog> relationLogs =
                 processTaskRelationList.stream().map(ProcessTaskRelationLog::new).collect(Collectors.toList());
-        int insertResult = processService.saveTaskRelation(loginUser, processDefinition.getProjectCode(),
+        int insertResult = this.saveProcessTaskRelation(loginUser, processDefinition.getProjectCode(),
                 processDefinition.getCode(),
                 processDefinition.getVersion(), relationLogs, Lists.newArrayList(), Boolean.TRUE);
         if (insertResult == Constants.EXIT_CODE_SUCCESS) {
@@ -950,5 +955,65 @@ public class ProcessTaskRelationServiceImpl extends BaseServiceImpl implements P
                 return Objects.hash(getCode(), getVersion(), getProjectCode());
             }
         };
+    }
+
+    @Override
+    public int saveProcessTaskRelation(User operator, long projectCode, long processDefinitionCode,
+                                       int processDefinitionVersion,
+                                       List<ProcessTaskRelationLog> taskRelationList,
+                                       List<TaskDefinitionLog> taskDefinitionLogs,
+                                       Boolean syncDefine) {
+        if (taskRelationList.isEmpty()) {
+            return Constants.EXIT_CODE_FAILURE;
+        }
+        Map<Long, TaskDefinitionLog> taskDefinitionLogMap = null;
+        if (CollectionUtils.isNotEmpty(taskDefinitionLogs)) {
+            taskDefinitionLogMap = taskDefinitionLogs
+                    .stream()
+                    .collect(Collectors.toMap(TaskDefinition::getCode, taskDefinitionLog -> taskDefinitionLog));
+        }
+        Date now = new Date();
+        for (ProcessTaskRelationLog processTaskRelationLog : taskRelationList) {
+            processTaskRelationLog.setProjectCode(projectCode);
+            processTaskRelationLog.setProcessDefinitionCode(processDefinitionCode);
+            processTaskRelationLog.setProcessDefinitionVersion(processDefinitionVersion);
+            if (taskDefinitionLogMap != null) {
+                TaskDefinitionLog preTaskDefinitionLog =
+                        taskDefinitionLogMap.get(processTaskRelationLog.getPreTaskCode());
+                if (preTaskDefinitionLog != null) {
+                    processTaskRelationLog.setPreTaskVersion(preTaskDefinitionLog.getVersion());
+                }
+                TaskDefinitionLog postTaskDefinitionLog =
+                        taskDefinitionLogMap.get(processTaskRelationLog.getPostTaskCode());
+                if (postTaskDefinitionLog != null) {
+                    processTaskRelationLog.setPostTaskVersion(postTaskDefinitionLog.getVersion());
+                }
+            }
+            processTaskRelationLog.setCreateTime(now);
+            processTaskRelationLog.setUpdateTime(now);
+            processTaskRelationLog.setOperator(operator.getId());
+            processTaskRelationLog.setOperateTime(now);
+        }
+        int insert = taskRelationList.size();
+        if (Boolean.TRUE.equals(syncDefine)) {
+            List<ProcessTaskRelation> processTaskRelationList =
+                    processTaskRelationMapper.queryByProcessCode(processDefinitionCode);
+            if (!processTaskRelationList.isEmpty()) {
+                Set<Integer> processTaskRelationSet =
+                        processTaskRelationList.stream().map(ProcessTaskRelation::hashCode).collect(toSet());
+                Set<Integer> taskRelationSet =
+                        taskRelationList.stream().map(ProcessTaskRelationLog::hashCode).collect(toSet());
+                boolean result = CollectionUtils.isEqualCollection(processTaskRelationSet, taskRelationSet);
+                if (result) {
+                    return Constants.EXIT_CODE_SUCCESS;
+                }
+                processTaskRelationMapper.deleteByCode(projectCode, processDefinitionCode);
+            }
+            List<ProcessTaskRelation> processTaskRelations =
+                    taskRelationList.stream().map(ProcessTaskRelation::new).collect(Collectors.toList());
+            insert = processTaskRelationMapper.batchInsert(processTaskRelations);
+        }
+        int resultLog = processTaskRelationLogMapper.batchInsert(taskRelationList);
+        return (insert & resultLog) > 0 ? Constants.EXIT_CODE_SUCCESS : Constants.EXIT_CODE_FAILURE;
     }
 }

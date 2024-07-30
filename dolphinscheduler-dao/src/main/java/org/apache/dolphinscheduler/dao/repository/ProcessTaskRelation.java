@@ -17,17 +17,6 @@
 
 package org.apache.dolphinscheduler.dao.repository;
 
-import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionLog;
+public interface ProcessTaskRelation extends IDao<ProcessTaskRelation> {
 
-import org.jetbrains.annotations.NotNull;
-
-public interface ProcessDefinitionLogDao extends IDao<ProcessDefinitionLog> {
-
-    ProcessDefinitionLog queryByDefinitionCodeAndVersion(long workflowDefinitionCode, int workflowDefinitionVersion);
-
-    void deleteByWorkflowDefinitionCode(long workflowDefinitionCode);
-
-    Integer queryMaxVersionForDefinition(long code);
-
-    int insert(@NotNull ProcessDefinitionLog processDefinitionLog);
 }

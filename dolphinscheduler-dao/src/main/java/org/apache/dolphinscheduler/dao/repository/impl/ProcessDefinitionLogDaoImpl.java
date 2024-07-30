@@ -24,6 +24,7 @@ import org.apache.dolphinscheduler.dao.repository.ProcessDefinitionLogDao;
 
 import lombok.NonNull;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -44,5 +45,15 @@ public class ProcessDefinitionLogDaoImpl extends BaseDao<ProcessDefinitionLog, P
     @Override
     public void deleteByWorkflowDefinitionCode(long workflowDefinitionCode) {
         mybatisMapper.deleteByProcessDefinitionCode(workflowDefinitionCode);
+    }
+
+    @Override
+    public Integer queryMaxVersionForDefinition(long code) {
+        return mybatisMapper.queryMaxVersionForDefinition(code);
+    }
+
+    @Override
+    public int insert(@NotNull ProcessDefinitionLog processDefinitionLog) {
+        return mybatisMapper.insert(processDefinitionLog);
     }
 }

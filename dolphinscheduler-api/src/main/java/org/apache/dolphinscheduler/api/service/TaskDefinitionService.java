@@ -22,8 +22,10 @@ import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.enums.ReleaseState;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
+import org.apache.dolphinscheduler.dao.entity.TaskDefinitionLog;
 import org.apache.dolphinscheduler.dao.entity.User;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -158,4 +160,7 @@ public interface TaskDefinitionService {
                                               ReleaseState releaseState);
 
     void deleteTaskByWorkflowDefinitionCode(long workflowDefinitionCode, int workflowDefinitionVersion);
+
+    int saveTaskDefinitions(User operator, long projectCode, List<TaskDefinitionLog> taskDefinitionLogs,
+                            Boolean syncDefine);
 }

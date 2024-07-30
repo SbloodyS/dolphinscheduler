@@ -28,7 +28,6 @@ import org.apache.dolphinscheduler.common.enums.CommandType;
 import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.ProcessExecutionTypeEnum;
 import org.apache.dolphinscheduler.common.enums.TaskGroupQueueStatus;
-import org.apache.dolphinscheduler.common.enums.UserType;
 import org.apache.dolphinscheduler.common.graph.DAG;
 import org.apache.dolphinscheduler.common.model.TaskNodeRelation;
 import org.apache.dolphinscheduler.common.utils.CodeGenerateUtils;
@@ -86,7 +85,6 @@ import org.apache.dolphinscheduler.service.model.TaskNode;
 import org.apache.dolphinscheduler.spi.params.base.FormType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -635,42 +633,6 @@ public class ProcessServiceTest {
         processService.setGlobalParamIfCommanded(processDefinition, commandParams);
         Assertions.assertTrue(globalParamMap.get("global_param").equals(expectValue));
         Assertions.assertTrue(globalParamMap.containsKey("O_ERRCODE"));
-    }
-
-    @Test
-    public void testSaveTaskDefine() {
-        User operator = new User();
-        operator.setId(-1);
-        operator.setUserType(UserType.GENERAL_USER);
-        long projectCode = 751485690568704L;
-        String taskJson =
-                "[{\"code\":751500437479424,\"name\":\"aa\",\"version\":1,\"description\":\"\",\"delayTime\":0,"
-                        + "\"taskType\":\"SHELL\",\"taskParams\":{\"resourceList\":[],\"localParams\":[],\"rawScript\":\"sleep 1s\\necho 11\","
-                        + "\"dependence\":{},\"conditionResult\":{\"successNode\":[\"\"],\"failedNode\":[\"\"]},\"waitStartTimeout\":{}},"
-                        + "\"flag\":\"YES\",\"taskPriority\":\"MEDIUM\",\"workerGroup\":\"yarn\",\"failRetryTimes\":0,\"failRetryInterval\":1,"
-                        + "\"timeoutFlag\":\"OPEN\",\"timeoutNotifyStrategy\":\"FAILED\",\"timeout\":1,\"environmentCode\":751496815697920},"
-                        + "{\"code\":751516889636864,\"name\":\"bb\",\"description\":\"\",\"taskType\":\"SHELL\",\"taskParams\":{\"resourceList\":[],"
-                        + "\"localParams\":[],\"rawScript\":\"echo 22\",\"dependence\":{},\"conditionResult\":{\"successNode\":[\"\"],\"failedNode\":[\"\"]},"
-                        + "\"waitStartTimeout\":{}},\"flag\":\"YES\",\"taskPriority\":\"MEDIUM\",\"workerGroup\":\"default\",\"failRetryTimes\":\"0\","
-                        + "\"failRetryInterval\":\"1\",\"timeoutFlag\":\"CLOSE\",\"timeoutNotifyStrategy\":\"\",\"timeout\":0,\"delayTime\":\"0\",\"environmentCode\":-1}]";
-        List<TaskDefinitionLog> taskDefinitionLogs = JSONUtils.toList(taskJson, TaskDefinitionLog.class);
-        TaskDefinitionLog taskDefinition = new TaskDefinitionLog();
-        taskDefinition.setCode(751500437479424L);
-        taskDefinition.setName("aa");
-        taskDefinition.setProjectCode(751485690568704L);
-        taskDefinition.setTaskType("SHELL");
-        taskDefinition.setUserId(-1);
-        taskDefinition.setVersion(1);
-        taskDefinition.setCreateTime(new Date());
-        taskDefinition.setUpdateTime(new Date());
-        when(taskDefinitionLogMapper.queryByDefinitionCodeAndVersion(taskDefinition.getCode(),
-                taskDefinition.getVersion())).thenReturn(taskDefinition);
-        when(taskDefinitionLogMapper.queryMaxVersionForDefinition(taskDefinition.getCode())).thenReturn(1);
-        when(taskDefinitionMapper.queryByCodeList(Collections.singletonList(taskDefinition.getCode())))
-                .thenReturn(Collections.singletonList(taskDefinition));
-        when(taskDefinitionMapper.queryByCode(Mockito.anyLong())).thenReturn(taskDefinition);
-        int result = processService.saveTaskDefine(operator, projectCode, taskDefinitionLogs, Boolean.TRUE);
-        Assertions.assertEquals(0, result);
     }
 
     @Test

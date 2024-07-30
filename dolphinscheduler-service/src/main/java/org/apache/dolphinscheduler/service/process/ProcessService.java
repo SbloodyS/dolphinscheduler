@@ -35,7 +35,6 @@ import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
 import org.apache.dolphinscheduler.dao.entity.ProcessDefinitionLog;
 import org.apache.dolphinscheduler.dao.entity.ProcessInstance;
 import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelation;
-import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelationLog;
 import org.apache.dolphinscheduler.dao.entity.ProjectUser;
 import org.apache.dolphinscheduler.dao.entity.Schedule;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
@@ -129,17 +128,6 @@ public interface ProcessService {
     int switchProcessTaskRelationVersion(ProcessDefinition processDefinition);
 
     int switchTaskDefinitionVersion(long taskCode, int taskVersion);
-
-    String getResourceIds(TaskDefinition taskDefinition);
-
-    int saveTaskDefine(User operator, long projectCode, List<TaskDefinitionLog> taskDefinitionLogs, Boolean syncDefine);
-
-    int saveProcessDefine(User operator, ProcessDefinition processDefinition, Boolean syncDefine,
-                          Boolean isFromProcessDefine);
-
-    int saveTaskRelation(User operator, long projectCode, long processDefinitionCode, int processDefinitionVersion,
-                         List<ProcessTaskRelationLog> taskRelationList, List<TaskDefinitionLog> taskDefinitionLogs,
-                         Boolean syncDefine);
 
     boolean isTaskOnline(long taskCode);
 

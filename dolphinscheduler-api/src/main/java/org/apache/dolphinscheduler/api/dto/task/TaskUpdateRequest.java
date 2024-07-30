@@ -150,9 +150,6 @@ public class TaskUpdateRequest {
         if (this.timeoutNotifyStrategy != null) {
             taskDefinitionDeepCopy.setTimeoutNotifyStrategy(TaskTimeoutStrategy.valueOf(this.timeoutNotifyStrategy));
         }
-        if (this.resourceIds != null) {
-            taskDefinitionDeepCopy.setResourceIds(this.resourceIds);
-        }
         if (this.taskGroupId != 0) {
             taskDefinitionDeepCopy.setTaskGroupId(this.taskGroupId);
         }

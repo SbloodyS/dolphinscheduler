@@ -58,6 +58,8 @@ import org.apache.dolphinscheduler.service.process.ProcessServiceImpl;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +102,9 @@ public class TaskDefinitionServiceImplTest {
     private ProcessService processService;
 
     @Mock
+    private ProcessDefinitionService processDefinitionService;
+
+    @Mock
     private ProcessDefinitionLogMapper processDefineLogMapper;
 
     @Mock
@@ -113,9 +118,6 @@ public class TaskDefinitionServiceImplTest {
 
     @Mock
     private ProcessDefinitionMapper processDefinitionMapper;
-
-    @Mock
-    private ProcessDefinitionService processDefinitionService;
 
     @Mock
     private ProcessTaskRelationLogDao processTaskRelationLogDao;
@@ -292,13 +294,14 @@ public class TaskDefinitionServiceImplTest {
         Integer version = 1;
         when(processDefinitionMapper.queryByCode(isA(long.class))).thenReturn(processDefinition);
 
-        // saveProcessDefine
+        // saveProcessDefinition
         when(processDefineLogMapper.queryMaxVersionForDefinition(isA(long.class))).thenReturn(version);
         when(processDefineLogMapper.insert(isA(ProcessDefinitionLog.class))).thenReturn(1);
         when(processDefinitionMapper.insert(isA(ProcessDefinitionLog.class))).thenReturn(1);
         int insertVersion =
-                processServiceImpl.saveProcessDefine(loginUser, processDefinition, Boolean.TRUE, Boolean.TRUE);
-        when(processService.saveProcessDefine(loginUser, processDefinition, Boolean.TRUE, Boolean.TRUE))
+                processDefinitionService.saveProcessDefinition(loginUser, processDefinition, Boolean.TRUE,
+                        Boolean.TRUE);
+        when(processDefinitionService.saveProcessDefinition(loginUser, processDefinition, Boolean.TRUE, Boolean.TRUE))
                 .thenReturn(insertVersion);
         assertEquals(insertVersion, version + 1);
 
@@ -308,9 +311,10 @@ public class TaskDefinitionServiceImplTest {
                 .thenReturn(processTaskRelationList);
         when(processTaskRelationMapper.batchInsert(isA(List.class))).thenReturn(1);
         when(processTaskRelationLogMapper.batchInsert(isA(List.class))).thenReturn(1);
-        int insertResult = processServiceImpl.saveTaskRelation(loginUser, processDefinition.getProjectCode(),
-                processDefinition.getCode(), insertVersion, processTaskRelationLogList, taskDefinitionLogs,
-                Boolean.TRUE);
+        int insertResult =
+                processTaskRelationService.saveProcessTaskRelation(loginUser, processDefinition.getProjectCode(),
+                        processDefinition.getCode(), insertVersion, processTaskRelationLogList, taskDefinitionLogs,
+                        Boolean.TRUE);
         assertEquals(Constants.EXIT_CODE_SUCCESS, insertResult);
         Assertions.assertDoesNotThrow(
                 () -> taskDefinitionService.updateDag(loginUser, processDefinition.getCode(), processTaskRelationList,
@@ -516,5 +520,41 @@ public class TaskDefinitionServiceImplTest {
         processTaskRelationList.add(processTaskRelation2);
 
         return processTaskRelationList;
+    }
+
+    @Test
+    public void testSaveTaskDefinitions() {
+        User operator = new User();
+        operator.setId(-1);
+        operator.setUserType(UserType.GENERAL_USER);
+        long projectCode = 751485690568704L;
+        String taskJson =
+                "[{\"code\":751500437479424,\"name\":\"aa\",\"version\":1,\"description\":\"\",\"delayTime\":0,"
+                        + "\"taskType\":\"SHELL\",\"taskParams\":{\"resourceList\":[],\"localParams\":[],\"rawScript\":\"sleep 1s\\necho 11\","
+                        + "\"dependence\":{},\"conditionResult\":{\"successNode\":[\"\"],\"failedNode\":[\"\"]},\"waitStartTimeout\":{}},"
+                        + "\"flag\":\"YES\",\"taskPriority\":\"MEDIUM\",\"workerGroup\":\"yarn\",\"failRetryTimes\":0,\"failRetryInterval\":1,"
+                        + "\"timeoutFlag\":\"OPEN\",\"timeoutNotifyStrategy\":\"FAILED\",\"timeout\":1,\"environmentCode\":751496815697920},"
+                        + "{\"code\":751516889636864,\"name\":\"bb\",\"description\":\"\",\"taskType\":\"SHELL\",\"taskParams\":{\"resourceList\":[],"
+                        + "\"localParams\":[],\"rawScript\":\"echo 22\",\"dependence\":{},\"conditionResult\":{\"successNode\":[\"\"],\"failedNode\":[\"\"]},"
+                        + "\"waitStartTimeout\":{}},\"flag\":\"YES\",\"taskPriority\":\"MEDIUM\",\"workerGroup\":\"default\",\"failRetryTimes\":\"0\","
+                        + "\"failRetryInterval\":\"1\",\"timeoutFlag\":\"CLOSE\",\"timeoutNotifyStrategy\":\"\",\"timeout\":0,\"delayTime\":\"0\",\"environmentCode\":-1}]";
+        List<TaskDefinitionLog> taskDefinitionLogs = JSONUtils.toList(taskJson, TaskDefinitionLog.class);
+        TaskDefinitionLog taskDefinition = new TaskDefinitionLog();
+        taskDefinition.setCode(751500437479424L);
+        taskDefinition.setName("aa");
+        taskDefinition.setProjectCode(751485690568704L);
+        taskDefinition.setTaskType("SHELL");
+        taskDefinition.setUserId(-1);
+        taskDefinition.setVersion(1);
+        taskDefinition.setCreateTime(new Date());
+        taskDefinition.setUpdateTime(new Date());
+        when(taskDefinitionLogMapper.queryByDefinitionCodeAndVersion(taskDefinition.getCode(),
+                taskDefinition.getVersion())).thenReturn(taskDefinition);
+        when(taskDefinitionLogMapper.queryMaxVersionForDefinition(taskDefinition.getCode())).thenReturn(1);
+        when(taskDefinitionMapper.queryByCodeList(Collections.singletonList(taskDefinition.getCode())))
+                .thenReturn(Collections.singletonList(taskDefinition));
+        when(taskDefinitionMapper.queryByCode(Mockito.anyLong())).thenReturn(taskDefinition);
+        int result = taskDefinitionService.saveTaskDefinitions(operator, projectCode, taskDefinitionLogs, Boolean.TRUE);
+        Assertions.assertEquals(0, result);
     }
 }

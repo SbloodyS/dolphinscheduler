@@ -179,7 +179,7 @@ public class TaskDefinition {
     private int delayTime;
 
     /**
-     * resource ids we do
+     * deprecated, use task_params.resourceList instead
      */
     @Deprecated
     private String resourceIds;
@@ -292,9 +292,6 @@ public class TaskDefinition {
                 && Objects.equals(workerGroup, that.workerGroup)
                 && timeoutFlag == that.timeoutFlag
                 && timeoutNotifyStrategy == that.timeoutNotifyStrategy
-                && (Objects.equals(resourceIds, that.resourceIds)
-                        || ("".equals(resourceIds) && that.resourceIds == null)
-                        || ("".equals(that.resourceIds) && resourceIds == null))
                 && environmentCode == that.environmentCode
                 && taskGroupId == that.taskGroupId
                 && taskGroupPriority == that.taskGroupPriority

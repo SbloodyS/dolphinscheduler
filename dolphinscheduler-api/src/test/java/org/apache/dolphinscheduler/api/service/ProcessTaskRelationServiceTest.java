@@ -85,6 +85,9 @@ public class ProcessTaskRelationServiceTest {
     private ProjectServiceImpl projectService;
 
     @Mock
+    private ProcessDefinitionService processDefinitionService;
+
+    @Mock
     private ProcessTaskRelationMapper processTaskRelationMapper;
 
     @Mock
@@ -427,7 +430,8 @@ public class ProcessTaskRelationServiceTest {
         Mockito.when(processTaskRelationLogMapper.deleteRelation(processTaskRelationLog)).thenReturn(1);
         ProcessDefinition processDefinition = getProcessDefinition();
         Mockito.when(processDefinitionMapper.queryByCode(1L)).thenReturn(processDefinition);
-        Mockito.when(processService.saveProcessDefine(user, processDefinition, Boolean.TRUE, Boolean.TRUE))
+        Mockito.when(
+                processDefinitionService.saveProcessDefinition(user, processDefinition, Boolean.TRUE, Boolean.TRUE))
                 .thenReturn(1);
         Map<String, Object> result1 =
                 processTaskRelationService.deleteDownstreamRelation(user, projectCode, "123", taskCode);
@@ -459,7 +463,7 @@ public class ProcessTaskRelationServiceTest {
         Mockito.when(processTaskRelationMapper.queryByProcessCode(1L)).thenReturn(processTaskRelationList);
         List<ProcessTaskRelationLog> relationLogs =
                 processTaskRelationList.stream().map(ProcessTaskRelationLog::new).collect(Collectors.toList());
-        Mockito.when(processService.saveTaskRelation(user, 1L, 1L,
+        Mockito.when(processTaskRelationService.saveProcessTaskRelation(user, 1L, 1L,
                 1, relationLogs, Lists.newArrayList(), Boolean.TRUE)).thenReturn(0);
         Assertions.assertEquals(Status.SUCCESS, result.get(Constants.STATUS));
     }
@@ -499,7 +503,7 @@ public class ProcessTaskRelationServiceTest {
         List<ProcessTaskRelationLog> relationLogs =
                 processTaskRelationList.stream().map(ProcessTaskRelationLog::new).collect(Collectors.toList());
 
-        Mockito.when(processService.saveTaskRelation(user, 1L, 1L,
+        Mockito.when(processTaskRelationService.saveProcessTaskRelation(user, 1L, 1L,
                 1, relationLogs, Lists.newArrayList(), Boolean.TRUE)).thenReturn(0);
         Assertions.assertEquals(Status.SUCCESS, result.get(Constants.STATUS));
     }
@@ -530,7 +534,7 @@ public class ProcessTaskRelationServiceTest {
         Mockito.when(processTaskRelationMapper.queryByProcessCode(1L)).thenReturn(processTaskRelationList);
         List<ProcessTaskRelationLog> relationLogs =
                 processTaskRelationList.stream().map(ProcessTaskRelationLog::new).collect(Collectors.toList());
-        Mockito.when(processService.saveTaskRelation(user, 1L, 1L,
+        Mockito.when(processTaskRelationService.saveProcessTaskRelation(user, 1L, 1L,
                 1, relationLogs, Lists.newArrayList(), Boolean.TRUE)).thenReturn(0);
         Assertions.assertEquals(Status.SUCCESS, result.get(Constants.STATUS));
     }

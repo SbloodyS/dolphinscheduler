@@ -600,7 +600,8 @@ public class ProcessInstanceServiceTest {
         when(processService.getTenantForProcess(Mockito.anyString(), Mockito.anyInt()))
                 .thenReturn(tenant.getTenantCode());
         when(processInstanceDao.updateById(processInstance)).thenReturn(true);
-        when(processService.saveProcessDefine(loginUser, processDefinition, Boolean.TRUE, Boolean.FALSE)).thenReturn(1);
+        when(processDefinitionService.saveProcessDefinition(loginUser, processDefinition, Boolean.TRUE, Boolean.FALSE))
+                .thenReturn(1);
 
         List<TaskDefinitionLog> taskDefinitionLogs = JSONUtils.toList(taskDefinitionJson, TaskDefinitionLog.class);
         when(processDefinitionService.checkProcessNodeList(taskRelationJson, taskDefinitionLogs)).thenReturn(result);
@@ -621,8 +622,9 @@ public class ProcessInstanceServiceTest {
             when(processDefineMapper.queryByCode(46L)).thenReturn(processDefinition);
             putMsg(result, Status.SUCCESS, projectCode);
 
-            when(processService.saveProcessDefine(loginUser, processDefinition, Boolean.FALSE, Boolean.FALSE))
-                    .thenReturn(1);
+            when(processDefinitionService.saveProcessDefinition(loginUser, processDefinition, Boolean.FALSE,
+                    Boolean.FALSE))
+                            .thenReturn(1);
             Map<String, Object> successRes = processInstanceService.updateProcessInstance(loginUser, projectCode, 1,
                     taskRelationJson, taskDefinitionJson, "2020-02-21 00:00:00", Boolean.FALSE, "", "", 0);
             Assertions.assertEquals(Status.SUCCESS, successRes.get(Constants.STATUS));

@@ -19,11 +19,18 @@ package org.apache.dolphinscheduler.dao.entity;
 
 import java.util.Date;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * task definition log
  */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @TableName("t_ds_task_definition_log")
 public class TaskDefinitionLog extends TaskDefinition {
 
@@ -53,7 +60,6 @@ public class TaskDefinitionLog extends TaskDefinition {
         this.setEnvironmentCode(taskDefinition.getEnvironmentCode());
         this.setProjectCode(taskDefinition.getProjectCode());
         this.setProjectName(taskDefinition.getProjectName());
-        this.setResourceIds(taskDefinition.getResourceIds());
         this.setTaskParams(taskDefinition.getTaskParams());
         this.setTaskParamList(taskDefinition.getTaskParamList());
         this.setTaskParamMap(taskDefinition.getTaskParamMap());
@@ -76,34 +82,4 @@ public class TaskDefinitionLog extends TaskDefinition {
         this.setTaskExecuteType(taskDefinition.getTaskExecuteType());
     }
 
-    public int getOperator() {
-        return operator;
-    }
-
-    public void setOperator(int operator) {
-        this.operator = operator;
-    }
-
-    public Date getOperateTime() {
-        return operateTime;
-    }
-
-    public void setOperateTime(Date operateTime) {
-        this.operateTime = operateTime;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
 }

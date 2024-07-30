@@ -183,6 +183,9 @@ public class ProcessDefinitionServiceTest extends BaseServiceTestTool {
     private ProcessDefinitionLogDao processDefinitionLogDao;
 
     @Mock
+    private ProcessTaskRelationService processTaskRelationService;
+
+    @Mock
     private UserMapper userMapper;
 
     protected User user;
@@ -423,7 +426,8 @@ public class ProcessDefinitionServiceTest extends BaseServiceTestTool {
             }
         }
         when(processDefinitionMapper.queryByCodes(definitionCodes)).thenReturn(processDefinitionList);
-        when(processService.saveProcessDefine(user, definition, Boolean.TRUE, Boolean.TRUE)).thenReturn(2);
+        when(processDefinitionService.saveProcessDefinition(user, definition, Boolean.TRUE, Boolean.TRUE))
+                .thenReturn(2);
         Map<String, Object> map3 = processDefinitionService.batchCopyProcessDefinition(
                 user, projectCodeOther, String.valueOf(processDefinitionCode), projectCode);
         Assertions.assertEquals(Status.SUCCESS, map3.get(Constants.STATUS));
@@ -460,7 +464,8 @@ public class ProcessDefinitionServiceTest extends BaseServiceTestTool {
             }
         }
         when(processDefinitionMapper.queryByCodes(definitionCodes)).thenReturn(processDefinitionList);
-        when(processService.saveProcessDefine(user, definition, Boolean.TRUE, Boolean.TRUE)).thenReturn(2);
+        when(processDefinitionService.saveProcessDefinition(user, definition, Boolean.TRUE, Boolean.TRUE))
+                .thenReturn(2);
         when(processTaskRelationMapper.queryByProcessCode(processDefinitionCode))
                 .thenReturn(getProcessTaskRelation());
         putMsg(result, Status.SUCCESS);
@@ -835,12 +840,13 @@ public class ProcessDefinitionServiceTest extends BaseServiceTestTool {
         when(projectMapper.queryByCode(projectCode)).thenReturn(getProject(projectCode));
         when(projectService.checkProjectAndAuth(user, project, projectCode, WORKFLOW_IMPORT))
                 .thenReturn(result);
-        when(processService.saveTaskDefine(Mockito.same(user), Mockito.eq(projectCode), Mockito.notNull(),
+        when(taskDefinitionService.saveTaskDefinitions(Mockito.same(user), Mockito.eq(projectCode), Mockito.notNull(),
                 Mockito.anyBoolean())).thenReturn(2);
-        when(processService.saveProcessDefine(Mockito.same(user), Mockito.notNull(), Mockito.notNull(),
+        when(processDefinitionService.saveProcessDefinition(Mockito.same(user), Mockito.notNull(), Mockito.notNull(),
                 Mockito.anyBoolean())).thenReturn(1);
         when(
-                processService.saveTaskRelation(Mockito.same(user), Mockito.eq(projectCode), Mockito.anyLong(),
+                processTaskRelationService.saveProcessTaskRelation(Mockito.same(user), Mockito.eq(projectCode),
+                        Mockito.anyLong(),
                         Mockito.eq(1), Mockito.notNull(), Mockito.notNull(), Mockito.anyBoolean()))
                                 .thenReturn(0);
         result = processDefinitionService.importSqlProcessDefinition(user, projectCode, mockMultipartFile);
