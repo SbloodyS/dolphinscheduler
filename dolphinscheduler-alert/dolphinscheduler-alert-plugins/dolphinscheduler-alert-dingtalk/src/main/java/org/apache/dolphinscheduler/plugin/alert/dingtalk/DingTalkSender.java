@@ -258,29 +258,6 @@ public final class DingTalkSender {
      * @param text text
      */
     private void generateMarkdownMsg(String title, String content, Map<String, Object> text) {
-//        StringBuilder builder = new StringBuilder(content);
-//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(keyword)) {
-//            builder.append(" ");
-//            builder.append(keyword);
-//        }
-//        builder.append("\n\n");
-//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atMobiles)) {
-//            Arrays.stream(atMobiles.split(",")).forEach(value -> {
-//                builder.append("@");
-//                builder.append(value);
-//                builder.append(" ");
-//            });
-//        }
-//        if (org.apache.dolphinscheduler.spi.utils.StringUtils.isNotBlank(atUserIds)) {
-//            Arrays.stream(atUserIds.split(",")).forEach(value -> {
-//                builder.append("@");
-//                builder.append(value);
-//                builder.append(" ");
-//            });
-//        }
-
-//        byte[] byt = StringUtils.getBytesUtf8(builder.toString());
-//        String txt = StringUtils.newStringUtf8(byt);
         List<ProcessAlertContent> processAlertContentList = JSONUtils.toList(content, ProcessAlertContent.class);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("> DS任务告警: %s", title));

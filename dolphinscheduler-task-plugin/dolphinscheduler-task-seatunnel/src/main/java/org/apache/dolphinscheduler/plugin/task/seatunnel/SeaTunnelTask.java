@@ -477,7 +477,7 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         if (autoCreateHiveTable) {
             createHiveTableStatement = generateCreateHiveTableStatement(targetTable, sinkHiveTablePartition);
         }
-        String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS TEXTFILE AS SELECT * FROM %s WHERE 1=2;", tmpTable, targetTable);
+        String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS ORC AS SELECT * FROM %s WHERE 1=2;", tmpTable, targetTable);
         String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
         String insertTableStatement;
         if (StringUtils.isEmpty(sinkHiveTablePartition)) {
@@ -507,7 +507,8 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
 
     @SneakyThrows
     private void generateHiveSourceCommand(String targetTable, String tmpTable) {
-        String createTmpTableStatement = String.format("CREATE TABLE %s ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\u0007' NULL DEFINED AS '' STORED AS TEXTFILE AS SELECT * FROM %s;", tmpTable, targetTable);
+//        String createTmpTableStatement = String.format("CREATE TABLE %s ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\u0007' NULL DEFINED AS '' STORED AS TEXTFILE AS SELECT * FROM %s;", tmpTable, targetTable);
+        String createTmpTableStatement = String.format("CREATE TABLE %s STORED AS ORC AS SELECT * FROM %s;", tmpTable, targetTable);
         String dropTableStatement = String.format("DROP TABLE IF EXISTS %s;", tmpTable);
 
         String beforeHiveSourceSqlPath = String.format("%s/%s_before_hive_source.sql", taskExecutionContext.getExecutePath(), taskExecutionContext.getTaskName());
