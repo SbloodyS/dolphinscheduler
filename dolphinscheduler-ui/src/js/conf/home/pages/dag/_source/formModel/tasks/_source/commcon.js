@@ -258,10 +258,10 @@ const nodeStatusList = [
 
 const clickhouseIPList = [
   {
-    ip: '172.16.92.170'
+    ip: '172.22.97.17'
   },
   {
-    ip: '172.16.204.33'
+    ip: '172.22.97.16'
   }
 ]
 
