@@ -495,11 +495,11 @@ public class SeaTunnelTask extends AbstractTaskExecutor {
         createSeaTunnelCommandFileIfNotExists(String.format("%s\n%s\n%s", createHiveTableStatement,dropTableStatement, createTmpTableStatement), beforeHiveSqlPath);
         createSeaTunnelCommandFileIfNotExists(String.format("%s\n%s", insertTableStatement, dropTableStatement), afterHiveSqlPath);
 
-        beforeHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
+        beforeHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf spark.app.name=%s -hiveconf spark.yarn.queue=%s -hiveconf hive.execution.engine=spark -f %s",
                 taskExecutionContext.getTaskName(),
                 yarnQueue,
                 beforeHiveSqlPath);
-        afterHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf mapreduce.job.name=%s -hiveconf mapreduce.job.queuename=%s -hiveconf hive.execution.engine=mr -f %s",
+        afterHiveSinkCommand = String.format("sudo ${HIVE_CLI_HOME} -v -hiveconf spark.app.name=%s -hiveconf spark.yarn.queue=%s -hiveconf hive.execution.engine=spark -f %s",
                 taskExecutionContext.getTaskName(),
                 yarnQueue,
                 afterHiveSqlPath);
