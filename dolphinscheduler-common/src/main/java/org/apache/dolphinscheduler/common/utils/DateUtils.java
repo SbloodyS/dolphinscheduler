@@ -268,7 +268,7 @@ public final class DateUtils {
         strBuilder = days > 0 ? strBuilder.append(days).append("d").append(" ") : strBuilder;
         strBuilder = hours > 0 ? strBuilder.append(hours).append("h").append(" ") : strBuilder;
         strBuilder = minutes > 0 ? strBuilder.append(minutes).append("m").append(" ") : strBuilder;
-        strBuilder = seconds > 0 ? strBuilder.append(seconds).append("s") : strBuilder;
+        strBuilder = seconds >= 0 ? strBuilder.append(seconds).append("s") : strBuilder;
 
         return strBuilder.toString();
 

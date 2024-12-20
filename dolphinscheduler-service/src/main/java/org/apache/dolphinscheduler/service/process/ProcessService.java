@@ -1336,6 +1336,25 @@ public class ProcessService {
         if (processInstanceState == ExecutionStatus.READY_PAUSE) {
             taskInstance.setState(ExecutionStatus.PAUSE);
         }
+        if (taskInstance.getState().typeIsFailure()) {
+            if (processInstanceState != ExecutionStatus.READY_STOP
+                    && processInstanceState != ExecutionStatus.READY_PAUSE) {
+                // failure task set invalid
+                taskInstance.setFlag(Flag.NO);
+                taskInstance.setRetryTimes(taskInstance.getRetryTimes() - 1);
+                updateTaskInstance(taskInstance);
+                // crate new task instance
+                taskInstance.setRetryTimes(taskInstance.getRetryTimes() + 1);
+                taskInstance.setSubmitTime(null);
+                taskInstance.setLogPath(null);
+                taskInstance.setExecutePath(null);
+                taskInstance.setStartTime(null);
+                taskInstance.setEndTime(null);
+                taskInstance.setFlag(Flag.YES);
+                taskInstance.setHost(null);
+                taskInstance.setId(0);
+            }
+        }
         taskInstance.setProcessInstancePriority(processInstance.getProcessInstancePriority());
         taskInstance.setExecutorId(processInstance.getExecutorId());
         taskInstance.setState(getSubmitTaskState(taskInstance, processInstanceState));
