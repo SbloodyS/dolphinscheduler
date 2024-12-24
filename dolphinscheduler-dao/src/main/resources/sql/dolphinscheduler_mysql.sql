@@ -822,6 +822,7 @@ CREATE TABLE `t_ds_task_instance` (
   `host` varchar(135) DEFAULT NULL COMMENT 'host of task running on',
   `execute_path` varchar(200) DEFAULT NULL COMMENT 'task execute path in the host',
   `log_path` varchar(200) DEFAULT NULL COMMENT 'task log path',
+  `full_log_path` text DEFAULT NULL COMMENT 'full log path',
   `alert_flag` tinyint(4) DEFAULT NULL COMMENT 'whether alert',
   `retry_times` int(4) DEFAULT '0' COMMENT 'task retry times',
   `pid` int(4) DEFAULT NULL COMMENT 'pid of task',

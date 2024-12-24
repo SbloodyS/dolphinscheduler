@@ -238,7 +238,7 @@
       }
     },
     mounted () {
-      this._onTextareaScroll()
+      // this._onTextareaScroll()
     },
     updated () {
     },

@@ -134,7 +134,7 @@ public class LoggerController extends BaseController {
                                    @RequestParam(value = "taskInstanceId") int taskInstanceId,
                                    @RequestParam(value = "skipLineNum") int skipNum,
                                    @RequestParam(value = "limit") int limit) {
-        return returnDataList(loggerService.queryLog(loginUser, projectCode, taskInstanceId, skipNum, limit));
+        return returnDataList(loggerService.queryLog(loginUser, projectCode, taskInstanceId, skipNum, Constants.LOG_QUERY_LIMIT));
     }
 
     /**

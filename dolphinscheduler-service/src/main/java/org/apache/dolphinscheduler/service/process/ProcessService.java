@@ -47,6 +47,7 @@ import org.apache.dolphinscheduler.common.enums.TimeoutFlag;
 import org.apache.dolphinscheduler.common.enums.WarningType;
 import org.apache.dolphinscheduler.common.graph.DAG;
 import org.apache.dolphinscheduler.common.model.DateInterval;
+import org.apache.dolphinscheduler.common.model.TaskInstanceFullLogPath;
 import org.apache.dolphinscheduler.common.model.TaskNode;
 import org.apache.dolphinscheduler.common.model.TaskNodeRelation;
 import org.apache.dolphinscheduler.common.process.ProcessDag;
@@ -126,6 +127,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -1336,25 +1338,6 @@ public class ProcessService {
         if (processInstanceState == ExecutionStatus.READY_PAUSE) {
             taskInstance.setState(ExecutionStatus.PAUSE);
         }
-        if (taskInstance.getState().typeIsFailure()) {
-            if (processInstanceState != ExecutionStatus.READY_STOP
-                    && processInstanceState != ExecutionStatus.READY_PAUSE) {
-                // failure task set invalid
-                taskInstance.setFlag(Flag.NO);
-                taskInstance.setRetryTimes(taskInstance.getRetryTimes() - 1);
-                updateTaskInstance(taskInstance);
-                // crate new task instance
-                taskInstance.setRetryTimes(taskInstance.getRetryTimes() + 1);
-                taskInstance.setSubmitTime(null);
-                taskInstance.setLogPath(null);
-                taskInstance.setExecutePath(null);
-                taskInstance.setStartTime(null);
-                taskInstance.setEndTime(null);
-                taskInstance.setFlag(Flag.YES);
-                taskInstance.setHost(null);
-                taskInstance.setId(0);
-            }
-        }
         taskInstance.setProcessInstancePriority(processInstance.getProcessInstancePriority());
         taskInstance.setExecutorId(processInstance.getExecutorId());
         taskInstance.setState(getSubmitTaskState(taskInstance, processInstanceState));
@@ -1477,7 +1460,21 @@ public class ProcessService {
     }
 
     public boolean updateHostAndSubmitTimeById(int id, String host, Date date) {
-        int count = taskInstanceMapper.updateHostAndSubmitTimeById(id, host, date);
+        List<TaskInstanceFullLogPath> taskInstanceFullLogPathList = JSONUtils.parseObject(taskInstanceMapper.queryTaskInstanceFullLogPath(id), new TypeReference<List<TaskInstanceFullLogPath>>() {});
+        AtomicBoolean isExist = new AtomicBoolean(false);
+        if (CollectionUtils.isNotEmpty(taskInstanceFullLogPathList)) {
+            taskInstanceFullLogPathList
+                    .forEach(taskInstanceFullLogPath -> {
+                        if (taskInstanceFullLogPath.getHost().equals(host)) {
+                            isExist.set(true);
+                        }
+                    });
+            if (!isExist.get()) {
+                taskInstanceFullLogPathList.add(new TaskInstanceFullLogPath(host, taskInstanceFullLogPathList.get(0).getLogPath()));
+            }
+        }
+//        logger.info("updateHostAndSubmitTimeById TaskInstanceFullLogPathList: {}", taskInstanceFullLogPathList);
+        int count = taskInstanceMapper.updateHostAndSubmitTimeById(id, host, date, JSONUtils.toJsonString(taskInstanceFullLogPathList));
         return count > 0;
     }
 
@@ -1499,8 +1496,27 @@ public class ProcessService {
      * @return update task instance result
      */
     public boolean updateTaskInstance(TaskInstance taskInstance) {
+        String taskInstanceFullLogPath = taskInstanceMapper.queryTaskInstanceFullLogPath(taskInstance.getId());
+//        logger.info("taskInstanceFullLogPath: {}", taskInstanceFullLogPath);
+        List<TaskInstanceFullLogPath> taskInstanceFullLogPathList = JSONUtils.parseObject(taskInstanceFullLogPath, new TypeReference<List<TaskInstanceFullLogPath>>() {});
+//        logger.info("taskInstanceFullLogPathList: {}, getFullLogPath: {}, host: {}", taskInstanceFullLogPathList, taskInstance.getFullLogPath(), taskInstance.getHost());
+        if (CollectionUtils.isNotEmpty(taskInstanceFullLogPathList)) {
+//            logger.info("taskInstanceFullLogPath is not null");
+            if (CollectionUtils.isNotEmpty(taskInstance.getTaskInstanceFullLogPath())) {
+                List<TaskInstanceFullLogPath> memoryTaskInstanceFullLogPathList = taskInstance.getTaskInstanceFullLogPath();
+                memoryTaskInstanceFullLogPathList.addAll(taskInstanceFullLogPathList);
+                taskInstance.setTaskInstanceFullLogPath(memoryTaskInstanceFullLogPathList);
+//                logger.info("taskInstanceFullLogPath is not null: {}", taskInstance.getTaskInstanceFullLogPath());
+            } else {
+                taskInstance.setTaskInstanceFullLogPath(taskInstanceFullLogPathList);
+            }
+        } else if (taskInstance.getFullLogPath() == null && taskInstance.getHost() != null) {
+//            logger.info("taskInstanceFullLogPath is null");
+            taskInstance.setTaskInstanceFullLogPath(Lists.asList(new TaskInstanceFullLogPath(taskInstance.getHost(), taskInstance.getLogPath()), new TaskInstanceFullLogPath[]{}));
+        }
+        taskInstance.setLogPath(taskInstance.getLogPath());
         int count = taskInstanceMapper.updateById(taskInstance);
-        logger.debug("updateTaskInstance, task instance id:{}, state;{}", taskInstance.getId(), taskInstance.getState());
+        logger.info("updateTaskInstance, task instance id: {}, state: {}", taskInstance.getId(), taskInstance.getState());
         return count > 0;
     }
 

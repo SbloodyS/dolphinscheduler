@@ -26,14 +26,21 @@ import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.Flag;
 import org.apache.dolphinscheduler.common.enums.Priority;
 import org.apache.dolphinscheduler.common.enums.TaskType;
+import org.apache.dolphinscheduler.common.model.TaskInstanceFullLogPath;
 import org.apache.dolphinscheduler.common.task.dependent.DependentParameters;
 import org.apache.dolphinscheduler.common.task.switchtask.SwitchParameters;
 import org.apache.dolphinscheduler.common.utils.DateUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -41,11 +48,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-/**
- * task instance
- */
 @Data
-@TableName("t_ds_task_instance")
+@TableName(value = "t_ds_task_instance")
 public class TaskInstance implements Serializable {
 
     /**
@@ -131,6 +135,11 @@ public class TaskInstance implements Serializable {
      * default path: $base_run_dir/processInstanceId/taskInstanceId/retryTimes
      */
     private String logPath;
+
+    private String fullLogPath;
+
+    @TableField(exist = false)
+    private List<TaskInstanceFullLogPath> taskInstanceFullLogPath;
 
     /**
      * retry times
@@ -283,16 +292,44 @@ public class TaskInstance implements Serializable {
         this.executePath = executePath;
     }
 
+    public List<TaskInstanceFullLogPath> getTaskInstanceFullLogPath() {
+        if (this.taskInstanceFullLogPath == null) {
+            this.taskInstanceFullLogPath = JSONUtils.toList(this.fullLogPath, TaskInstanceFullLogPath.class);
+        }
+        return this.taskInstanceFullLogPath;
+    }
+
+    public void setTaskInstanceFullLogPath(List<TaskInstanceFullLogPath> taskInstanceFullLogPaths) {
+        if (this.taskInstanceFullLogPath != null) {
+            Set<String> taskInstanceFullLogPathSet = this.taskInstanceFullLogPath.stream()
+                    .map(taskInstanceFullLogPath -> taskInstanceFullLogPath.getHost() + "-" + taskInstanceFullLogPath.getLogPath())
+                    .collect(Collectors.toSet());
+            for (TaskInstanceFullLogPath inputTaskInstanceFullLogPath : taskInstanceFullLogPaths) {
+                String key = inputTaskInstanceFullLogPath.getHost() + "-" + inputTaskInstanceFullLogPath.getLogPath();
+                if (!taskInstanceFullLogPathSet.contains(key)) {
+                    this.taskInstanceFullLogPath.add(inputTaskInstanceFullLogPath);
+                }
+            }
+            this.taskInstanceFullLogPath = this.taskInstanceFullLogPath.stream()
+                    .collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(
+                            Comparator.comparing(o -> o.getHost() + "-" + o.getLogPath()))), ArrayList::new
+                    ));
+        } else {
+            this.taskInstanceFullLogPath = taskInstanceFullLogPaths.stream()
+                    .collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(
+                            Comparator.comparing(o -> o.getHost() + "-" + o.getLogPath()))), ArrayList::new
+                    ));
+        }
+
+        this.fullLogPath = JSONUtils.toJsonString(this.taskInstanceFullLogPath);
+    }
+
     public DependentParameters getDependency() {
         if (this.dependency == null) {
             Map<String, Object> taskParamsMap = JSONUtils.parseObject(this.getTaskParams(), new TypeReference<Map<String, Object>>() {});
             this.dependency = JSONUtils.parseObject((String) taskParamsMap.get(Constants.DEPENDENCE), DependentParameters.class);
         }
         return this.dependency;
-    }
-
-    public void setDependency(DependentParameters dependency) {
-        this.dependency = dependency;
     }
 
     public SwitchParameters getSwitchDependency() {
@@ -313,14 +350,6 @@ public class TaskInstance implements Serializable {
         return this.getState().typeIsSuccess()
                 || this.getState().typeIsCancel()
                 || (this.getState().typeIsFailure() && !taskCanRetry());
-    }
-
-    public Map<String, String> getResources() {
-        return resources;
-    }
-
-    public void setResources(Map<String, String> resources) {
-        this.resources = resources;
     }
 
     public boolean isSubProcess() {
@@ -373,74 +402,11 @@ public class TaskInstance implements Serializable {
         Date now = new Date();
         long failedTimeInterval = DateUtils.differSec(now, getEndTime());
         // task retry does not over time, return false
-        return getRetryInterval() * SEC_2_MINUTES_TIME_UNIT < failedTimeInterval;
-    }
-
-    @Override
-    public String toString() {
-        return "TaskInstance{"
-                + "id=" + id
-                + ", name='" + name + '\''
-                + ", taskType='" + taskType + '\''
-                + ", processInstanceId=" + processInstanceId
-                + ", processInstanceName='" + processInstanceName + '\''
-                + ", state=" + state
-                + ", firstSubmitTime=" + firstSubmitTime
-                + ", submitTime=" + submitTime
-                + ", startTime=" + startTime
-                + ", endTime=" + endTime
-                + ", host='" + host + '\''
-                + ", executePath='" + executePath + '\''
-                + ", logPath='" + logPath + '\''
-                + ", retryTimes=" + retryTimes
-                + ", alertFlag=" + alertFlag
-                + ", processInstance=" + processInstance
-                + ", processDefine=" + processDefine
-                + ", pid=" + pid
-                + ", appLink='" + appLink + '\''
-                + ", flag=" + flag
-                + ", dependency='" + dependency + '\''
-                + ", duration=" + duration
-                + ", maxRetryTimes=" + maxRetryTimes
-                + ", retryInterval=" + retryInterval
-                + ", taskInstancePriority=" + taskInstancePriority
-                + ", processInstancePriority=" + processInstancePriority
-                + ", dependentResult='" + dependentResult + '\''
-                + ", workerGroup='" + workerGroup + '\''
-                + ", environmentCode=" + environmentCode
-                + ", environmentConfig='" + environmentConfig + '\''
-                + ", executorId=" + executorId
-                + ", executorName='" + executorName + '\''
-                + ", delayTime=" + delayTime
-                + ", dryRun=" + dryRun
-                + '}';
-    }
-
-    public long getTaskCode() {
-        return taskCode;
-    }
-
-    public void setTaskCode(long taskCode) {
-        this.taskCode = taskCode;
-    }
-
-    public int getTaskDefinitionVersion() {
-        return taskDefinitionVersion;
-    }
-
-    public void setTaskDefinitionVersion(int taskDefinitionVersion) {
-        this.taskDefinitionVersion = taskDefinitionVersion;
-    }
-
-    public String getTaskParams() {
-        return taskParams;
-    }
-
-    public void setTaskParams(String taskParams) {
-        this.taskParams = taskParams;
+        return (long) getRetryInterval() * SEC_2_MINUTES_TIME_UNIT < failedTimeInterval;
     }
 
     public boolean isFirstRun() {
         return endTime == null;
     }
+
 }

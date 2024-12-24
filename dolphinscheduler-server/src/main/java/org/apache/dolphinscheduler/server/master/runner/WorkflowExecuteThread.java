@@ -1517,6 +1517,7 @@ public class WorkflowExecuteThread implements Runnable {
                         }
                     }
                 }
+                task.setStartTime(new Date());
                 //init varPool only this task is the first time running
                 if (task.isFirstRun()) {
                     //get pre task ,get all the task varPool to this task

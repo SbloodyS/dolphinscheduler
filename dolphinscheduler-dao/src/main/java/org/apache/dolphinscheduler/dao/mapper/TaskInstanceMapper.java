@@ -73,7 +73,10 @@ public interface TaskInstanceMapper extends BaseMapper<TaskInstance> {
                                                     @Param("startTime") Date startTime,
                                                     @Param("endTime") Date endTime);
 
-    int updateHostAndSubmitTimeById(@Param("id") int id, @Param("host") String host, @Param("submitTime") Date submitTime);
+    int updateHostAndSubmitTimeById(@Param("id") int id,
+                                    @Param("host") String host,
+                                    @Param("submitTime") Date submitTime,
+                                    @Param("fullLogPath") String fullLogPath);
 
     /**
      * query last task instance
@@ -87,4 +90,6 @@ public interface TaskInstanceMapper extends BaseMapper<TaskInstance> {
     List<TaskInstance> queryLastTaskInstanceList(@Param("taskCodes") Set<Long> taskCodes, @Param("processInstanceId") long processInstanceId);
 
     List<TaskInstance> queryTaskInstanceListByIds(@Param("ids") Set<Integer> ids);
+
+    String queryTaskInstanceFullLogPath(@Param("taskInstanceId") Integer taskInstanceId);
 }

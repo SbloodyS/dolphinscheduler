@@ -17,12 +17,14 @@
 
 package org.apache.dolphinscheduler.api.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.exceptions.ServiceException;
 import org.apache.dolphinscheduler.api.service.LoggerService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.model.TaskInstanceFullLogPath;
 import org.apache.dolphinscheduler.common.utils.PropertyUtils;
 import org.apache.dolphinscheduler.dao.entity.Project;
 import org.apache.dolphinscheduler.dao.entity.TaskDefinition;
@@ -37,6 +39,7 @@ import org.apache.dolphinscheduler.service.process.ProcessService;
 import org.apache.commons.lang.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -214,27 +217,54 @@ public class LoggerServiceImpl extends BaseServiceImpl implements LoggerService 
      * @return log string data
      */
     private String queryLog(TaskInstance taskInstance, int skipLineNum, int limit) {
-
-        String host = getHost(taskInstance.getHost());
-
-        logger.info("log host : {} , logPath : {} , logServer port : {}", host, taskInstance.getLogPath(),
-                PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
-
+        List<TaskInstanceFullLogPath> taskInstanceFullLogPathList = taskInstance.getTaskInstanceFullLogPath();
         StringBuilder log = new StringBuilder();
-        if (skipLineNum == 0) {
-            String head = String.format(LOG_HEAD_FORMAT,
-                    taskInstance.getLogPath(),
-                    host,
-                    Constants.SYSTEM_LINE_SEPARATOR);
-            log.append(head);
+        if (CollectionUtils.isEmpty(taskInstanceFullLogPathList)) {
+            String host = getHost(taskInstance.getHost());
+            String logPath = taskInstance.getLogPath();
+
+            logger.info("log host: {}, logPath: {}, logServer port: {}", host, logPath,
+                    PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
+
+            if (skipLineNum == 0) {
+                String head = String.format(LOG_HEAD_FORMAT,
+                        logPath,
+                        host,
+                        Constants.SYSTEM_LINE_SEPARATOR);
+                log.append(head);
+            }
+
+            log.append(logClient
+                    .rollViewLog(host,
+                            PropertyUtils.getInt(Constants.LOGGER_RPC_PORT),
+                            logPath,
+                            skipLineNum,
+                            limit));
+            return log.toString();
         }
 
-        log.append(logClient
-                .rollViewLog(host,
-                        PropertyUtils.getInt(Constants.LOGGER_RPC_PORT),
-                        taskInstance.getLogPath(),
-                        skipLineNum,
-                        limit));
+        for (TaskInstanceFullLogPath taskInstanceFullLogPath : taskInstanceFullLogPathList) {
+            String host = getHost(taskInstanceFullLogPath.getHost());
+            String logPath = taskInstanceFullLogPath.getLogPath();
+
+            logger.info("log host: {}, logPath: {}, logServer port: {}", host, logPath,
+                    PropertyUtils.getInt(Constants.LOGGER_RPC_PORT));
+
+            if (skipLineNum == 0) {
+                String head = String.format(LOG_HEAD_FORMAT,
+                        logPath,
+                        host,
+                        Constants.SYSTEM_LINE_SEPARATOR);
+                log.append(head);
+            }
+
+            log.append(logClient
+                    .rollViewLog(host,
+                            PropertyUtils.getInt(Constants.LOGGER_RPC_PORT),
+                            logPath,
+                            skipLineNum,
+                            limit));
+        }
 
         return log.toString();
     }

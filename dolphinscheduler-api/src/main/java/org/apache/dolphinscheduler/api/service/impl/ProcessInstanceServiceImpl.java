@@ -26,6 +26,7 @@ import static org.apache.dolphinscheduler.common.Constants.PROCESS_INSTANCE_STAT
 import static org.apache.dolphinscheduler.common.Constants.TASK_LIST;
 import static org.apache.dolphinscheduler.common.Constants.WARNING_GROUP_NAME;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dolphinscheduler.api.dto.gantt.GanttDto;
 import org.apache.dolphinscheduler.api.dto.gantt.Task;
 import org.apache.dolphinscheduler.api.enums.Status;
@@ -104,6 +105,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  * process instance service impl
  */
 @Service
+@Slf4j
 public class ProcessInstanceServiceImpl extends BaseServiceImpl implements ProcessInstanceService {
 
     public static final String TASK_TYPE = "taskType";
@@ -293,7 +295,11 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
         }
 
         for (ProcessInstance processInstance : processInstances) {
-            processInstance.setDuration(DateUtils.format2Duration(processInstance.getStartTime(), processInstance.getEndTime()));
+            Date endTime = processInstance.getEndTime();
+            if (endTime != null && endTime.getTime() < processInstance.getStartTime().getTime()) {
+                endTime = new Date();
+            }
+            processInstance.setDuration(DateUtils.format2Duration(processInstance.getStartTime(), endTime));
             User executor = idToUserMap.get(processInstance.getExecutorId());
             if (null != executor) {
                 processInstance.setExecutorName(executor.getUserName());
@@ -331,6 +337,7 @@ public class ProcessInstanceServiceImpl extends BaseServiceImpl implements Proce
             return result;
         }
         List<TaskInstance> taskInstanceList = processService.findValidTaskListByProcessId(processId);
+        log.info("task instance list: {}", taskInstanceList);
         addDependResultForTaskList(taskInstanceList);
 
         Map<String, Object> resultMap = new HashMap<>();
