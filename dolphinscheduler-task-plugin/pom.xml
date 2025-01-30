@@ -42,7 +42,6 @@
         <module>dolphinscheduler-task-trino</module>
         <module>dolphinscheduler-task-seatunnel</module>
         <module>dolphinscheduler-task-hive</module>
-        <module>dolphinscheduler-task-tock</module>
         <module>dolphinscheduler-task-clickhouse</module>
     </modules>
 </project>

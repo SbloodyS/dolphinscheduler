@@ -282,15 +282,6 @@
             :backfill-item="backfillItem"
           >
           </m-seaTunnel>
-          <!-- tock node -->
-          <m-to-ck
-            v-if="nodeData.taskType === 'TOCK'"
-            @on-params="_onParams"
-            @on-cache-params="_onCacheParams"
-            ref="TOCK"
-            :backfill-item="backfillItem"
-          >
-          </m-to-ck>
           <!-- clickhouse node -->
           <m-clickhouse
             v-if="nodeData.taskType === 'CLICKHOUSE'"
@@ -421,15 +412,6 @@
             :nodeData="nodeData"
             :postTasks="postTasks"
           ></m-switch>
-          <!-- waterdrop node -->
-          <m-waterdrop
-            v-if="nodeData.taskType === 'WATERDROP'"
-            @on-params="_onParams"
-            @on-cache-params="_onCacheParams"
-            ref="WATERDROP"
-            :backfill-item="backfillItem"
-          >
-          </m-waterdrop>
         </div>
         <!-- Pre-tasks in workflow -->
         <m-pre-tasks
@@ -466,7 +448,6 @@
   import mListBox from './tasks/_source/listBox'
   import mShell from './tasks/shell'
   import mTrino from './tasks/trino'
-  import mWaterdrop from './tasks/waterdrop'
   import mSpark from './tasks/spark'
   import mFlink from './tasks/flink'
   import mPython from './tasks/python'
@@ -480,7 +461,6 @@
   import mSqoop from './tasks/sqoop'
   import mSubProcess from './tasks/sub_process'
   import mHive from './tasks/hive'
-  import mToCk from './tasks/tock'
   import mClickhouse from './tasks/clickhouse'
   import mSeaTunnel from './tasks/seatunnel'
   // import mSelectInput from './_source/selectInput'
@@ -1017,8 +997,6 @@
       mTrino,
       mSeaTunnel,
       mHive,
-      mToCk,
-      mWaterdrop,
       mSubProcess,
       mProcedure,
       mSql,

@@ -466,11 +466,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
-                <artifactId>dolphinscheduler-task-tock</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.dolphinscheduler</groupId>
                 <artifactId>dolphinscheduler-task-seatunnel</artifactId>
                 <version>${project.version}</version>
             </dependency>

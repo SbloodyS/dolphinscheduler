@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@TableName(schema = "data_center", value = "datasource_info")
+@TableName(value = "datasource_info")
 public class DataSourceNew {
   @TableId(value="id", type=IdType.AUTO)
   private int id;
